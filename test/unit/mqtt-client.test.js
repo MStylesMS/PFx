@@ -4,72 +4,100 @@
 
 const MqttClient = require('../../lib/core/mqtt-client');
 const mqtt = require('mqtt');
+const EventEmitter = require('events');
+
+jest.mock('mqtt');
 
 describe('MqttClient', () => {
     let mqttClient;
     let mockMqttInstance;
 
     beforeEach(() => {
-        mockMqttInstance = {
-            on: jest.fn(),
-            subscribe: jest.fn(),
-            unsubscribe: jest.fn(),
-            publish: jest.fn(),
-            end: jest.fn()
-        };
+        // Create a proper mock that extends EventEmitter
+        mockMqttInstance = new EventEmitter();
+        mockMqttInstance.subscribe = jest.fn((topic, callback) => callback && callback(null));
+        mockMqttInstance.unsubscribe = jest.fn();
+        mockMqttInstance.publish = jest.fn((topic, message, options, callback) => callback && callback(null));
+        mockMqttInstance.end = jest.fn((force, options, callback) => {
+            if (callback) callback();
+            return mockMqttInstance;
+        });
 
         mqtt.connect.mockReturnValue(mockMqttInstance);
 
         const config = {
             mqttServer: 'localhost',
             mqttPort: 1883,
+            mqttReconnectPeriod: 1500,
+            mqttKeepAlive: 60,
+            mqttCleanSession: true,
             heartbeatTopic: 'test/heartbeat',
-            heartbeatInterval: 1000,
-            mqttMaxAttempts: 1,
-            mqttConnectTimeoutMs: 200,
-            mqttOverallTimeoutMs: 400
+            heartbeatInterval: 1000
         };
 
         mqttClient = new MqttClient(config);
     });
 
+    afterEach(() => {
+        // Clean up heartbeat interval to prevent Jest warnings
+        if (mqttClient && mqttClient.heartbeatInterval) {
+            clearInterval(mqttClient.heartbeatInterval);
+            mqttClient.heartbeatInterval = null;
+        }
+        jest.clearAllMocks();
+    });
+
     describe('connect', () => {
         test('should connect to MQTT broker successfully', async () => {
             const connectPromise = mqttClient.connect();
+            
+            // Wait for jitter
+            await new Promise(resolve => setTimeout(resolve, 600));
 
             // Simulate successful connection
-            const connectCallback = mockMqttInstance.on.mock.calls.find(call => call[0] === 'connect')[1];
-            connectCallback();
+            mockMqttInstance.emit('connect');
 
             await expect(connectPromise).resolves.toBeUndefined();
             expect(mqttClient.connected).toBe(true);
-            expect(mqtt.connect).toHaveBeenCalledWith('mqtt://localhost:1883', expect.any(Object));
+            expect(mqtt.connect).toHaveBeenCalledWith('mqtt://localhost:1883', expect.objectContaining({
+                reconnectPeriod: 1500
+            }));
         });
 
-        test('should handle connection errors', async () => {
+        test('should handle connection errors gracefully', async () => {
             const connectPromise = mqttClient.connect();
-            const errorCallback = mockMqttInstance.on.mock.calls.find(call => call[0] === 'error')[1];
-            // Fire error before connect
-            errorCallback(new Error('Connection failed'));
-            await expect(connectPromise).rejects.toThrow('Connection failed');
+            
+            await new Promise(resolve => setTimeout(resolve, 600));
+
+            // Simulate connection error - should not reject, library handles reconnect
+            mockMqttInstance.emit('error', new Error('Connection failed'));
+
+            // Connect should eventually timeout (30s) but not reject
+            // For testing, we'll just emit connect after error
+            mockMqttInstance.emit('connect');
+            
+            await expect(connectPromise).resolves.toBeUndefined();
         });
 
-        test('should timeout on slow connections', async () => {
-            jest.useFakeTimers();
+        test('should timeout initial connection after 30s but allow library to continue', async () => {
             const connectPromise = mqttClient.connect();
-            // Advance beyond overall timeout (400ms)
-            jest.advanceTimersByTime(450);
-            await expect(connectPromise).rejects.toThrow('overall connection timeout');
-            jest.useRealTimers();
-        });
+            
+            await new Promise(resolve => setTimeout(resolve, 600));
+            
+            // Don't emit connect - let the 30s timeout resolve the promise
+            await new Promise(resolve => setTimeout(resolve, 30100));
+
+            await expect(connectPromise).resolves.toBeUndefined();
+            expect(mqttClient.connected).toBe(false); // Not connected yet, but library keeps trying
+        }, 35000);
     });
 
     describe('subscribe', () => {
         beforeEach(async () => {
             // Connect first
             const connectPromise = mqttClient.connect();
-            const connectCallback = mockMqttInstance.on.mock.calls.find(call => call[0] === 'connect')[1];
-            connectCallback();
+            await new Promise(resolve => setTimeout(resolve, 600));
+            mockMqttInstance.emit('connect');
             await connectPromise;
         });
 
@@ -102,8 +130,8 @@ describe('MqttClient', () => {
         beforeEach(async () => {
             // Connect first
             const connectPromise = mqttClient.connect();
-            const connectCallback = mockMqttInstance.on.mock.calls.find(call => call[0] === 'connect')[1];
-            connectCallback();
+            await new Promise(resolve => setTimeout(resolve, 600));
+            mockMqttInstance.emit('connect');
             await connectPromise;
         });
 
@@ -141,16 +169,12 @@ describe('MqttClient', () => {
     });
 
     describe('message handling', () => {
-        let messageHandler;
-
         beforeEach(async () => {
             // Connect and get message handler
             const connectPromise = mqttClient.connect();
-            const connectCallback = mockMqttInstance.on.mock.calls.find(call => call[0] === 'connect')[1];
-            connectCallback();
+            await new Promise(resolve => setTimeout(resolve, 600));
+            mockMqttInstance.emit('connect');
             await connectPromise;
-
-            messageHandler = mockMqttInstance.on.mock.calls.find(call => call[0] === 'message')[1];
         });
 
         test('should handle JSON messages', () => {
@@ -163,7 +187,7 @@ describe('MqttClient', () => {
 
             // Simulate incoming message
             const message = Buffer.from(JSON.stringify({ command: 'test' }));
-            messageHandler('test/topic', message);
+            mockMqttInstance.emit('message', 'test/topic', message);
 
             expect(handler).toHaveBeenCalledWith('test/topic', { command: 'test' });
         });
@@ -178,7 +202,7 @@ describe('MqttClient', () => {
 
             // Simulate incoming message
             const message = Buffer.from('plain text');
-            messageHandler('test/topic', message);
+            mockMqttInstance.emit('message', 'test/topic', message);
 
             expect(handler).toHaveBeenCalledWith('test/topic', 'plain text');
         });
@@ -187,7 +211,7 @@ describe('MqttClient', () => {
             const message = Buffer.from('test');
 
             expect(() => {
-                messageHandler('unknown/topic', message);
+                mockMqttInstance.emit('message', 'unknown/topic', message);
             }).not.toThrow();
         });
     });

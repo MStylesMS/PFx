@@ -1,6 +1,23 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.3] - 2025-10-13
+### Fixed
+- **MQTT Reconnection**: Fixed critical bug where ParadoxFX would stop attempting to reconnect after losing connection to MQTT broker. The previous `connectWithBackoff` closure in the `close` event handler created a new client without reattaching event handlers, causing reconnection to fail silently.
+
+### Changed
+- **Simplified Reconnect Logic**: Replaced complex custom exponential backoff code (~100 lines) with mqtt.js library's built-in `reconnectPeriod` feature (default 1500ms).
+- **Startup Jitter**: Added 0–500ms random delay before initial connection to prevent thundering herd when multiple devices boot simultaneously.
+- **Configurable Reconnect**: Added optional `[mqtt] reconnect_period` INI parameter (milliseconds) with sensible 1500ms default.
+
+### Added
+- New unit tests for reconnect behavior (`test/unit/mqtt-client.reconnect.test.js`) with 6 test cases.
+- Updated existing mqtt-client tests to match new implementation (19 total tests passing).
+
+### Removed
+- Removed `mqttMaxAttempts`, `mqttConnectTimeoutMs`, `mqttOverallTimeoutMs` config options (now using library's simpler reconnect mechanism).
+- Removed `DEBUG_MQTT` environment variable (library handles reconnect transparently).
+
+## [1.1.2-rc2] - 2025-10-XX
 ### Added
 - Advanced MQTT client configuration options: `mqttMaxAttempts`, `mqttConnectTimeoutMs`, `mqttOverallTimeoutMs` for deterministic connection behavior in unstable networks and CI.
 - Heartbeat publication now unrefs its interval, allowing clean process exit when only heartbeat remains.
@@ -52,6 +69,7 @@ For telemetry consumers: incorporate new schemas and ignore telemetry fields if 
 ### Notes
 - Configure restart behavior via optional zone config keys: `mpvAutoRestart` (default true), `mpvRestartMaxAttempts`, `mpvRestartDelayMs`.
 	Future enhancement: expose these in documentation configuration guide.
+
 
 ## [1.0.4] - 2025-08-29
 ### Changed
