@@ -4,6 +4,7 @@
       "name": "Raspberry Pi 4",
       "description": "Pi4 with safer hardware acceleration to avoid blue screen issues",
       "tested": true,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=auto-copy",
         "--vo=gpu",
@@ -27,6 +28,7 @@
       "name": "Raspberry Pi 4 - Software",
       "description": "Pi4 with software decoding for maximum reliability (tested Oct 2025)",
       "tested": true,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=no",
         "--vo=gpu",
@@ -52,6 +54,7 @@
       "name": "Raspberry Pi 5",
       "description": "Optimized settings for Pi5 with dual HDMI and hardware acceleration (X11 compatible)",
       "tested": true,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=auto",
         "--vo=gpu",
@@ -75,6 +78,7 @@
       "name": "Raspberry Pi 3",
       "description": "Conservative settings for Pi3 with limited hardware acceleration",
       "tested": false,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=auto",
         "--vo=gpu",
@@ -101,6 +105,7 @@
       "name": "Raspberry Pi 3 - Software",
       "description": "Pi3 with software decoding and aggressive optimizations for weaker CPU",
       "tested": false,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=no",
         "--vo=gpu",
@@ -129,6 +134,7 @@
       "name": "Raspberry Pi Zero/Zero W",
       "description": "Minimal settings for Pi Zero with software decoding",
       "tested": false,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=no",
         "--vo=gpu",
@@ -161,6 +167,7 @@
       "name": "Generic Linux Desktop",
       "description": "Standard settings for typical Linux desktop with modern GPU",
       "tested": false,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=auto",
         "--vo=gpu",
@@ -193,6 +200,7 @@
       "name": "Generic Minimal",
       "description": "Fallback settings for older or resource-constrained systems",
       "tested": false,
+      "fullscreen": true,
       "baseArgs": [
         "--hwdec=no",
         "--vo=x11",
@@ -218,6 +226,67 @@
         ]
       },
       "notes": "Software-only fallback for systems without GPU acceleration or when all else fails."
+    },
+    "linux-fullscreen": {
+      "name": "Linux Desktop - Fullscreen",
+      "description": "Linux desktop with fullscreen video output for production use",
+      "tested": true,
+      "fullscreen": true,
+      "baseArgs": [
+        "--hwdec=auto",
+        "--vo=gpu",
+        "--cache=yes",
+        "--demuxer-max-bytes=100M",
+        "--no-terminal",
+        "--no-osc",
+        "--keep-open=always"
+      ],
+      "displayArgs": {
+        "wayland": [
+          "--vo=gpu",
+          "--gpu-context=wayland"
+        ],
+        "x11": [
+          "--vo=gpu",
+          "--gpu-context=x11"
+        ]
+      },
+      "performance": {
+        "profile": null,
+        "extraArgs": []
+      },
+      "notes": "Standard fullscreen mode for Linux desktops with hardware acceleration. Suitable for production installations on non-Pi Linux systems."
+    },
+    "linux-windowed": {
+      "name": "Linux Desktop - Windowed",
+      "description": "Linux desktop with windowed video output for testing and development",
+      "tested": true,
+      "fullscreen": false,
+      "windowGeometry": "960x540",
+      "baseArgs": [
+        "--hwdec=auto",
+        "--vo=gpu",
+        "--cache=yes",
+        "--demuxer-max-bytes=100M",
+        "--no-terminal",
+        "--no-osc",
+        "--keep-open=always"
+      ],
+      "displayArgs": {
+        "wayland": [
+          "--vo=gpu",
+          "--gpu-context=wayland"
+        ],
+        "x11": [
+          "--vo=gpu",
+          "--gpu-context=x11"
+        ]
+      },
+      "performance": {
+        "profile": null,
+        "extraArgs": []
+      },
+      "notes": "Windowed mode at 50% of 1080p (960x540) for testing and development. Allows multiple zones to be visible simultaneously on a single desktop."
     }
   },
   "autoDetection": {
