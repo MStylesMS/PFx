@@ -53,7 +53,7 @@ player_type = mpv
 audio_device = default
 # Display target: X11 display (e.g., ":0") or Wayland (uses $WAYLAND_DISPLAY)
 display = :0
-xinerama_screen = 0      # Only for X11/XWayland multi-monitor setups
+target_monitor = 0       # Zero-based monitor index for multi-display setups
 default_image = default.png  # Image displayed on startup and after wake (optional)
 ```
 
@@ -67,7 +67,7 @@ default_image = default.png  # Image displayed on startup and after wake (option
 - `player_type`: Media player preference (mpv, vlc, fbi, auto)
 - `audio_device`: Audio device identifier for PipeWire/PulseAudio (e.g., 'pulse/device_name') or ALSA direct (e.g., 'alsa/hdmi:CARD=...')
 - `display`: Display server target; X11 (":" + display number, e.g. ":0") or Wayland (uses $WAYLAND_DISPLAY)
-- `xinerama_screen`: Xinerama screen index for multi-monitor (only for X11/XWayland)
+- `target_monitor`: Zero-based monitor index used when multiple displays are attached (only for X11/XWayland)
 - `default_image`: Image file displayed on startup and after wake commands (defaults to "default.png" if not specified)
 
 **Media File Handling:**
@@ -220,7 +220,7 @@ audio_device = pulse/alsa_output.platform-107c706400.hdmi.hdmi-stereo    # Right
 
 ```ini
 display = :0                       # Default X11 display
-xinerama_screen = 0               # Primary screen
+target_monitor = 0               # Primary screen
 ```
 
 ### Multi-Monitor Setup
@@ -228,11 +228,11 @@ xinerama_screen = 0               # Primary screen
 ```ini
 [screen:monitor1]
 display = :0
-xinerama_screen = 0               # Left monitor
+target_monitor = 0               # Left monitor
 
 [screen:monitor2]
 display = :0
-xinerama_screen = 1               # Right monitor
+target_monitor = 1               # Right monitor
 ```
 
 **Important for Pi5**: Multi-monitor video routing requires X11. Wayland (the Pi5 default) has limitations that prevent reliable dual-screen video targeting. Use `sudo raspi-config` to switch to X11.
@@ -327,7 +327,7 @@ volume = 80
 player_type = mpv
 audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
 display = :0
-xinerama_screen = 0
+target_monitor = 0
 ```
 
 **Pi5 Audio Device Names:**
@@ -355,7 +355,7 @@ volume = 80
 player_type = mpv
 audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
 display = :0
-xinerama_screen = 0
+target_monitor = 0
 
 [screen:zone2-hdmi1]
 type = screen
@@ -365,7 +365,7 @@ volume = 80
 player_type = mpv
 audio_device = pulse/alsa_output.platform-107c706400.hdmi.hdmi-stereo
 display = :0
-xinerama_screen = 1
+target_monitor = 1
 ```
 
 **Pi5 Audio Device Names:**
@@ -492,7 +492,7 @@ display = /dev/fb0
 #### Display Issues
 
 - Verify X11 display is accessible
-- Check Xinerama configuration for multi-monitor
+- Confirm `target_monitor` / `output_name` mappings by running `xrandr --listmonitors`
 - Ensure proper graphics drivers are installed
 
 **Pi5 Specific Issues:**

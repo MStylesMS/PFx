@@ -18,7 +18,7 @@ const pi5TestConfig = {
     
     // Pi5 Screen 0 settings (from pfx-pi5-h.ini)
     display: ':0',
-    xineramaScreen: 0,
+    targetMonitor: 0,
     audioDevice: 'alsa/hdmi:CARD=vc4hdmi0,DEV=0',
     
     // Media configuration 

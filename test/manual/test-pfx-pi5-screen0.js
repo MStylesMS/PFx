@@ -20,7 +20,7 @@ const pi5TestConfig = {
     name: 'zone1-hdmi0',
     type: 'screen',
     display: ':0',
-    xineramaScreen: 0,
+    targetMonitor: 0,
     audioDevice: 'alsa/hdmi:CARD=vc4hdmi0,DEV=0',  // Pi5 HDMI0
     mediaDir: '/opt/paradox/media/zone1',
     volume: 80,

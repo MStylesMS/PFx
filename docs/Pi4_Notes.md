@@ -52,14 +52,14 @@ Lower-latency profile (for sound effects and short clips): `--profile=fast`.
 [screen:zone1]
 type = screen
 display = :0
-xinerama_screen = 0
+target_monitor = 0
 audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
 mpvOntop = true
 
 [screen:zone2]
 type = screen
 display = :0
-xinerama_screen = 1
+target_monitor = 1
 audio_device = pulse/alsa_output.platform-107c706400.hdmi.hdmi-stereo
 mpvOntop = false
 ```

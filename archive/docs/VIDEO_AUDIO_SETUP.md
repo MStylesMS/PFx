@@ -228,7 +228,7 @@ volume = 80
 player_type = mpv
 audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
 display = :0
-xinerama_screen = 0
+target_monitor = 0
 
 [screen:zone2-hdmi1]
 type = screen
@@ -238,7 +238,7 @@ volume = 80
 player_type = mpv
 audio_device = pulse/alsa_output.platform-107c706400.hdmi.hdmi-stereo
 display = :0
-xinerama_screen = 1
+target_monitor = 1
 ```
 
 ---

@@ -70,8 +70,8 @@ Defines video+audio screen zones. Common keys:
 | player_type | string | No | mpv | mpv|vlc|auto |
 | audio_device | string | No | default | Pulse/PipeWire/ALSA identifier |
 | display | string | Yes | N/A | X11 display (`:0`) or Wayland display |
+| target_monitor | integer | No | 0 | Zero-based monitor index used to pick an output when multiple displays are present. |
 | output_name | string | No | (auto) | Optional xrandr output name (e.g. `HDMI-1`). When omitted PFx will try to resolve the monitor by `targetMonitor` index. |
-| xinerama_screen | integer | No | 0 | Xinerama index for multi-monitor |
 | resolution_mode | string | No | (none) | Desired display mode (e.g. `640x480@60`). Applied via `xrandr` before MPV starts. |
 | resolution_fallback | string | No | (none) | Secondary mode tried when the primary fails. Same syntax as `resolution_mode`. |
 | default_image | string | No | default.png | Startup image |
@@ -81,7 +81,7 @@ Defines video+audio screen zones. Common keys:
 
 Notes:
 - `mpvOntop = false` is recommended for zones where Chromium browser must be raised above MPV (e.g., clocks/UI overlays).
-- Use `display = :0` and `xinerama_screen` to target specific monitors under X11. For Pi5 dual-HDMI use X11 (see Pi5 section).
+- Use `display = :0` and `target_monitor` to target specific monitors under X11. For Pi5 dual-HDMI use X11 (see Pi5 section).
 - Screen resolution control requires X11 with `xrandr` installed (`sudo apt install x11-xserver-utils` on Debian/Ubuntu/Pi OS). PFx logs will warn if the binary is missing or the mode cannot be applied; the system continues using the current desktop resolution.
 - `max_volume` setting prevents audio from exceeding the specified level, providing volume safety limits for installations
 
@@ -218,7 +218,7 @@ type = screen
 media_dir = /opt/paradox/media/zone1
 audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
 display = :0
-xinerama_screen = 0
+target_monitor = 0
 max_volume = 120  # Limit HDMI-0 audio to 120% for safety
 ducking_adjust = -40  # Background reduced to 60% during speech/video/manual duck
 
@@ -227,7 +227,7 @@ type = screen
 media_dir = /opt/paradox/media/zone2
 audio_device = pulse/alsa_output.platform-107c706400.hdmi.hdmi-stereo
 display = :0
-xinerama_screen = 1
+target_monitor = 1
 max_volume = 100  # Standard limit for HDMI-1
 ducking_adjust = -30
 ```

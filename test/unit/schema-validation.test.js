@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
+const addFormats = require('ajv-formats');
 let draft2020;
 try {
     draft2020 = require('ajv/dist/refs/json-schema-draft-2020-12.json');
@@ -20,7 +21,8 @@ describe('JSON Schema validation (telemetry events)', () => {
     let playbackSchema;
     let recomputeSchema;
     beforeAll(() => {
-        ajv = new Ajv({ strict: false, allErrors: true, validateSchema: false });
+    ajv = new Ajv({ strict: false, allErrors: true, validateSchema: false });
+    addFormats(ajv, ['date-time']);
         playbackSchema = loadSchema('command-outcome-playback.schema.json');
         recomputeSchema = loadSchema('background-volume-recompute.schema.json');
         // Always strip $schema to avoid meta fetch requirement in offline/unit context

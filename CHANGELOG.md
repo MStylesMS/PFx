@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Optional per-screen resolution control via `resolution_mode`, `resolution_fallback`, and `output_name` keys. PFx now applies requested modes with `xrandr` before MPV launches, including fallback handling and clear logging.
+- New unit suite (`test/unit/screen-resolution-helper.test.js`) validating resolution helper behavior and config trimming for the new keys.
+
+### Fixed
+- Suppressed AJV `date-time` format warnings by registering `ajv-formats` in schema validation tests.
+
 ## [1.1.3] - 2025-10-13
 ### Fixed
 - **MQTT Reconnection**: Fixed critical bug where ParadoxFX would stop attempting to reconnect after losing connection to MQTT broker. The previous `connectWithBackoff` closure in the `close` event handler created a new client without reattaching event handlers, causing reconnection to fail silently.

@@ -52,7 +52,7 @@ A screen section defines a video (and audio) zone.
 | enabled           | boolean   | No       | true         | Whether this zone is active                                        |
 | media_path        | path      | No       | —            | Subdirectory under `media_base_path` or absolute path              |
 | display           | string    | Yes      | N/A          | X11 or Wayland display (`:0`, `wayland-0`, etc.)                   |
-| xinerama_screen   | integer   | No       | 0            | Xinerama display index                                              |
+| target_monitor    | integer   | No       | 0            | Zero-based monitor index used when multiple displays are present   |
 | monitor_geometry  | string    | No       | auto         | Resolution override or `auto`                                       |
 | player_type       | string    | No       | mpv          | Media player (`mpv`, `cvlc`, etc.)                                 |
 | video_volume      | integer   | No       | 100          | Volume percent for video audio (0–150)                             |

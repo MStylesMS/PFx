@@ -101,6 +101,9 @@ MEDIA_DIR=/custom/media
 VIDEO_QUEUE_MAX=10
 AUDIO_QUEUE_MAX=8
 TRANSITION_DELAY_MS=200
+OUTPUT_NAME= HDMI-1   
+RESOLUTION_MODE= 640x480@60 
+RESOLUTION_FALLBACK= 1024x768@60
 `;
 
             fs.readFile.mockResolvedValue(mockConfig);
@@ -114,6 +117,9 @@ TRANSITION_DELAY_MS=200
             expect(device.videoQueueMax).toBe(10);
             expect(device.audioQueueMax).toBe(8);
             expect(device.transitionDelay).toBe(200);
+            expect(device.outputName).toBe('HDMI-1');
+            expect(device.resolutionMode).toBe('640x480@60');
+            expect(device.resolutionFallback).toBe('1024x768@60');
         });
 
         test('should process light device configuration correctly', async () => {

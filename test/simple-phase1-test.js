@@ -23,7 +23,7 @@ const testConfig = {
     name: 'test-screen',
     type: 'screen',
     display: ':0',
-    xineramaScreen: 0,
+    targetMonitor: 0,
     audioDevice: 'hw:0,0',
     mediaDir: '/opt/paradox/apps/pfx/media/test',
     baseTopic: 'test/screen',

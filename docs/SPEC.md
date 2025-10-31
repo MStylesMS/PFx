@@ -230,7 +230,7 @@ enable_hardware_acceleration = true
 type = screen
 topic = paradox/zone1/screen
 display = :0
-xinerama_screen = 0
+target_monitor = 0
 audio_device = pulse/alsa_output.platform-fef00700.hdmi.hdmi-stereo
 background_music_volume = 70
 effects_volume = 100
@@ -242,7 +242,7 @@ mpv_video_options = --hwdec=auto --vo=gpu --profile=gpu-hq
 type = screen
 topic = paradox/zone2/screen
 display = :0
-xinerama_screen = 1
+target_monitor = 1
 audio_device = pulse/alsa_output.platform-fef05700.hdmi.hdmi-stereo
 background_music_volume = 70
 effects_volume = 100

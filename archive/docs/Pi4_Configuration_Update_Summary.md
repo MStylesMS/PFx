@@ -77,7 +77,7 @@ _getMediaPath(mediaPath) {
 ### 8. HDMI0 vs HDMI1 Settings Parity
 ✅ **VERIFIED**: Both HDMI screens now support identical settings:
 - Both have: `enabled`, `video_volume`, `background_music_volume`, `ducking_volume`, `effects_volume`, `speech_volume`
-- Both have: `display`, `xinerama_screen`, `monitor_geometry`, `player_type`, `video_queue_max`, `audio_queue_max`
+- Both have: `display`, `target_monitor`, `monitor_geometry`, `player_type`, `video_queue_max`, `audio_queue_max`
 - Only difference: Zone-specific audio device identifiers and default volumes
 
 ## Implementation Status Report
