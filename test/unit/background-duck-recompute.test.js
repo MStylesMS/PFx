@@ -74,8 +74,11 @@ describe('Phase 8 Background Duck Recompute', () => {
         // Play speech which should trigger ducking (default code path adds duck trigger)
         await zone._playSpeech('/tmp/audio.mp3', undefined, -26); // explicit negative duck to ensure trigger
 
-        // Expect a recompute event publishing ducked volume 40 and then restoration event to 80
-        const publishPayloads = mockMqtt.publish.mock.calls.map(c => c[1]);
+    // Allow queued microtasks (speech completion cleanup) to publish restore event
+    await new Promise(resolve => setImmediate(resolve));
+
+    // Expect a recompute event publishing ducked volume 40 and then restoration event to 80
+    const publishPayloads = mockMqtt.publish.mock.calls.map(c => c[1]);
         const duckEvent = publishPayloads.find(p => p && p.background_volume_recomputed && p.effective_volume === 40);
         expect(duckEvent).toBeTruthy();
         const restoreEvent = publishPayloads.reverse().find(p => p && p.background_volume_recomputed && p.effective_volume === 80);
