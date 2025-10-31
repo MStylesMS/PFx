@@ -70,7 +70,10 @@ Defines video+audio screen zones. Common keys:
 | player_type | string | No | mpv | mpv|vlc|auto |
 | audio_device | string | No | default | Pulse/PipeWire/ALSA identifier |
 | display | string | Yes | N/A | X11 display (`:0`) or Wayland display |
+| output_name | string | No | (auto) | Optional xrandr output name (e.g. `HDMI-1`). When omitted PFx will try to resolve the monitor by `targetMonitor` index. |
 | xinerama_screen | integer | No | 0 | Xinerama index for multi-monitor |
+| resolution_mode | string | No | (none) | Desired display mode (e.g. `640x480@60`). Applied via `xrandr` before MPV starts. |
+| resolution_fallback | string | No | (none) | Secondary mode tried when the primary fails. Same syntax as `resolution_mode`. |
 | default_image | string | No | default.png | Startup image |
 | mpv_video_options | string | No | - | Extra mpv CLI options |
 | mpvOntop | boolean | No | true | If `false` remove `--ontop` from mpv args (useful when Chromium must be on top) |
@@ -79,6 +82,7 @@ Defines video+audio screen zones. Common keys:
 Notes:
 - `mpvOntop = false` is recommended for zones where Chromium browser must be raised above MPV (e.g., clocks/UI overlays).
 - Use `display = :0` and `xinerama_screen` to target specific monitors under X11. For Pi5 dual-HDMI use X11 (see Pi5 section).
+- Screen resolution control requires X11 with `xrandr` installed (`sudo apt install x11-xserver-utils` on Debian/Ubuntu/Pi OS). PFx logs will warn if the binary is missing or the mode cannot be applied; the system continues using the current desktop resolution.
 - `max_volume` setting prevents audio from exceeding the specified level, providing volume safety limits for installations
 
 <!-- Combined sink configuration allows routing audio to multiple physical outputs simultaneously -->
