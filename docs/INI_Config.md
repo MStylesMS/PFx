@@ -46,7 +46,7 @@ General advice:
 | log_level | string | No | info | error|warn|info|debug|trace |
 | log_directory | path | No | (none) | Directory for log files. If not set, logs only to console (captured by systemd). Enables automatic log rotation (30 days / 100MB limit). |
 | message_level | string | No | info | Verbosity for INFO/DEBUG messages |
-| media_base_path | path | Yes | N/A | Base directory for media (prefer zone-specific media_dir) |
+| media_base_path | path | No | (deprecated) | DEPRECATED — Use per-device `media_dir` instead. When present PFx will no longer rely on a global `media_base_path` for per-zone media resolution; specify `media_dir` inside each `[screen:<name>]` or `[audio:<name>]` section (absolute or relative to `/opt/paradox/media`). |
 | heartbeat_enabled | boolean | No | false | Enable heartbeat messages |
 | heartbeat_interval | integer(ms) | No | 10000 | Heartbeat interval in ms |
 | heartbeat_topic | string | No | paradox/heartbeat | Heartbeat MQTT topic |
