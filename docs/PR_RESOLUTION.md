@@ -1,5 +1,61 @@
 # PR_RESOLUTION: Screen Resolution Control for PFx
 
+## Status Snapshot (March 2026)
+
+This feature is mostly implemented in code and tests.
+
+- Implemented in PFx code path:
+   - `lib/utils/screen-resolution-helper.js`
+   - `lib/core/config-loader.js`
+   - `lib/zones/screen-zone.js`
+   - `test/unit/screen-resolution-helper.test.js`
+   - `test/unit/config-loader.test.js`
+- Remaining work is primarily hardware validation and final doc/acceptance closure.
+- Monitor control is intentionally postponed and tracked separately in `docs/PR_MONITOR_CONTROL.md`.
+
+## Implementation Checklist
+
+### 1) INI Schema Extension
+- [x] Added optional `[screen:*]` keys: `output_name`, `resolution_mode`, `resolution_fallback`.
+- [x] Wired keys through config loader normalization (`outputName`, `resolutionMode`, `resolutionFallback`).
+- [x] Added/updated unit coverage in config loader tests.
+- [x] Documented keys and behavior in `docs/INI_Config.md`.
+
+### 2) Runtime Resolution Manager
+- [x] Added dedicated helper module for resolution apply flow.
+- [x] Parses `WxH@Hz` style mode strings and supports raw mode tokens.
+- [x] Resolves output by explicit `output_name` or fallback `target_monitor` index.
+- [x] Applies mode using `xrandr --output <name> --mode <WxH> [--rate <Hz>]`.
+- [x] Skips idempotently when target mode already active.
+- [x] Attempts fallback mode when primary mode apply fails.
+
+### 3) Screen Zone Integration
+- [x] `ScreenZone.initialize()` calls resolution helper before MPV zone manager creation.
+- [x] Resolution failure path is non-fatal and initialization continues.
+- [x] Logging records success/warn/skip outcomes.
+
+### 4) Error Handling & Logging
+- [x] Handles missing `DISPLAY` safely and skips with warning.
+- [x] Handles invalid `resolution_mode`/`resolution_fallback` safely.
+- [x] Handles missing `xrandr` binary with explicit actionable warning.
+- [x] Continues operation when resolution change cannot be applied.
+
+### 5) Tests
+- [x] Unit tests for helper: no-mode skip, already-set skip, fallback behavior, unresolved output, missing binary.
+- [x] Unit tests for config parsing of resolution keys.
+- [ ] Hardware validation runbook execution on real devices (Pi3/Pi4/Pi5) is still pending final sign-off.
+- [ ] End-to-end verification logs/screenshots for invalid-primary/valid-fallback scenario on target hardware are still pending.
+
+### 6) Documentation
+- [x] `docs/INI_Config.md` updated with resolution settings and dependency note (`x11-xserver-utils`).
+- [x] Plan doc exists and now includes implementation status.
+- [x] Supplementary platform guidance includes firmware-level notes.
+- [ ] Add a short "verified on" matrix (device, output, mode, result) after hardware pass.
+
+### 7) Scope Control
+- [x] Monitor control is deferred; not part of this PR delivery.
+- [x] Adaptive/per-media resolution switching remains excluded.
+
 ## Objective
 Add a software-managed screen resolution feature to PFx that allows each `screen:` zone to specify the desired output mode (resolution + refresh rate) and optional HDMI output name. PFx will set the mode dynamically during startup using `xrandr` (or equivalent) before launching mpv.
 
@@ -46,29 +102,7 @@ Add a software-managed screen resolution feature to PFx that allows each `screen
 - Per-media resolution switching.
 
 ## Implementation Plan
-1. **Schema Update**
-   - Extend config loader to accept new keys and validate basic format.
-   - Default behavior remains unchanged when keys are absent.
-
-2. **Resolution Helper Module**
-   - Accepts `{ outputName, mode, fallbackMode }`.
-   - Parses mode into width/height/refresh, or accepts raw `xrandr --mode` tokens.
-   - Executes `xrandr --output <output> --mode <WxH> --rate <Hz>`.
-   - If the target mode is already active, skip to avoid log noise.
-   - On failure, attempt fallback (if provided), then warn.
-
-3. **Screen Zone Integration**
-   - `ScreenZone.initialize()` calls resolution helper before mpv processes spawn.
-   - Ensure asynchronous calls resolve before continuing to media load.
-
-4. **Testing**
-   - Verify on Pi3 (Trixie) and Pi4/5 with dual-head setups.
-   - Test fallback behavior by specifying an invalid mode first.
-   - Confirm mpv launches with expected window size and no race conditions.
-
-5. **Documentation Refresh (Final Step)**
-   - Add "Resolution Control" section to `INI_Config.md` and reference this PR plan.
-   - Document manual firmware edits (hdmi_group/mode) only as supplementary guidance.
+Most implementation-plan items are complete. Remaining items are tracked in the checklist above under "Tests" and "Documentation".
 
 ## Risks & Mitigations
 - **Missing xrandr**: Ensure package dependency documented (`x11-xserver-utils`). Log a clear error if the binary is missing.
@@ -76,14 +110,17 @@ Add a software-managed screen resolution feature to PFx that allows each `screen
 - **Wayland users**: Document that X11 is required for `xrandr` (recommended for PFx deployments already). Warn if `DISPLAY` not set.
 
 ## Acceptance Criteria
-- New INI keys documented and optional.
-- PFx applies requested resolution before mpv window creation.
-- Logs indicate resolution state changes or failures clearly.
-- System continues operating when modes cannot be set.
-- Example configuration demonstrates Pi3 640x480 use case.
+- [x] New INI keys documented and optional.
+- [x] PFx applies requested resolution before mpv window creation.
+- [x] Logs indicate resolution state changes or failures clearly.
+- [x] System continues operating when modes cannot be set.
+- [x] Example configuration demonstrates Pi3 640x480 use case.
+- [ ] Hardware validation evidence captured on target devices (Pi3/Pi4/Pi5 where applicable).
 
 ## Next Steps
-- Implement resolution helper module.
-- Update config loader and screen zone initialization.
-- Refresh documentation and provide sample configs.
-- Test on physical Pi hardware with HDMI→RF converter scenario.
+- Execute hardware validation pass on physical targets:
+   - Pi3 + HDMI->RF workflow at `640x480@60`
+   - Pi4/Pi5 single and dual output scenarios as configured
+   - Invalid primary mode + valid fallback mode behavior
+- Capture a concise verification matrix in this document (device/output/mode/result/log reference).
+- If hardware validation passes, mark this PR as complete and close remaining checklist items.
