@@ -68,7 +68,7 @@ Defines video+audio screen zones. Common keys:
 | media_dir | path | No | - | Zone media directory |
 | volume | integer | No | 80 | Base volume % |
 | player_type | string | No | mpv | mpv|vlc|auto |
-| audio_device | string | No | default | Pulse/PipeWire/ALSA identifier |
+| audio_device | string | No | default | PipeWire/Pulse/ALSA device identifier passed to mpv via `--audio-device`. Use `pipewire` to route through PipeWire (required when running as a systemd service — `default` silently falls back to raw ALSA, bypassing PipeWire). Use `pipewire/<sinkname>` to pin to a specific output. Run `mpv --audio-device=help` to list available device strings. |
 | display | string | Yes | N/A | X11 display (`:0`) or Wayland display |
 | target_monitor | integer | No | 0 | Zero-based monitor index used to pick an output when multiple displays are present. |
 | output_name | string | No | (auto) | Optional xrandr output name (e.g. `HDMI-1`). When omitted PFx will try to resolve the monitor by `targetMonitor` index. |

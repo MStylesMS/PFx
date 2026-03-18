@@ -30,6 +30,7 @@ class PFxApplication {
             const argv = minimist(process.argv.slice(2));
             const configFile = argv.config || argv.c || argv._[0] || 'pfx.ini';
             const configPath = path.resolve(configFile);
+            const logDirOverride = argv['log-dir'] || argv.logDir || argv['log-directory'] || argv.logDirectory || null;
 
             // Load version first (needed for startup message)
             let version = '0.0.0';
@@ -52,6 +53,11 @@ class PFxApplication {
             
             // Load configuration
             this.config = await ConfigLoader.load(configPath);
+
+            if (logDirOverride) {
+                this.config.global.log_directory = path.resolve(logDirOverride);
+                this.logger.info(`Overriding log directory from CLI: ${this.config.global.log_directory}`);
+            }
 
             // Set up file logging if log_directory is configured
             let logStream = null;
