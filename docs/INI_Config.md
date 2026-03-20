@@ -1,4 +1,3 @@
-````markdown
 # ParadoxFX INI Configuration (Merged Reference)
 
 This file consolidates the previous `CONFIGURATION.md` and `INI_REFERENCE.md` into a single authoritative INI configuration reference and examples document.
@@ -305,4 +304,3 @@ Machine-readable JSON Schemas for volume telemetry events (playback outcome & ba
 - `background-volume-recompute.schema.json`
 These can be consumed by external validators / dashboards to ensure event shape compliance.
 
-````
