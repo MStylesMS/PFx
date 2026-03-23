@@ -20,6 +20,7 @@ ExecStartPre=/opt/paradox/apps/ParadoxFX/scripts/cleanup.sh
 ExecStartPre=/bin/rm -f /run/paradox/pfx.ready
 ExecStart=/usr/bin/node /opt/paradox/apps/ParadoxFX/pfx.js --config /opt/paradox/config/pfx.ini
 ExecStartPost=/opt/paradox/scripts/pfx-ready.sh
+ExecStopPost=/opt/paradox/apps/ParadoxFX/scripts/cleanup.sh
 
 # Restart policy
 Restart=on-failure
