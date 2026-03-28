@@ -84,9 +84,13 @@ class PFxApplication {
                 // Also create/update the latest log symlink
                 const latestLogFile = path.join(logDir, 'pfx-latest.log');
                 try {
-                    if (fs.existsSync(latestLogFile)) {
-                        fs.unlinkSync(latestLogFile);
-                    }
+                        // Remove existing path even if it's a dangling symlink.
+                        try {
+                            fs.lstatSync(latestLogFile);
+                            fs.unlinkSync(latestLogFile);
+                        } catch (_) {
+                            // Path does not exist; nothing to remove.
+                        }
                     fs.symlinkSync(path.basename(logFile), latestLogFile);
                 } catch (err) {
                     // Ignore symlink errors, just use timestamped file
