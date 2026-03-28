@@ -2,6 +2,8 @@
 
 A Node.js multi-modal media and effect controller for screens, lights, and relays via MQTT.
 
+**AI Documentation**: [AI-INSTRUCTIONS.md](AI-INSTRUCTIONS.md) (quick context) | [AI-DETAILED-OVERVIEW.md](AI-DETAILED-OVERVIEW.md) (comprehensive guide)
+
 ## Overview
 
 ParadoxFX is a comprehensive system for controlling various devices through MQTT messaging. It supports:
