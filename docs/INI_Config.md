@@ -155,6 +155,9 @@ Lighting zones now initialize in PFx directly. Supported section naming variants
 | type | string | Yes | light | `light`, `light_group`, `light-group`, or `lightgroup` |
 | topic | string | Yes | N/A | Zone base MQTT topic (`.../lights`) |
 | backend | string | No | passthrough | `passthrough` or `wiz` |
+| generation | string/int | No | - | Device protocol generation (for example Shelly gen1/gen2) |
+| profile | string | No | - | Device behavior profile (`switch`, `dimmer`, `rgbw`, `input`) |
+| model | string | No | - | Device model identifier (metadata/routing hint) |
 | controller | string | No | - | Optional legacy alias. If `backend` omitted, `controller=wiz` selects WiZ backend. |
 | forward_topic | string | No | `{topic}/backend-commands` | Passthrough backend forward target |
 | bulb_ip | string | No | - | Required for WiZ backend |
@@ -163,6 +166,10 @@ Lighting zones now initialize in PFx directly. Supported section naming variants
 | device_id / node_id | string | No | - | Optional device identifier |
 | lights / devices / device_list | CSV | No | - | Group membership list for light groups |
 | bulb_ips | CSV | No | - | Optional direct IP target list for `light-group` fan-out when not referencing individual light sections |
+| shelly_host | string | No | - | Shelly host/IP for backend `shelly` |
+| shelly_auth_user / shelly_auth_pass | string | No | - | Optional Shelly HTTP auth |
+| channel | integer | No | 0 | Output channel/component index |
+| target_hosts | CSV | No | - | Optional host fan-out list for backend groups |
 
 Example (passthrough):
 
@@ -205,6 +212,36 @@ type = light-group
 topic = paradox/agent22/lights
 backend = wiz
 devices = wiz-84,wiz-109
+```
+
+### [input:<id>]
+
+Input zones consume external event topics (for example Shelly Plus i4 button events) and can map them to MQTT commands.
+
+| Setting | Type | Req | Default | Description |
+|---|---:|:--:|---|---|
+| type | string | Yes | input | Must be `input` |
+| topic | string | Yes | N/A | Base topic for PFx input zone state/events |
+| backend | string | No | generic | Backend family (`shelly`, etc.) |
+| generation | string/int | No | - | Device generation marker |
+| profile | string | No | input | Input device profile |
+| model | string | No | - | Device model (for example `plus-i4`) |
+| input_topic | string | Yes* | - | MQTT topic to subscribe for events |
+| input_topics | CSV | Yes* | - | Multiple event topics |
+| input_map | JSON | No | {} | Event-to-command mapping (key: `input.event` or event-only fallback) |
+
+Example:
+
+```ini
+[input:shelly-i4-main]
+type = input
+topic = paradox/agent22/inputs/main
+backend = shelly
+generation = 2
+profile = input
+model = plus-i4
+input_topic = shellyplusi4-abc123/events/rpc
+input_map = {"0.single_push":{"topic":"paradox/agent22/lights/commands","payload":{"command":"setColorScene","scene":"normal"}}}
 ```
 
 ### [relay:<id>]

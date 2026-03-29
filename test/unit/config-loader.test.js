@@ -225,6 +225,72 @@ bulb_ips=10.0.0.84,10.0.0.109,10.0.0.38,10.0.0.130
             expect(device.bulbIps).toEqual(['10.0.0.84', '10.0.0.109', '10.0.0.38', '10.0.0.130']);
         });
 
+        test('should parse Shelly output fields', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light:shelly-room-rgbw]
+type=light
+topic=paradox/room/lights/shelly
+backend=shelly
+generation=2
+profile=rgbw
+model=plus-rgbw
+shelly_host=10.0.0.150
+shelly_auth_user=admin
+shelly_auth_pass=secret
+channel=1
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['light:shelly-room-rgbw'];
+
+            expect(device.backend).toBe('shelly');
+            expect(device.generation).toBe('2');
+            expect(device.profile).toBe('rgbw');
+            expect(device.model).toBe('plus-rgbw');
+            expect(device.shellyHost).toBe('10.0.0.150');
+            expect(device.shellyAuthUser).toBe('admin');
+            expect(device.shellyAuthPass).toBe('secret');
+            expect(device.shellyChannel).toBe(1);
+        });
+
+        test('should parse input zone fields and input_map', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[input:shelly-i4-main]
+type=input
+topic=paradox/agent22/inputs/main
+backend=shelly
+generation=2
+profile=input
+model=plus-i4
+input_topic=shellyplusi4-abcd/events/rpc
+input_map={"0.single_push":{"topic":"paradox/agent22/lights/commands","payload":{"command":"setColorScene","scene":"normal"}}}
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['input:shelly-i4-main'];
+
+            expect(device.type).toBe('input');
+            expect(device.backend).toBe('shelly');
+            expect(device.profile).toBe('input');
+            expect(device.inputTopic).toBe('shellyplusi4-abcd/events/rpc');
+            expect(device.inputMap['0.single_push']).toEqual({
+                topic: 'paradox/agent22/lights/commands',
+                payload: { command: 'setColorScene', scene: 'normal' }
+            });
+        });
+
         test('should handle file read errors', async () => {
             fs.readFile.mockRejectedValue(new Error('File not found'));
 
