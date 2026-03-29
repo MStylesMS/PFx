@@ -49,6 +49,7 @@ General advice:
 | heartbeat_enabled | boolean | No | false | Enable heartbeat messages |
 | heartbeat_interval | integer(ms) | No | 10000 | Heartbeat interval in ms |
 | heartbeat_topic | string | No | paradox/heartbeat | Heartbeat MQTT topic |
+| lights_config | path | No | (none) | Optional path to supplemental lighting INI file. Relative paths are resolved from the main config file directory. `[global]` and `[mqtt]` sections from the supplemental file are ignored; device sections are merged. |
 | ducking_adjust | integer (negative %) | No | 0 | Background reduction percent applied while any duck trigger active (0 = no duck). Expressed as negative percentage (e.g. -40). |
 | pulseaudio_wait_ms | integer (ms) | No | 6000 | Max time PFX will wait at startup for PulseAudio to become responsive before skipping combined sink setup. Increase if you see early "PulseAudio not available" warnings on boot. |
 | pulseaudio_wait_interval_ms | integer (ms) | No | 500 | Poll interval while waiting for PulseAudio readiness. Lower for finer granularity; keep >=250ms to avoid excess polling. |
@@ -145,9 +146,66 @@ Audio-only zones. Common keys:
 - Default fallback is 100% if max_volume is not specified
 -->
 
-### [light:<id>] and [lightgroup:<id>]
+### [light:<id>] and [lightgroup:<id>] / [light-group:<id>]
 
-Lighting sections for supported controllers (hue, wiz, zigbee). Keys include `controller`, `controller_config`, `lights` for groups, and controller-specific connection settings.
+Lighting zones now initialize in PFx directly. Supported section naming variants include `lightgroup` and `light-group`.
+
+| Setting | Type | Req | Default | Description |
+|---|---:|:--:|---|---|
+| type | string | Yes | light | `light`, `light_group`, `light-group`, or `lightgroup` |
+| topic | string | Yes | N/A | Zone base MQTT topic (`.../lights`) |
+| backend | string | No | passthrough | `passthrough` or `wiz` |
+| controller | string | No | - | Optional legacy alias. If `backend` omitted, `controller=wiz` selects WiZ backend. |
+| forward_topic | string | No | `{topic}/backend-commands` | Passthrough backend forward target |
+| bulb_ip | string | No | - | Required for WiZ backend |
+| wiz_port | integer | No | 38899 | WiZ UDP port |
+| scene_map | JSON | No | built-in scenes | Optional scene override map, keyed by scene name |
+| device_id / node_id | string | No | - | Optional device identifier |
+| lights / devices / device_list | CSV | No | - | Group membership list for light groups |
+| bulb_ips | CSV | No | - | Optional direct IP target list for `light-group` fan-out when not referencing individual light sections |
+
+Example (passthrough):
+
+```ini
+[light:room-lights]
+type = light
+topic = paradox/agent22/lights
+backend = passthrough
+forward_topic = paradox/agent22/lights/native/commands
+```
+
+Example (WiZ native):
+
+```ini
+[light:room-lights]
+type = light
+topic = paradox/agent22/lights
+backend = wiz
+bulb_ip = 192.168.1.120
+scene_map = {"normal":{"state":true,"dimming":80},"off":{"state":false}}
+```
+
+Example (room group fan-out):
+
+```ini
+[light:wiz-84]
+type = light
+topic = paradox/agent22/lights/wiz-84
+backend = wiz
+bulb_ip = 10.0.0.84
+
+[light:wiz-109]
+type = light
+topic = paradox/agent22/lights/wiz-109
+backend = wiz
+bulb_ip = 10.0.0.109
+
+[light-group:room-lights]
+type = light-group
+topic = paradox/agent22/lights
+backend = wiz
+devices = wiz-84,wiz-109
+```
 
 ### [relay:<id>]
 

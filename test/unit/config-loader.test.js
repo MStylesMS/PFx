@@ -146,6 +146,85 @@ STATUS_TOPIC=Paradox/Room/TestLight/Status
             expect(device.deviceId).toBe('AX30F2');
         });
 
+        test('should process lowercase light configuration and normalize light-group type', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light-group:room-lights]
+type=light-group
+topic=paradox/room/lights
+controller=wiz
+device_id=bulb-01
+lights=bulb-01, bulb-02
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['light-group:room-lights'];
+
+            expect(device.type).toBe('light_group');
+            expect(device.name).toBe('room-lights');
+            expect(device.controller).toBe('wiz');
+            expect(device.deviceId).toBe('bulb-01');
+            expect(device.deviceList).toEqual(['bulb-01', 'bulb-02']);
+            expect(device.backend).toBe('passthrough');
+        });
+
+        test('should merge supplemental lights config when lights_config is set', async () => {
+            const mainConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+lights_config=./pfx-lights.ini
+
+[screen:main]
+type=screen
+topic=paradox/main/screen
+`;
+
+            const lightsConfig = `
+[light:room-lights]
+type=light
+topic=paradox/main/lights
+backend=passthrough
+`;
+
+            fs.readFile
+                .mockResolvedValueOnce(mainConfig)
+                .mockResolvedValueOnce(lightsConfig);
+
+            const config = await ConfigLoader.load('/tmp/pfx.ini');
+
+            expect(fs.readFile).toHaveBeenCalledTimes(2);
+            expect(config.devices['light:room-lights']).toBeDefined();
+            expect(config.devices['light:room-lights'].type).toBe('light');
+            expect(config.devices['light:room-lights'].baseTopic).toBe('paradox/main/lights');
+        });
+
+        test('should parse bulb_ips list for light groups', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light-group:room-lights]
+type=light-group
+topic=paradox/room/lights
+backend=wiz
+bulb_ips=10.0.0.84,10.0.0.109,10.0.0.38,10.0.0.130
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['light-group:room-lights'];
+
+            expect(device.bulbIps).toEqual(['10.0.0.84', '10.0.0.109', '10.0.0.38', '10.0.0.130']);
+        });
+
         test('should handle file read errors', async () => {
             fs.readFile.mockRejectedValue(new Error('File not found'));
 
