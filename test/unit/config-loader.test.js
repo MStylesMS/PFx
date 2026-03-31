@@ -291,6 +291,108 @@ input_map={"0.single_push":{"topic":"paradox/agent22/lights/commands","payload":
             });
         });
 
+        test('should parse Hue v2 light fields', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light:hue-main-room]
+type=light
+topic=paradox/houdini/lights/main
+backend=hue
+hue_bridge_host=192.168.1.100
+hue_app_key=abc123xyz
+hue_resource_id=aaaa-bbbb-cccc-dddd
+hue_resource_type=room
+hue_profile=color
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['light:hue-main-room'];
+
+            expect(device.backend).toBe('hue');
+            expect(device.hueBridgeHost).toBe('192.168.1.100');
+            expect(device.hueAppKey).toBe('abc123xyz');
+            expect(device.hueResourceId).toBe('aaaa-bbbb-cccc-dddd');
+            expect(device.hueResourceType).toBe('room');
+            expect(device.hueProfile).toBe('color');
+        });
+
+        test('should parse LIFX light fields', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light:lifx-test]
+type=light
+topic=paradox/houdini/lights/lifx
+backend=lifx
+bulb_ip=192.168.1.55
+lifx_port=56700
+lifx_kelvin=4000
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['light:lifx-test'];
+
+            expect(device.backend).toBe('lifx');
+            expect(device.bulbIp).toBe('192.168.1.55');
+            expect(device.lifxPort).toBe(56700);
+            expect(device.lifxKelvin).toBe(4000);
+        });
+
+        test('should leave lifxPort and lifxKelvin undefined when not set', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light:lifx-minimal]
+type=light
+topic=paradox/houdini/lights/lifx
+backend=lifx
+bulb_ip=192.168.1.55
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['light:lifx-minimal'];
+
+            expect(device.lifxPort).toBeUndefined();
+            expect(device.lifxKelvin).toBeUndefined();
+        });
+
+        test('should default hue_resource_type to room and hue_profile to color', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light:hue-minimal]
+type=light
+topic=paradox/houdini/lights/main
+backend=hue
+hue_bridge_host=192.168.1.100
+hue_app_key=abc123xyz
+hue_resource_id=aaaa-bbbb-cccc-dddd
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices['light:hue-minimal'];
+
+            expect(device.hueResourceType).toBe('room');
+            expect(device.hueProfile).toBe('color');
+        });
+
         test('should handle file read errors', async () => {
             fs.readFile.mockRejectedValue(new Error('File not found'));
 

@@ -170,6 +170,13 @@ Lighting zones now initialize in PFx directly. Supported section naming variants
 | shelly_auth_user / shelly_auth_pass | string | No | - | Optional Shelly HTTP auth |
 | channel | integer | No | 0 | Output channel/component index |
 | target_hosts | CSV | No | - | Optional host fan-out list for backend groups |
+| hue_bridge_host | string | No* | - | Bridge IP or hostname — required for `backend = hue` |
+| hue_app_key | string | No* | - | Hue v2 app key obtained via `hue-pair.sh` — required for `backend = hue` |
+| hue_resource_id | string | No* | - | `grouped_light` service RID (from pairing script) — required for `backend = hue` |
+| hue_resource_type | string | No | `room` | `room`, `zone`, or `light` |
+| hue_profile | string | No | `color` | `color` (XY), `ct` (color-temperature mirek), or `dim` (brightness only) |
+| lifx_port | integer | No | `56700` | UDP port for LIFX LAN protocol — required for `backend = lifx` |
+| lifx_kelvin | integer | No | `3500` | Default white-point kelvin (1500–9000) for LIFX commands without explicit kelvin |
 
 Example (passthrough):
 
@@ -212,6 +219,35 @@ type = light-group
 topic = paradox/agent22/lights
 backend = wiz
 devices = wiz-84,wiz-109
+```
+
+Example (Hue room via v2 API):
+
+```ini
+[light:hue-main-room]
+type              = light
+backend           = hue
+topic             = paradox/houdini/lights/main
+
+hue_bridge_host   = 192.168.1.100
+hue_app_key       = your-app-key-from-hue-pair-sh
+hue_resource_id   = xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx   ; grouped_light service RID
+hue_resource_type = room
+hue_profile       = color
+```
+
+Use `scripts/hue-pair.sh [bridge-ip]` to obtain the app key and resource IDs. See `docs/HUE_QUICK_START.md` for a full walkthrough.
+
+Example (LIFX LAN):
+
+```ini
+[light:lifx-overhead]
+type              = light
+backend           = lifx
+topic             = paradox/houdini/lights/lifx
+bulb_ip           = 192.168.1.55
+lifx_port         = 56700          ; optional, default 56700
+lifx_kelvin       = 3500           ; optional default white-point kelvin
 ```
 
 ### [input:<id>]
