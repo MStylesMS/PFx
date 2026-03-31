@@ -74,7 +74,7 @@ Supports color, color-temperature, and dim-only profiles via an explicit `hue_pr
 - [x] 🤖 Query rooms: `GET /clip/v2/resource/room` — print name, room RID, and grouped_light service RID
 - [x] 🤖 Query zones: `GET /clip/v2/resource/zone` — print name, zone RID, and grouped_light service RID
 - [x] 🤖 Print ready-to-paste INI config snippet with all fields filled in
-- [ ] 🔌 Live test: run script against real bridge, confirm printed room list and INI snippet
+- [x] 🔌 Live test: run script against real bridge, confirm printed room list and INI snippet
 
 #### `hue-backend.js`
 - [x] 🤖 Constructor: create persistent `https.Agent({ rejectUnauthorized: false })`
@@ -97,7 +97,7 @@ Supports color, color-temperature, and dim-only profiles via an explicit `hue_pr
 - [x] 🤖 INI `scene_map` override (same pattern as WiZ backend)
 - [x] 🤖 `shutdown()`: destroy `https.Agent`
 - [x] 🤖 All non-2xx responses throw with status + body for diagnosability
-- [ ] 🔌 Live smoke test: `{"command":"scene","scene":"softWhite"}` → verify HTTPS PUT sent and bulb changes
+- [x] 🔌 Live smoke test: `{"command":"scene","scene":"softWhite"}` → verify HTTPS PUT sent and bulb changes
 
 #### `light-zone.js`
 - [x] 🤖 Add `case 'hue':` to `_createBackendForConfig()`; import `HueBackend`
