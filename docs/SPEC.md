@@ -353,7 +353,51 @@ ParadoxFX uses MPV extensively for media playback:
 - **Multi-Instance**: Independent MPV processes are used per soft device/zone for media; additional MPV instances exist for background audio and speech.
 - **Volume Management**: MPV's --volume-max argument enforces volume safety limits configured via max_volume settings
 
-### 9. Testing
+### 9. MQTT Discovery and Schema Topics
+
+On startup, after all zones are initialized, PFx publishes two retained messages for external integrations (Node-RED, dashboards, monitoring tools):
+
+**Discovery topic**: `{global.baseTopic}/discovery`
+
+Lists all initialized zones with their topics:
+
+```json
+{
+  "application": "pfx",
+  "timestamp": "2025-10-24T10:30:00.000Z",
+  "zones": [
+    {
+      "name": "screen",
+      "type": "screen",
+      "baseTopic": "paradox/pi4/screen",
+      "commandsTopic": "paradox/pi4/screen/commands",
+      "stateTopic": "paradox/pi4/screen/state",
+      "schemaTopic": "paradox/pi4/screen/schema"
+    }
+  ]
+}
+```
+
+**Per-zone schema topic**: `{zone.baseTopic}/schema`
+
+Lists all commands accepted by a zone:
+
+```json
+{
+  "application": "pfx",
+  "zone": "screen",
+  "type": "screen",
+  "commandsTopic": "paradox/pi4/screen/commands",
+  "commands": [
+    { "name": "playVideo", "description": "Play a video file" },
+    { "name": "setImage",  "description": "Display a still image" }
+  ]
+}
+```
+
+Both messages use `retain: true` so newly connected clients immediately receive the current inventory.
+
+### 10. Testing
 
 - **Unit Tests**: Included with actual MQTT message testing against localhost broker
 - **Integration Tests**: Test external media player wrappers with mock implementations

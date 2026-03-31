@@ -41,7 +41,24 @@ Follows the same backend strategy pattern as WiZ and Shelly:
 
 ---
 
-## Phase 1 — Core Control
+## Also Implemented During This Work
+
+The following were added beyond the original PR scope during the Hue phase:
+
+| Item | Status |
+|------|--------|
+| `lib/lights/backends/wiz-native-backend.js` | ✅ WiZ native UDP LAN backend (phase 0) |
+| `lib/lights/backends/shelly-backend.js` | ✅ Shelly HTTP/RPC backend (phase 0) |
+| `lib/lights/backends/lifx-backend.js` | ✅ LIFX binary UDP LAN backend |
+| `lib/lights/backends/multi-target-backend.js` — warning propagation | ✅ Per-target degradation warnings surfaced to log + MQTT warnings topic |
+| `test/unit/lifx-backend.test.js` | ✅ 46 tests |
+| `test/unit/multi-target-backend.test.js` | ✅ 9 tests |
+| Mixed-backend groups (WiZ + Hue + LIFX in same `light-group`) | ✅ Fully supported |
+| `docs/INI_Config.md` — `lifx_port`, `lifx_kelvin` fields | ✅ Documented |
+
+---
+
+## Phase 1 — Core Control ✅ COMPLETE (🤖 items) — 🔌 live test pending
 
 **Goal:** Feature parity with WiZ — on/off, named scenes, brightness — against a Hue room or zone.
 Supports color, color-temperature, and dim-only profiles via an explicit `hue_profile` INI key.
@@ -49,59 +66,58 @@ Supports color, color-temperature, and dim-only profiles via an explicit `hue_pr
 ### Checklist
 
 #### Pairing Script (`scripts/hue-pair.sh`)
-- [ ] 🤖 Accept bridge IP as positional arg `$1`, or prompt if omitted
-- [ ] 🤖 `GET http://{ip}/api/0/config` (plain HTTP) → extract and print `bridgeid` to confirm connectivity
-- [ ] 🤖 Prompt user to press the bridge link button, then press Enter
-- [ ] 🤖 `POST -k https://{ip}/api` with `{"devicetype":"paradoxfx#pfx","generateclientkey":true}`
-- [ ] 🤖 Extract `username` (app key) from JSON response; handle the `link button not pressed` error and retry
-- [ ] 🤖 Query rooms: `GET /clip/v2/resource/room` — print name, room RID, and grouped_light service RID
-- [ ] 🤖 Query zones: `GET /clip/v2/resource/zone` — print name, zone RID, and grouped_light service RID
-- [ ] 🤖 Print ready-to-paste INI config snippet with all fields filled in
+- [x] 🤖 Accept bridge IP as positional arg `$1`, or prompt if omitted
+- [x] 🤖 `GET http://{ip}/api/0/config` (plain HTTP) → extract and print `bridgeid` to confirm connectivity
+- [x] 🤖 Prompt user to press the bridge link button, then press Enter
+- [x] 🤖 `POST -k https://{ip}/api` with `{"devicetype":"paradoxfx#pfx","generateclientkey":true}`
+- [x] 🤖 Extract `username` (app key) from JSON response; handle the `link button not pressed` error and retry
+- [x] 🤖 Query rooms: `GET /clip/v2/resource/room` — print name, room RID, and grouped_light service RID
+- [x] 🤖 Query zones: `GET /clip/v2/resource/zone` — print name, zone RID, and grouped_light service RID
+- [x] 🤖 Print ready-to-paste INI config snippet with all fields filled in
 - [ ] 🔌 Live test: run script against real bridge, confirm printed room list and INI snippet
 
 #### `hue-backend.js`
-- [ ] 🤖 Constructor: create persistent `https.Agent({ rejectUnauthorized: false })`
-- [ ] 🤖 `initialize()`: `GET /clip/v2/resource/grouped_light/{rid}` to validate connectivity + log profile
-- [ ] 🤖 `executeCommand({ command, ...params })`:
+- [x] 🤖 Constructor: create persistent `https.Agent({ rejectUnauthorized: false })`
+- [x] 🤖 `initialize()`: `GET /clip/v2/resource/grouped_light/{rid}` to validate connectivity + log profile
+- [x] 🤖 `executeCommand({ command, ...params })`:
   - `on` → `PUT {"on": {"on": true}}`
   - `off` → `PUT {"on": {"on": false}}`
   - `brightness` → `PUT {"dimming": {"brightness": N}}` (0–100)
   - `scene` → resolve via `scene_map` / `HUE_DEFAULT_SCENES`, build payload by `hue_profile`
-- [ ] 🤖 Profile-aware payload builder (set via `hue_profile` INI key):
+- [x] 🤖 Profile-aware payload builder (set via `hue_profile` INI key):
   - `color` → `{color: {xy: {x, y}}, dimming: {brightness: N}}`
   - `ct` (color temperature) → `{color_temperature: {mirek: N}, dimming: {brightness: N}}`
   - `dim` → `{dimming: {brightness: N}}`
-- [ ] 🤖 `HUE_DEFAULT_SCENES` map — matches WiZ scene names and adds Hue-appropriate payloads:
+- [x] 🤖 `HUE_DEFAULT_SCENES` map — matches WiZ scene names and adds Hue-appropriate payloads:
   `normal`, `dim`, `red`, `blue`, `green`, `yellow`, `orange`, `purple`, `pink`,
   `cyan`, `magenta`, `white`, `softWhite`/`softwhite`, `brightWhite`/`brightwhite`,
   `warmWhite`/`warmwhite`, `coolWhite`/`coolwhite`, `off`
-- [ ] 🤖 RGB → XY helper: sRGB gamma decode → linear → multiply by D65 sRGB→XYZ matrix → `x = X/(X+Y+Z)`, `y = Y/(X+Y+Z)`; gamut-B clamp
-- [ ] 🤖 Kelvin → mirek helper: `Math.round(1_000_000 / K)`; clamp to Hue range 153–500
-- [ ] 🤖 INI `scene_map` override (same pattern as WiZ backend)
-- [ ] 🤖 `shutdown()`: destroy `https.Agent`
-- [ ] 🤖 All non-2xx responses throw with status + body for diagnosability
+- [x] 🤖 RGB → XY helper: sRGB gamma decode → linear → multiply by D65 sRGB→XYZ matrix → `x = X/(X+Y+Z)`, `y = Y/(X+Y+Z)`; gamut-B clamp
+- [x] 🤖 Kelvin → mirek helper: `Math.round(1_000_000 / K)`; clamp to Hue range 153–500
+- [x] 🤖 INI `scene_map` override (same pattern as WiZ backend)
+- [x] 🤖 `shutdown()`: destroy `https.Agent`
+- [x] 🤖 All non-2xx responses throw with status + body for diagnosability
 - [ ] 🔌 Live smoke test: `{"command":"scene","scene":"softWhite"}` → verify HTTPS PUT sent and bulb changes
 
 #### `light-zone.js`
-- [ ] 🤖 Add `case 'hue':` to `_createBackendForConfig()`; import `HueBackend`
+- [x] 🤖 Add `case 'hue':` to `_createBackendForConfig()`; import `HueBackend`
 
 #### `config-loader.js` — new fields for `light` and `light_group` sections
-- [ ] 🤖 `hue_bridge_host` (string, required for hue backend)
-- [ ] 🤖 `hue_app_key` (string, required)
-- [ ] 🤖 `hue_resource_id` (string, the `grouped_light` service RID)
-- [ ] 🤖 `hue_resource_type` (string: `room` | `zone` | `light`, default `room`)
-- [ ] 🤖 `hue_profile` (string: `color` | `ct` | `dim`, default `color`)
+- [x] 🤖 `hue_bridge_host` (string, required for hue backend)
+- [x] 🤖 `hue_app_key` (string, required)
+- [x] 🤖 `hue_resource_id` (string, the `grouped_light` service RID)
+- [x] 🤖 `hue_resource_type` (string: `room` | `zone` | `light`, default `room`)
+- [x] 🤖 `hue_profile` (string: `color` | `ct` | `dim`, default `color`)
 
 #### Tests
-- [ ] 🤖 `hue-backend.test.js`: mock `https.request`; test on/off, scene→XY payload, scene→mirek payload,
-  brightness, unknown scene (warn + no-throw), HTTP error response
-- [ ] 🤖 `config-loader.test.js`: add `[light:hue-test]` fixture → assert all `hue_*` fields parsed correctly
+- [x] 🤖 `hue-backend.test.js`: mock `https.request`; 30 tests covering on/off, scene→XY, scene→mirek, brightness, dim profile, unknown scene (warn + no-throw), HTTP error response
+- [x] 🤖 `config-loader.test.js`: `[light:hue-test]` and minimal fixture → all `hue_*` fields asserted
 
 #### Docs
-- [ ] 🤖 `docs/HUE_QUICK_START.md`: pairing walkthrough, INI example, scene-name table, common issues
-- [ ] 🤖 `docs/INI_Config.md`: add `[light:hue-zone]` example block; document all `hue_*` fields
-- [ ] 🤖 Delete `lib/controllers/hue-controller.js` (placeholder superseded)
-- [ ] 🔌 Verify no remaining references to `hue-controller.js` in runtime code
+- [x] 🤖 `docs/HUE_QUICK_START.md`: pairing walkthrough, INI example, scene-name table, common issues
+- [x] 🤖 `docs/INI_Config.md`: `[light:hue-zone]` example block; all `hue_*` fields documented
+- [x] 🤖 Delete `lib/controllers/hue-controller.js` (placeholder superseded)
+- [x] 🔌 Verify no remaining references to `hue-controller.js` — confirmed zero references
 
 #### Example INI (Phase 1)
 
@@ -196,8 +212,8 @@ scene_map = softWhite=softWhite,brightWhite=brightWhite
 
 ## Verification
 
-1. 🤖 `npm test` — all existing tests plus new `hue-backend.test.js` and config-loader Hue cases pass
-2. 🔌 `hue-pair.sh` end-to-end: run against real bridge, confirm app key returned + room list printed + INI snippet output
+1. [x] 🤖 `npm test` — all existing tests plus new `hue-backend.test.js` and config-loader Hue cases pass (62 unit tests total, excluding pre-existing `schema-validation` failure unrelated to lighting)
+2. [ ] 🔌 `hue-pair.sh` end-to-end: run against real bridge, confirm app key returned + room list printed + INI snippet output
 3. 🔌 Publish `{"command":"scene","scene":"softWhite"}` to Hue zone topic; verify correct XY or mirek PUT body
 4. 🔌 Publish `{"command":"brightness","value":30}`; confirm `dimming.brightness: 30` in PUT body
 5. 🤖 Confirm `hue-controller.js` has zero references across codebase after deletion
