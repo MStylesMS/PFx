@@ -9,18 +9,18 @@ Wants=network-online.target mosquitto.service
 Type=simple
 User=paradox
 Group=paradox
-WorkingDirectory=/opt/paradox/apps/ParadoxFX
+WorkingDirectory=/opt/paradox/apps/PFx
 Environment="DISPLAY=:0"
 Environment="XAUTHORITY=/home/paradox/.Xauthority"
 Environment="XDG_RUNTIME_DIR=/run/user/1000"
 Environment="PFX_SKIP_PULSE_WAIT=0"
 Environment="NODE_ENV=production"
 ExecStartPre=/bin/sleep 5
-ExecStartPre=/opt/paradox/apps/ParadoxFX/scripts/cleanup.sh
+ExecStartPre=/opt/paradox/apps/PFx/scripts/cleanup.sh
 ExecStartPre=/bin/rm -f /run/paradox/pfx.ready
-ExecStart=/usr/bin/node /opt/paradox/apps/ParadoxFX/pfx.js --config /opt/paradox/config/pfx.ini
+ExecStart=/usr/bin/node /opt/paradox/apps/PFx/pfx.js --config /opt/paradox/config/pfx.ini
 ExecStartPost=/opt/paradox/scripts/pfx-ready.sh
-ExecStopPost=/opt/paradox/apps/ParadoxFX/scripts/cleanup.sh
+ExecStopPost=/opt/paradox/apps/PFx/scripts/cleanup.sh
 
 # Restart policy
 Restart=on-failure
