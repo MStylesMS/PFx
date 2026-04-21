@@ -105,7 +105,7 @@ Notes:
   ```
   Use an `ExecStartPre` script in your service unit to do this before PFx starts (see `scripts/configure-audio-levels.sh` in the paradox deployment repo for a working example).
 - Use `pactl list sinks` or `aplay -l` to discover sink names. Pi4 hardware sink names can be stable but vary by kernel/firmware.
-- If you need combined sinks (dual-output), see the combined sink configuration in `INI_Config.md`. Note: combined sinks require PulseAudio or the pipewire-pulse compatibility layer.
+- If you need combined sinks (dual-output), see the combined sink configuration in `CONFIG_INI.md`. Note: combined sinks require PulseAudio or the pipewire-pulse compatibility layer.
 
 ## Browser and window management notes
 
@@ -129,4 +129,4 @@ Notes:
 
 ---
 
-This note is intended to be a concise, Pi4-focused companion to `Pi5-Notes.md` and `INI_Config.md`.
+This note is intended to be a concise, Pi4-focused companion to `Pi5-Notes.md` and `CONFIG_INI.md`.

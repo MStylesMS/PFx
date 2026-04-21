@@ -110,7 +110,7 @@ These can form Phase 2+ deliverables once baseline DPMS control is stable.
 3. Implement monitor-state helper + unit tests.
 4. Integrate with ScreenZone init and status reporting.
 5. Add auto-wake logic and regression tests.
-6. Document configuration and operational guidance in `INI_Config.md` and release notes.
+6. Document configuration and operational guidance in `CONFIG_INI.md` and release notes.
 
 ---
 *Draft prepared October 2025 for PFx monitor control roadmap.*

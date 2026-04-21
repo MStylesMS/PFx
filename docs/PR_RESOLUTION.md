@@ -19,7 +19,7 @@ This feature is mostly implemented in code and tests.
 - [x] Added optional `[screen:*]` keys: `output_name`, `resolution_mode`, `resolution_fallback`.
 - [x] Wired keys through config loader normalization (`outputName`, `resolutionMode`, `resolutionFallback`).
 - [x] Added/updated unit coverage in config loader tests.
-- [x] Documented keys and behavior in `docs/INI_Config.md`.
+- [x] Documented keys and behavior in `docs/CONFIG_INI.md`.
 
 ### 2) Runtime Resolution Manager
 - [x] Added dedicated helper module for resolution apply flow.
@@ -47,7 +47,7 @@ This feature is mostly implemented in code and tests.
 - [ ] End-to-end verification logs/screenshots for invalid-primary/valid-fallback scenario on target hardware are still pending.
 
 ### 6) Documentation
-- [x] `docs/INI_Config.md` updated with resolution settings and dependency note (`x11-xserver-utils`).
+- [x] `docs/CONFIG_INI.md` updated with resolution settings and dependency note (`x11-xserver-utils`).
 - [x] Plan doc exists and now includes implementation status.
 - [x] Supplementary platform guidance includes firmware-level notes.
 - [ ] Add a short "verified on" matrix (device, output, mode, result) after hardware pass.
@@ -72,7 +72,7 @@ Add a software-managed screen resolution feature to PFx that allows each `screen
      - `output_name` (string): e.g., `HDMI-1`, `HDMI-A-1`.
      - `resolution_mode` (string): `640x480@60`, `1280x720@60`, etc.
      - `resolution_fallback` (string, optional): attempted if primary mode fails.
-   - Document acceptable formats and defaults in `docs/INI_Config.md`.
+   - Document acceptable formats and defaults in `docs/CONFIG_INI.md`.
 
 2. **Runtime Resolution Manager**
    - Small utility to parse the mode string, construct `xrandr` commands, and apply them idempotently.
@@ -85,7 +85,7 @@ Add a software-managed screen resolution feature to PFx that allows each `screen
    - Optionally suggest running `xrandr` manually for troubleshooting.
 
 4. **Documentation & Examples**
-   - Update `docs/INI_Config.md` with new keys, example configs (Pi3 480p, Pi4 dual 1080p).
+   - Update `docs/CONFIG_INI.md` with new keys, example configs (Pi3 480p, Pi4 dual 1080p).
    - Add a troubleshooting note referencing firmware-level overrides (`/boot/firmware/config.txt`) for stubborn displays.
 
 ## Media Preparation (Optional Transcode Workflow)

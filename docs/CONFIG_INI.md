@@ -154,7 +154,7 @@ Lighting zones now initialize in PFx directly. Supported section naming variants
 |---|---:|:--:|---|---|
 | type | string | Yes | light | `light`, `light_group`, `light-group`, or `lightgroup` |
 | topic | string | Yes | N/A | Zone base MQTT topic (`.../lights`) |
-| backend | string | No | passthrough | `passthrough` or `wiz` |
+| backend | string | No | passthrough | `passthrough`, `wiz`, `shelly`, `hue`, `lifx`, `zwave`, or `zigbee` |
 | generation | string/int | No | - | Device protocol generation (for example Shelly gen1/gen2) |
 | profile | string | No | - | Device behavior profile (`switch`, `dimmer`, `rgbw`, `input`) |
 | model | string | No | - | Device model identifier (metadata/routing hint) |
@@ -177,6 +177,18 @@ Lighting zones now initialize in PFx directly. Supported section naming variants
 | hue_profile | string | No | `color` | `color` (XY), `ct` (color-temperature mirek), or `dim` (brightness only) |
 | lifx_port | integer | No | `56700` | UDP port for LIFX LAN protocol — required for `backend = lifx` |
 | lifx_kelvin | integer | No | `3500` | Default white-point kelvin (1500–9000) for LIFX commands without explicit kelvin |
+| zwave_mode | string | No | `direct` | Z-Wave mode; currently only `direct` is implemented |
+| zwave_port | string | No* | - | Serial path for Z-Wave controller (for example `/dev/zwave`) — required for `backend = zwave` |
+| zwave_node_id | integer | No* | - | Z-Wave node id — required for `backend = zwave` |
+| zwave_type | string | No | `binary_switch` | `binary_switch`, `multilevel_switch`, or `color_dimmer` |
+| zwave_poll_ms | integer | No | - | Optional poll interval hint for future runtime polling |
+| zwave_security_mode | string | No | `none` | `none`, `s0`, or `s2` metadata hint |
+| zigbee_mode | string | No | `direct` | Zigbee mode; currently only `direct` is implemented |
+| zigbee_port | string | No* | - | Serial path for Zigbee coordinator (for example `/dev/zigbee`) — required for `backend = zigbee` |
+| zigbee_adapter | string | No | `ember` | Coordinator adapter type; HUSBZB-1 uses `ember` |
+| zigbee_ieee | string | No* | - | Device IEEE address — required for `backend = zigbee` |
+| zigbee_type | string | No | `onoff` | `onoff`, `dim`, `ct`, or `color` |
+| zigbee_db_path | string | No | `/opt/paradox/config/zigbee.db` | Coordinator database file path |
 
 Example (passthrough):
 
@@ -249,6 +261,37 @@ bulb_ip           = 192.168.1.55
 lifx_port         = 56700          ; optional, default 56700
 lifx_kelvin       = 3500           ; optional default white-point kelvin
 ```
+
+Example (Z-Wave direct):
+
+```ini
+[light:entry-switch]
+type = light
+backend = zwave
+topic = paradox/houdini/lights/entry-switch
+zwave_mode = direct
+zwave_port = /dev/zwave
+zwave_node_id = 12
+zwave_type = binary_switch
+```
+
+See `docs/ZWAVE_QUICK_START.md` for setup and troubleshooting.
+
+Example (Zigbee direct):
+
+```ini
+[light:hall-color]
+type = light
+backend = zigbee
+topic = paradox/houdini/lights/hall-color
+zigbee_mode = direct
+zigbee_port = /dev/zigbee
+zigbee_adapter = ember
+zigbee_ieee = 0x00158d0002abcdef
+zigbee_type = color
+```
+
+See `docs/ZIGBEE_QUICK_START.md` for setup and troubleshooting.
 
 ### [input:<id>]
 
@@ -383,7 +426,7 @@ xdotool search --class ParadoxBrowser
 
 ## Removal of old docs
 
-`CONFIGURATION.md` and `INI_REFERENCE.md` are replaced by this consolidated `INI_CONFIG.md` file. Keep per-deployment `pfx.ini` files local and out of commits unless intentional.
+`CONFIGURATION.md` and `INI_REFERENCE.md` are replaced by this consolidated `CONFIG_INI.md` file. Keep per-deployment `pfx.ini` files local and out of commits unless intentional.
 
 ---
 

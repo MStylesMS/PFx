@@ -7,8 +7,8 @@ This directory contains the complete documentation for ParadoxFX (Paradox Effect
 ### User Documentation
 
 - **[MQTT API Reference](MQTT_API.md)** - Complete MQTT command reference, message formats, and examples
-- **[Configuration Guide](INI_Config.md)** - Consolidated INI reference and configuration examples (merged from older CONFIGURATION.md / INI_REFERENCE.md)
-- **Unified Volume & Ducking Model**: See the "Unified Volume & Ducking Model" section inside `INI_Config.md` for precedence (volume > adjustVolume > base) and telemetry field descriptions.
+- **[Configuration Guide](CONFIG_INI.md)** - Consolidated INI reference and configuration examples (merged from older CONFIGURATION.md / INI_REFERENCE.md)
+- **Unified Volume & Ducking Model**: See the "Unified Volume & Ducking Model" section inside `CONFIG_INI.md` for precedence (volume > adjustVolume > base) and telemetry field descriptions.
 - **[Pi5 Notes](Pi5-Notes.md)** - Pi5-specific deployment guidance
 - **[Pi4 Notes](Pi4_Notes.md)** - Pi4-specific deployment guidance
 

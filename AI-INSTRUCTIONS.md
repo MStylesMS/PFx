@@ -34,7 +34,7 @@ Before significant changes, review relevant docs. If a change conflicts with doc
 |----------|---------|
 | [AI-DETAILED-OVERVIEW.md](AI-DETAILED-OVERVIEW.md) | Full architecture, code patterns, development workflows |
 | [docs/SPEC.md](docs/SPEC.md) | Comprehensive specification (audio, video, lights, config) |
-| [docs/INI_Config.md](docs/INI_Config.md) | INI configuration reference |
+| [docs/CONFIG_INI.md](docs/CONFIG_INI.md) | INI configuration reference |
 | [docs/Pi5-Notes.md](docs/Pi5-Notes.md) | Pi5-specific setup and MPV profiles |
 | [docs/Pi4_Notes.md](docs/Pi4_Notes.md) | Pi4-specific setup guidance |
 | [README.md](README.md) | User-facing overview, quick start, platform variants |

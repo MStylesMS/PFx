@@ -24,7 +24,7 @@ Follows the same backend strategy pattern as WiZ and Shelly:
 | `docs/HUE_QUICK_START.md` | Operator setup guide |
 | `test/unit/hue-backend.test.js` | Backend unit tests |
 
-**Modified files:** `light-zone.js`, `config-loader.js`, `config-loader.test.js`, `INI_Config.md`
+**Modified files:** `light-zone.js`, `config-loader.js`, `config-loader.test.js`, `CONFIG_INI.md`
 
 > **Note:** The existing `lib/controllers/hue-controller.js` placeholder is **superseded** by the
 > new backend and will be deleted at the end of Phase 1.
@@ -54,7 +54,7 @@ The following were added beyond the original PR scope during the Hue phase:
 | `test/unit/lifx-backend.test.js` | ✅ 46 tests |
 | `test/unit/multi-target-backend.test.js` | ✅ 9 tests |
 | Mixed-backend groups (WiZ + Hue + LIFX in same `light-group`) | ✅ Fully supported |
-| `docs/INI_Config.md` — `lifx_port`, `lifx_kelvin` fields | ✅ Documented |
+| `docs/CONFIG_INI.md` — `lifx_port`, `lifx_kelvin` fields | ✅ Documented |
 
 ---
 
@@ -115,7 +115,7 @@ Supports color, color-temperature, and dim-only profiles via an explicit `hue_pr
 
 #### Docs
 - [x] 🤖 `docs/HUE_QUICK_START.md`: pairing walkthrough, INI example, scene-name table, common issues
-- [x] 🤖 `docs/INI_Config.md`: `[light:hue-zone]` example block; all `hue_*` fields documented
+- [x] 🤖 `docs/CONFIG_INI.md`: `[light:hue-zone]` example block; all `hue_*` fields documented
 - [x] 🤖 Delete `lib/controllers/hue-controller.js` (placeholder superseded)
 - [x] 🔌 Verify no remaining references to `hue-controller.js` — confirmed zero references
 

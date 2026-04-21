@@ -147,7 +147,7 @@ Key commands: `scene`, `setColorScene`, `allOff`, `allOn`
 ## Documentation-First Development
 
 This repo follows the Paradox documentation-first standard:
-1. Review relevant docs before coding (SPEC.md, INI_Config.md)
+1. Review relevant docs before coding (SPEC.md, CONFIG_INI.md)
 2. Propose doc updates before conflicting changes
 3. Update docs alongside code changes
 4. API/protocol changes require explicit approval
@@ -161,7 +161,7 @@ This repo follows the Paradox documentation-first standard:
 | `pfx-pi3.js` | Pi3 variant entry point |
 | `pfx.ini.example` | Configuration template |
 | `docs/SPEC.md` | Comprehensive specification |
-| `docs/INI_Config.md` | INI configuration reference |
+| `docs/CONFIG_INI.md` | INI configuration reference |
 | `docs/Pi5-Notes.md` | Pi5 platform notes |
 | `docs/Pi4_Notes.md` | Pi4 platform notes |
 | `scripts/` | Audio discovery, setup scripts |

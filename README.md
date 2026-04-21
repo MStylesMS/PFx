@@ -56,7 +56,7 @@ For platform-specific guidance see the `docs/` folder:
 - Pi5 notes and setup guidance: `docs/Pi5-Notes.md`
 - Pi4 notes and setup guidance: `docs/Pi4_Notes.md`
 
-Both documents include Pi-specific boot config recommendations and MPV profiles. For INI options and examples, see `docs/INI_Config.md`.
+Both documents include Pi-specific boot config recommendations and MPV profiles. For INI options and examples, see `docs/CONFIG_INI.md`.
 
 ### Raspberry Pi 3 Installation
 
@@ -253,7 +253,7 @@ mosquitto_pub -h localhost -t "paradox/zone1/commands" \
 ## Documentation
 
 - **[MQTT API Reference](docs/MQTT_API.md)** - Complete command reference and message formats
-- **[Configuration & INI Reference](docs/INI_Config.md)** - Consolidated INI reference and examples
+- **[Configuration & INI Reference](docs/CONFIG_INI.md)** - Consolidated INI reference and examples
 - **[Project Architecture](docs/Scaffold_Summary.md)** - Technical implementation details
 - **[Browser Switching & Startup Timing](docs/Browser_Switching.md)** - Browser lifecycle and show/hide guidance matching runtime behavior
 - **[Production Deployment](README_FULL.md#process-management-with-systemd)** - systemd service setup and process management
@@ -295,7 +295,7 @@ Playback outcome and background-volume recompute events now include:
 `effective_volume`, `pre_duck_volume`, `ducked`.
 They are NOT part of steady state `status` messages; subscribe to `{baseTopic}/events`.
 
-Full details: `docs/INI_Config.md` (Unified Volume & Ducking section).
+Full details: `docs/CONFIG_INI.md` (Unified Volume & Ducking section).
 
 ## Requirements
 
