@@ -6,6 +6,31 @@
 - Implementation order locked: Z-Wave first, Zigbee second.
 - Config format locked: INI only.
 - Standalone bridge/service mode deferred to a later phase.
+- Initial direct Z-Wave and Zigbee implementation is now in-tree.
+- Documentation rename complete: `INI_Config.md` -> `CONFIG_INI.md`.
+
+## Implementation Snapshot (2026-04-20)
+
+Completed in code/docs:
+
+- Added direct backends:
+	- `lib/lights/backends/zwave-backend.js`
+	- `lib/lights/backends/zigbee-backend.js`
+- Wired backend selection in `lib/zones/light-zone.js` for `backend = zwave` and `backend = zigbee`.
+- Added config loader parsing for Z-Wave/Zigbee keys in `lib/core/config-loader.js`.
+- Added dependencies in `package.json`:
+	- `zwave-js`
+	- `zigbee-herdsman`
+- Added quick-start guides:
+	- `docs/ZWAVE_QUICK_START.md`
+	- `docs/ZIGBEE_QUICK_START.md`
+- Renamed INI reference doc to `docs/CONFIG_INI.md` and updated references.
+
+Still pending:
+
+- Real hardware validation/sign-off for Z-Wave and Zigbee command paths.
+- Sensor/event integration work listed in Phase 2.
+- Bridge mode design work listed in Phase 4.
 
 ## Goal
 
@@ -37,8 +62,8 @@ Introduce native Z-Wave and Zigbee support in PFx while preserving PFx backend a
 
 ### Deliverables
 
-- [ ] This phased PR design doc.
-- [ ] `docs/CONFIG_INI.md` updates.
+- [x] This phased PR design doc.
+- [x] `docs/CONFIG_INI.md` updates.
 - [ ] `docs/SPEC.md` updates.
 
 ### Gate
@@ -49,17 +74,17 @@ Introduce native Z-Wave and Zigbee support in PFx while preserving PFx backend a
 
 ### Checklist
 
-- [ ] Add `zwave-js` dependency.
-- [ ] Add `lib/lights/backends/zwave-backend.js`.
-- [ ] Implement lifecycle: `initialize()`, `execute()`, `shutdown()`.
-- [ ] Implement singleton-per-port driver handling.
-- [ ] Wire `backend = zwave` in LightZone backend selector.
-- [ ] Add config loader parsing for Z-Wave keys.
-- [ ] Support on/off for binary switch nodes.
-- [ ] Support dimming for multilevel switch nodes.
-- [ ] Support `getStatus` / `getState` with normalized output.
-- [ ] Add warnings/outcome payloads for unsupported command classes.
-- [ ] Add operator guide `docs/ZWAVE_QUICK_START.md`.
+- [x] Add `zwave-js` dependency.
+- [x] Add `lib/lights/backends/zwave-backend.js`.
+- [x] Implement lifecycle: `initialize()`, `execute()`, `shutdown()`.
+- [x] Implement singleton-per-port driver handling.
+- [x] Wire `backend = zwave` in LightZone backend selector.
+- [x] Add config loader parsing for Z-Wave keys.
+- [x] Support on/off for binary switch nodes.
+- [x] Support dimming for multilevel switch nodes.
+- [x] Support `getStatus` / `getState` with normalized output.
+- [x] Add warnings/outcome payloads for unsupported command classes.
+- [x] Add operator guide `docs/ZWAVE_QUICK_START.md`.
 
 ### Proposed INI Keys (Z-Wave)
 
@@ -102,15 +127,15 @@ Introduce native Z-Wave and Zigbee support in PFx while preserving PFx backend a
 
 ### Checklist
 
-- [ ] Add `zigbee-herdsman` dependency.
-- [ ] Add `lib/lights/backends/zigbee-backend.js`.
-- [ ] Implement Ember adapter path for HUSBZB-1 (`adapter = ember`).
-- [ ] Implement singleton-per-port coordinator lifecycle.
-- [ ] Wire `backend = zigbee` in LightZone backend selector.
-- [ ] Add config loader parsing for Zigbee keys.
-- [ ] Implement `on`, `off`, `setBrightness`, `setColor`, `setColorTemp`, `getStatus`.
-- [ ] Add warning semantics for unsupported clusters/features.
-- [ ] Add operator guide `docs/ZIGBEE_QUICK_START.md`.
+- [x] Add `zigbee-herdsman` dependency.
+- [x] Add `lib/lights/backends/zigbee-backend.js`.
+- [x] Implement Ember adapter path for HUSBZB-1 (`adapter = ember`).
+- [x] Implement singleton-per-port coordinator lifecycle.
+- [x] Wire `backend = zigbee` in LightZone backend selector.
+- [x] Add config loader parsing for Zigbee keys.
+- [x] Implement `on`, `off`, `setBrightness`, `setColor`, `setColorTemp`, `getStatus`.
+- [x] Add warning semantics for unsupported clusters/features.
+- [x] Add operator guide `docs/ZIGBEE_QUICK_START.md`.
 
 ### Proposed INI Keys (Zigbee)
 
@@ -260,6 +285,89 @@ input_map = {"0.open":[{"topic":"paradox/room-a/lights/entry-switch/commands","p
 - Zigbee on/off light: on/off and status.
 - Zigbee color light: `setColor`, `setBrightness`, `setColorTemp`.
 - Restart resilience after PFx restart and USB re-enumeration.
+
+## What To Check And Test Now
+
+Run these checks in order and record outcomes in the PR discussion.
+
+### 1) Static/Syntax Checks
+
+From PFx root:
+
+```bash
+node -c lib/lights/backends/zwave-backend.js
+node -c lib/lights/backends/zigbee-backend.js
+node -c lib/zones/light-zone.js
+node -c lib/core/config-loader.js
+npm run -s validate
+```
+
+Expected: all commands exit with no errors.
+
+### 2) Dependency Install Check
+
+```bash
+npm install
+```
+
+Expected: installs `zwave-js` and `zigbee-herdsman` cleanly.
+
+### 3) Device Node And Permissions Check
+
+```bash
+ls -l /dev/zwave /dev/zigbee
+id
+```
+
+Expected: both device paths resolve and PFx runtime user has serial access (typically `dialout`).
+
+### 4) Z-Wave Functional Smoke
+
+Use a configured Z-Wave light topic (example topic shown):
+
+```bash
+mosquitto_pub -t paradox/room-a/lights/entry-switch/commands -m '{"command":"on"}'
+mosquitto_pub -t paradox/room-a/lights/entry-switch/commands -m '{"command":"off"}'
+mosquitto_pub -t paradox/room-a/lights/overhead-dimmer/commands -m '{"command":"setBrightness","brightness":55}'
+mosquitto_pub -t paradox/room-a/lights/entry-switch/commands -m '{"command":"getStatus"}'
+```
+
+Verify:
+
+- Device behavior matches command.
+- Success outcomes on `.../events`.
+- Status updates on `.../state`.
+
+### 5) Zigbee Functional Smoke
+
+```bash
+mosquitto_pub -t paradox/room-a/lights/hall-color/commands -m '{"command":"on"}'
+mosquitto_pub -t paradox/room-a/lights/hall-color/commands -m '{"command":"setBrightness","brightness":60}'
+mosquitto_pub -t paradox/room-a/lights/hall-color/commands -m '{"command":"setColor","color":"#00aaff","brightness":70}'
+mosquitto_pub -t paradox/room-a/lights/hall-color/commands -m '{"command":"setColorTemp","kelvin":3500,"brightness":80}'
+mosquitto_pub -t paradox/room-a/lights/hall-color/commands -m '{"command":"off"}'
+```
+
+Verify:
+
+- Power, brightness, color, and color-temperature actions apply correctly.
+- Success outcomes on `.../events`.
+- Status updates on `.../state`.
+
+### 6) Failure/Recovery Checks
+
+- Wrong node/device id in INI should fail with clear backend error.
+- Unplug/replug USB adapter and restart PFx; confirm recovery.
+- Restart PFx twice with mixed Z-Wave/Zigbee zones; ensure no duplicate-driver startup errors.
+
+### 7) Documentation Consistency
+
+Confirm these docs match runtime behavior:
+
+- `docs/PR_ZWAVE_ZIGBEE_DIRECT.md`
+- `docs/ZWAVE_QUICK_START.md`
+- `docs/ZIGBEE_QUICK_START.md`
+- `docs/CONFIG_INI.md`
 
 ## Primary Files Affected by Implementation PRs
 

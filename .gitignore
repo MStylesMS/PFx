@@ -79,3 +79,6 @@ Thumbs.db
 # Process management
 *.pid
 processes/
+
+# Z-Wave runtime cache/state
+cache/
