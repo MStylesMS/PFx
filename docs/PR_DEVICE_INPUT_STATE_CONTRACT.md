@@ -1,6 +1,6 @@
 # PR: Device Input State/Event Contract (PFx)
 
-Status: Draft plan aligned with PxO external input routing work.
+Status: In progress. Phase 2 payload cleanup implemented for InputZone.
 
 ## Goal
 Define and implement a clean producer-side contract for PFx device-facing zones so downstream consumers (PxO, dashboards, tooling) receive high-signal data.
@@ -82,14 +82,32 @@ The new contract makes:
 
 ## Implementation Phases
 ### Phase 1: Contract and Metadata
-- [ ] Define capability-scoped state field model for sensor and output profiles
-- [ ] Define warnings policy and thresholds (battery, offline, tamper)
-- [ ] Extend schema payloads with state/events field metadata
+- [x] Define capability-scoped state field model for sensor and output profiles
+- [x] Define warnings policy and thresholds (battery, offline, tamper)
+- [x] Extend schema payloads with state/events field metadata
++
++Implemented notes:
++- `InputZone` now tracks capability-scoped signals under `input.signals` (`contact`, `battery`, `tamper`, `reachable`, `last_seen`).
++- Warning policy defaults are defined in code and configurable via INI-style zone keys:
++  - `low_battery_threshold` (default `20`)
++  - `offline_timeout_sec` (default `0`, reserved for upcoming offline monitor)
++  - `tamper_warning_enabled` (default `true`)
++- Input zone schema payload now advertises:
++  - `state_fields`
++  - `event_fields`
++  - `warning_policy`
++  through zone manager `/schema` publication.
 
 ### Phase 2: Input Zone Payload Cleanup
-- [ ] Reduce inherited status noise for input/sensor profiles
-- [ ] Keep retained state publish behavior: startup and on-change
-- [ ] Preserve backward compatibility where practical
+- [x] Reduce inherited status noise for input/sensor profiles
+- [x] Keep retained state publish behavior: startup and on-change
+- [x] Preserve backward compatibility where practical
+
+Implemented notes:
+- `InputZone.publishStatus()` now publishes compact sensor-focused retained payloads directly to `{baseTopic}/state`.
+- Inherited media/audio state fields (`mpv_instances`, `background`, `speech`, `effects`, `current_file`, `volume`) are no longer included for input zones.
+- Existing topic family and retained state behavior are preserved.
+- Covered by unit test: `test/unit/input-zone.test.js` (`publishes compact input state without media status fields`).
 
 ### Phase 3: Backend Alignment
 - [ ] Align Z-Wave and Zigbee sensor event normalization to the contract
@@ -119,6 +137,42 @@ The new contract makes:
 - Existing topic families remain intact.
 - State payload shape may become intentionally slimmer for sensor-like profiles.
 - Where behavior changes, document migration notes and provide examples.
+
+## Pre-Test Verification
+Use these checks before live room testing:
+
+```bash
+# 1) PFx unit checks for input-zone contract
+cd /opt/paradox/apps/PFx
+npx jest test/unit/input-zone.test.js --runInBand
+npx jest test/unit/zone-manager-discovery.test.js --runInBand
+
+# 2) Validate Houdini EDN after trigger/source edits
+cd /opt/paradox/apps/PxO
+node tools/validate-edn.js /opt/paradox/rooms/houdinis-challenge/config/houdini.edn
+
+# 3) Watch spell-box input state and raw events
+mosquitto_sub -h localhost -v -t 'paradox/houdini/zwave/spell-box/events' -t 'paradox/houdini/inputs/spell-box/state'
+
+# 4) Watch game state transitions
+mosquitto_sub -h localhost -v -t 'paradox/houdini/state' -t 'paradox/houdini/events'
+```
+
+## Synthetic Smoke Test — PASSED (2025-05-20)
+
+End-to-end validation using `mosquitto_pub` on this machine (no live hardware required):
+
+1. Started PxO game → transitioned `ready → intro → gameplay`
+2. Published synthetic open event:
+   ```bash
+   mosquitto_pub -h localhost -t 'paradox/houdini/zwave/spell-box/events' \
+     -m '{"input":"0","event":"open","source":"synthetic-smoke"}'
+   ```
+3. PxO fired `game_end_trigger` with `outcome:"win"` and state became `gameState:"solved"`
+
+**Result:** Full `ready → intro → gameplay → solved` chain confirmed via `:spell-box-raw` trigger.
+
+---
 
 ## Definition of Done (PFx Portion)
 - Sensor and output profiles publish high-signal `/events`.

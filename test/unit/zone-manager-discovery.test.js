@@ -23,11 +23,15 @@ function makeMqttClient() {
     };
 }
 
-function makeZone(type, baseTopic, commands = []) {
-    return {
+function makeZone(type, baseTopic, commands = [], schemaMetadata = null) {
+    const zone = {
         config: { type, baseTopic },
         getSupportedCommands: jest.fn().mockReturnValue(commands),
     };
+    if (schemaMetadata) {
+        zone.getSchemaMetadata = jest.fn().mockReturnValue(schemaMetadata);
+    }
+    return zone;
 }
 
 function makeZoneManager(baseTopicOverride) {
@@ -154,5 +158,22 @@ describe('ZoneManager._publishZoneSchemas', () => {
         zm._publishZoneSchemas();
 
         expect(zone.getSupportedCommands).toHaveBeenCalledTimes(1);
+    });
+
+    test('includes optional schema metadata when zone exposes it', () => {
+        const { zm, mqttClient } = makeZoneManager('paradox/test');
+        const schemaMetadata = {
+            state_fields: { input: { profile: 'string' } },
+            event_fields: { input_event: { event: 'string' } },
+            warning_policy: { low_battery_threshold: 20 }
+        };
+        zm.zones.set('input1', makeZone('input', 'paradox/test/input1', ['getState'], schemaMetadata));
+
+        zm._publishZoneSchemas();
+
+        const [, payload] = mqttClient.publish.mock.calls[0];
+        expect(payload.state_fields).toEqual(schemaMetadata.state_fields);
+        expect(payload.event_fields).toEqual(schemaMetadata.event_fields);
+        expect(payload.warning_policy).toEqual(schemaMetadata.warning_policy);
     });
 });
