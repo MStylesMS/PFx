@@ -665,35 +665,33 @@ Format:
 
 #### showBrowser
 
-Bring the browser to the front. Optionally apply a fade effect via the page’s MQTT API.
+Bring the browser to the front.
 
 Format:
 
 ```json
 {
-  "command": "showBrowser",
-  "effect": "fade"
+  "command": "showBrowser"
 }
 ```
 
 Parameters:
-- effect (optional): "fade" | "instant" (default: "fade"). When "fade", publishes `{ "command": "fadeIn" }` to `paradox/houdini/clock/commands`.
+- None. This is pure window management and does not publish clock fade commands.
 
 #### hideBrowser
 
-Hide the browser and return focus to MPV. Optionally apply a fade-out effect.
+Hide the browser and return focus to MPV.
 
 Format:
 
 ```json
 {
-  "command": "hideBrowser",
-  "effect": "fade"
+  "command": "hideBrowser"
 }
 ```
 
 Parameters:
-- effect (optional): "fade" | "instant" (default: "fade"). When "fade", publishes `{ "command": "fadeout" }` to `paradox/houdini/clock/commands` before switching back.
+- None. This is pure window management and does not publish clock fade commands.
 
 
 
