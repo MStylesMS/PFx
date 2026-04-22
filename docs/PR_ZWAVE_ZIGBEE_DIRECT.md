@@ -1,13 +1,30 @@
 # PR: Z-Wave and Zigbee Device Support (Direct-in-PFx, Hybrid-ready)
 
+> ## 🔀 Decision Reversal — Radio Ownership Moved to PZB
+>
+> **Supersedes the direct-in-PFx plan below.** As of 2026-04-22, radio ownership for Z-Wave, Zigbee, and future Thread is moving out of PFx into a new dedicated product, **PZB (Paradox Z Bridge)**. PFx will consume radio devices over MQTT via PZB's topic contract, not by driving `zwave-js` / `zigbee-herdsman` directly.
+>
+> **What this changes:**
+> - Phase 1 (direct Z-Wave lights) code in PFx is **deprecated** and will be retired: `lib/lights/backends/zwave-backend.js`, `lib/controllers/zwave-controller.js`, the `.tmp_zwave_frontdoor_bridge.js` template.
+> - Phase 2 (Z-Wave sensors / input zones) is **superseded by PZB**. PFx `input_topic` subscriptions stay unchanged and consume PZB's `{node.base_topic}/events` — PZB's event schema is identical to the current PFx `InputZone` contract.
+> - Phase 3 (Zigbee, direct) is **cancelled**. Zigbee support lands in PZB instead (PZB phase 3).
+> - Phase 4 (bridge mode) is **re-scoped**: instead of being an optional alternative, it becomes the **only** mode. PFx light/relay backends gain a `bridge` mode that publishes to PZB node `commands` topics and reads state from PZB node `state`.
+>
+> **Coordination:**
+> - PZB scaffold and plan: [`/opt/paradox/apps/PZB/docs/PR_PZB_INITIAL.md`](../../PZB/docs/PR_PZB_INITIAL.md).
+> - Direct-in-PFx radio code must be removed before PZB goes live on the same host (no double-ownership of the serial port).
+> - The sections below are retained as historical context; treat phase checklists as frozen/archival unless explicitly re-opened under the PZB umbrella.
+
 ## Status
 
-- Design decisions finalized.
-- Implementation order locked: Z-Wave first, Zigbee second.
-- Config format locked: INI only.
-- Standalone bridge/service mode deferred to a later phase.
-- Initial direct Z-Wave and Zigbee implementation is now in-tree.
-- Documentation rename complete: `INI_Config.md` -> `CONFIG_INI.md`.
+- **Superseded by PZB** (see pivot block above).
+- Historical status (pre-pivot):
+  - Design decisions finalized.
+  - Implementation order locked: Z-Wave first, Zigbee second.
+  - Config format locked: INI only.
+  - Standalone bridge/service mode deferred to a later phase.
+  - Initial direct Z-Wave and Zigbee implementation is now in-tree.
+  - Documentation rename complete: `INI_Config.md` -> `CONFIG_INI.md`.
 
 ## Implementation Snapshot (2026-04-20)
 

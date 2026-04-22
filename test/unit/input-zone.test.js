@@ -81,6 +81,7 @@ describe('InputZone mapping', () => {
         expect(payload.effects).toBeUndefined();
         expect(payload.current_file).toBeUndefined();
         expect(payload.volume).toBeUndefined();
+        expect(zone.statusInterval).toBeNull();
 
         await zone.shutdown();
     });
@@ -115,8 +116,44 @@ describe('InputZone mapping', () => {
 
         await handler('paradox/houdini/zwave/spell-box/events', { input: '0', event: 'opened', ts: 1713700001 });
         statePublish = mqttClient.publish.mock.calls.filter((call) => call[0] === 'paradox/houdini/inputs/spell-box/state').pop();
-        expect(statePublish[1].input.last_event.event).toBe('opened');
+        expect(statePublish[1].input.last_event.event).toBe('open');
         expect(statePublish[1].input.signals.contact.value).toBe('open');
+
+        await zone.shutdown();
+    });
+
+    test('normalizes contact boolean payloads to open/close in state', async () => {
+        const subscribeCalls = [];
+        const mqttClient = {
+            connected: true,
+            subscribe: jest.fn((topic, handler) => {
+                subscribeCalls.push({ topic, handler });
+            }),
+            unsubscribe: jest.fn(),
+            publish: jest.fn()
+        };
+
+        const zone = new InputZone({
+            name: 'spell-box-contact',
+            type: 'input',
+            baseTopic: 'paradox/houdini/inputs/spell-box',
+            backend: 'zwave',
+            profile: 'contact',
+            inputTopic: 'paradox/houdini/zwave/spell-box/events'
+        }, mqttClient, { config: { devices: {} } });
+
+        await zone.initialize();
+        const handler = subscribeCalls[0].handler;
+
+        await handler('paradox/houdini/zwave/spell-box/events', { input: '0', value: true, ts: 1713700002 });
+        let statePublish = mqttClient.publish.mock.calls.filter((call) => call[0] === 'paradox/houdini/inputs/spell-box/state').pop();
+        expect(statePublish[1].input.last_event.event).toBe('open');
+        expect(statePublish[1].input.signals.contact.value).toBe('open');
+
+        await handler('paradox/houdini/zwave/spell-box/events', { input: '0', value: false, ts: 1713700003 });
+        statePublish = mqttClient.publish.mock.calls.filter((call) => call[0] === 'paradox/houdini/inputs/spell-box/state').pop();
+        expect(statePublish[1].input.last_event.event).toBe('close');
+        expect(statePublish[1].input.signals.contact.value).toBe('close');
 
         await zone.shutdown();
     });
