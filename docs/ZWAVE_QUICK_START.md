@@ -2,6 +2,11 @@
 
 This guide covers the direct-in-PFx Z-Wave setup path.
 
+> **Note:** Direct Z-Wave support inside PFx is being retired in favour of the
+> [PZB](/opt/paradox/apps/PZB/docs/QUICK_START.md) bridge. New deployments should
+> pair devices with PZB and consume events over MQTT via a PFx input zone. This
+> document is retained for existing installations only.
+
 ## 1. Prerequisites
 
 - PFx host has a supported Z-Wave USB stick connected.
@@ -62,5 +67,13 @@ zwave_type = multilevel_switch
 
 ## 6. Notes
 
-- Secure inclusion (S2) may require DSK from device packaging.
-- Use stable udev symlinks to avoid `ttyUSB*` renumbering across reboots.
+- **Inclusion is done via PZB, not PFx.** PFx's direct backend only controls
+  already-included nodes. Pair / unpair using
+  [PZB's inclusion commands](/opt/paradox/apps/PZB/docs/QUICK_START.md#8-include--exclude-a-node)
+  (or a dedicated Z-Wave tool such as Silicon Labs PC Controller). The default
+  PZB inclusion strategy is **Insecure (`2`)**; do not override to S2 unless
+  PZB has been updated to provide S2 user callbacks.
+- Secure inclusion (S2) may require the DSK printed on the device packaging.
+  S2 is not currently supported end-to-end; stick with Insecure inclusion.
+- Use stable udev symlinks (e.g. `/dev/zwave`) to avoid `ttyUSB*` renumbering
+  across reboots.
