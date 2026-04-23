@@ -1,11 +1,22 @@
 # Z-Wave Quick Start (PFx Direct Backend)
 
-This guide covers the direct-in-PFx Z-Wave setup path.
+> ## ⚠️ Deprecated — Radio I/O has moved to PZB
+>
+> All Z-Wave (and Zigbee) I/O — inclusion, inputs, and outputs — is handled by
+> [PZB (Paradox Z Bridge)](/opt/paradox/apps/PZB/docs/QUICK_START.md).
+>
+> PFx no longer consumes radio events. **Do not add `[input:*]` sections in
+> PFx INI for zwave/zigbee sensors.** Consumers (PxO, PxT, dashboards)
+> subscribe to PZB's per-node topics directly, e.g.
+> `paradox/houdini/zwave/spell-box/{events,state,schema}`.
+>
+> The PFx direct-backend for *outbound* lights / relays documented below is
+> still functional for existing installations but is also slated for retirement
+> once PFx gains a generic-command → PZB outbound adapter. New deployments
+> should publish to `{node.base_topic}/commands` on PZB instead.
 
-> **Note:** Direct Z-Wave support inside PFx is being retired in favour of the
-> [PZB](/opt/paradox/apps/PZB/docs/QUICK_START.md) bridge. New deployments should
-> pair devices with PZB and consume events over MQTT via a PFx input zone. This
-> document is retained for existing installations only.
+This guide describes the legacy direct-in-PFx Z-Wave output path. For new
+work, see [PZB Quick Start](/opt/paradox/apps/PZB/docs/QUICK_START.md).
 
 ## 1. Prerequisites
 
@@ -67,13 +78,14 @@ zwave_type = multilevel_switch
 
 ## 6. Notes
 
-- **Inclusion is done via PZB, not PFx.** PFx's direct backend only controls
-  already-included nodes. Pair / unpair using
-  [PZB's inclusion commands](/opt/paradox/apps/PZB/docs/QUICK_START.md#8-include--exclude-a-node)
-  (or a dedicated Z-Wave tool such as Silicon Labs PC Controller). The default
-  PZB inclusion strategy is **Insecure (`2`)**; do not override to S2 unless
-  PZB has been updated to provide S2 user callbacks.
-- Secure inclusion (S2) may require the DSK printed on the device packaging.
-  S2 is not currently supported end-to-end; stick with Insecure inclusion.
+- **Inputs (sensors) are not handled by PFx at all.** Configure them in PZB.
+  See [PZB Quick Start §7](/opt/paradox/apps/PZB/docs/QUICK_START.md) and
+  [PZB MQTT API §8](/opt/paradox/apps/PZB/docs/MQTT_API.md). Any existing
+  `[input:*]` section in a PFx INI for a zwave/zigbee sensor should be
+  removed or commented out.
+- **Inclusion is done via PZB, not PFx.** Pair / unpair using
+  [PZB's inclusion commands](/opt/paradox/apps/PZB/docs/QUICK_START.md#8-include--exclude-a-node).
+  The default PZB inclusion strategy is **Insecure (`2`)**; do not override
+  to S2 unless PZB has been updated to provide S2 user callbacks.
 - Use stable udev symlinks (e.g. `/dev/zwave`) to avoid `ttyUSB*` renumbering
   across reboots.
