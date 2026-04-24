@@ -7,7 +7,7 @@
 > **What this changes:**
 > - Phase 1 (direct Z-Wave lights) code in PFx is **deprecated** and will be retired: `lib/lights/backends/zwave-backend.js`, `lib/controllers/zwave-controller.js`, the `.tmp_zwave_frontdoor_bridge.js` template.
 > - Phase 2 (Z-Wave sensors / input zones) is **superseded by PZB**. PFx `input_topic` subscriptions stay unchanged and consume PZB's `{node.base_topic}/events` — PZB's event schema is identical to the current PFx `InputZone` contract.
-> - Phase 3 (Zigbee, direct) is **cancelled**. Zigbee support lands in PZB instead (PZB phase 3).
+> - Phase 3 (Zigbee, direct) is **cancelled**. Zigbee support is implemented in PZB (PZB phase 3, complete; hardware validation pending).
 > - Phase 4 (bridge mode) is **re-scoped**: instead of being an optional alternative, it becomes the **only** mode. PFx light/relay backends gain a `bridge` mode that publishes to PZB node `commands` topics and reads state from PZB node `state`.
 >
 > **Coordination:**

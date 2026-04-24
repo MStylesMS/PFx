@@ -1,6 +1,22 @@
 # Zigbee Quick Start (PFx Direct Backend)
 
-This guide covers the direct-in-PFx Zigbee setup path.
+> ## ⚠️ Deprecated — Radio I/O has moved to PZB
+>
+> All Zigbee (and Z-Wave) I/O — inclusion, inputs, and outputs — is handled by
+> [PZB (Paradox Z Bridge)](/opt/paradox/apps/PZB/docs/QUICK_START.md).
+>
+> PFx no longer consumes radio events. **Do not add `[input:*]` sections in
+> PFx INI for zwave/zigbee sensors.** Consumers (PxO, PxT, dashboards)
+> subscribe to PZB's per-node topics directly, e.g.
+> `paradox/houdini/zigbee/door-sensor/{events,state,schema}`.
+>
+> The PFx direct-backend for *outbound* lights / relays documented below is
+> still functional for existing installations but is also slated for retirement
+> once PFx gains a generic-command → PZB outbound adapter. New deployments
+> should publish to `{node.base_topic}/commands` on PZB instead.
+
+This guide describes the legacy direct-in-PFx Zigbee output path. For new
+work, see [PZB Quick Start](/opt/paradox/apps/PZB/docs/QUICK_START.md).
 
 ## 1. Prerequisites
 
