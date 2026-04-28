@@ -1,7 +1,0 @@
-Bump version to v0.9.0
-
-- Hide mouse cursor with unclutter when available on startup.
-- Fix browser-to-screen mapping: use zone `target_monitor` index (deterministic mapping by display X position) to choose the target display for Chromium launches.
-- Add notes and docs describing a current limitation: running more than one enabled browser across screens can confuse control messages; recommend only one browser be enabled at a time.
-
-Note: Please run `git add package.json CHANGELOG.md docs/SINGLE_BROWSER_LIMITATION.md lib/zones/screen-zone.js lib/utils/window-manager.js && git commit -F COMMIT_MESSAGE.txt` to create the commit.

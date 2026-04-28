@@ -27,8 +27,8 @@
         "escape-room",
         "interactive"
     ],
-    "author": "Paradox",
-    "license": "ISC",
+    "author": "Mark Stevens",
+    "license": "Apache-2.0",
     "dependencies": {
         "ini": "^4.1.1",
         "mqtt": "^5.13.2",

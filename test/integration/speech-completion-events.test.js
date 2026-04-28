@@ -56,7 +56,7 @@ async function waitFor(predicate, timeoutMs = 30000, intervalMs = 200) {
 }
 
 describe('Speech queue & completion events (real playback)', () => {
-    const tmpDir = path.join(__dirname, '..', '..', 'tmp_speech_media');
+    const tmpDir = path.join(__dirname, '..', '..', 'media', 'test', 'general');
     const fileA = 'speech_a.wav'; // 12s
     const fileB = 'speech_b.wav'; // 14s
     let zone;

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=/opt/paradox/apps/pfx/config/startup-xhost.sh > /opt/paradox/logs/xhost.log 2>&1
+Exec=/opt/paradox/apps/pfx/scripts/startup-xhost-config.sh > /opt/paradox/logs/xhost.log 2>&1
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true

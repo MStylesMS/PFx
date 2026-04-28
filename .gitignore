@@ -82,3 +82,11 @@ processes/
 
 # Z-Wave runtime cache/state
 cache/
+
+# Scratch and generated cleanup targets
+tmp_*
+tmp_*/
+*.tmp.js
+junit.xml
+COMMIT_MESSAGE.txt
+*-old.ini

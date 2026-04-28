@@ -1,5 +1,5 @@
 #!/bin/bash
-# startup-xhost.sh
+# startup-xhost-config.sh
 #
 # This script ensures that the X11 display server allows the 'paradox' user (including SSH sessions)
 # to open windows on the Pi's HDMI outputs. This is required for running ParadoxFX (PFX) remotely
@@ -13,7 +13,7 @@
 # Usage:
 # 1. Log in to the Pi's desktop as 'paradox' (the user running the X session).
 # 2. Run this script ON THE PI DESKTOP (not over SSH):
-#      ./startup-xhost.sh
+#      ./scripts/startup-xhost-config.sh
 # 3. Now, from your laptop, SSH into the Pi as 'paradox' and set DISPLAY=:0 before running PFX:
 #      export DISPLAY=:0
 #      node pfx.js
