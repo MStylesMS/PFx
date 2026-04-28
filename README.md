@@ -1,5 +1,7 @@
 # ParadoxFX (PFx)
 
+[![CI](https://github.com/MStylesMS/PFx/actions/workflows/ci.yml/badge.svg)](https://github.com/MStylesMS/PFx/actions/workflows/ci.yml)
+
 PFx is a Node.js media and effects controller for escape-room style environments. It consumes MQTT commands and coordinates screens, audio, browser overlays, lights, relays, and input events.
 
 This README is intentionally short for GitHub browsing. Use the docs links below for configuration, API details, and platform setup.

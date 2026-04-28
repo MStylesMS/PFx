@@ -269,10 +269,9 @@ describe('LifxBackend fade command', () => {
         await backend.initialize();
     });
 
-    it('applies brightness immediately and returns warning', async () => {
+    it('applies brightness immediately via SetColor', async () => {
         const result = await backend.execute('fade', { brightness: 50 });
         expect(result.applied).toBe(true);
-        expect(result.warning).toMatch(/not implemented/);
         expect(msgType(sentMessages[0])).toBe(102);
     });
 
