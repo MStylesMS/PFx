@@ -39,8 +39,8 @@ Completed in code/docs:
 	- `zwave-js`
 	- `zigbee-herdsman`
 - Added quick-start guides:
-	- `docs/ZWAVE_QUICK_START.md`
-	- `docs/ZIGBEE_QUICK_START.md`
+	- `docs/QUICK_START_ZWAVE.md`
+	- `docs/QUICK_START_ZIGBEE.md`
 - Renamed INI reference doc to `docs/CONFIG_INI.md` and updated references.
 
 Still pending:
@@ -101,7 +101,7 @@ Introduce native Z-Wave and Zigbee support in PFx while preserving PFx backend a
 - [x] Support dimming for multilevel switch nodes.
 - [x] Support `getStatus` / `getState` with normalized output.
 - [x] Add warnings/outcome payloads for unsupported command classes.
-- [x] Add operator guide `docs/ZWAVE_QUICK_START.md`.
+- [x] Add operator guide `docs/QUICK_START_ZWAVE.md`.
 
 ### Proposed INI Keys (Z-Wave)
 
@@ -152,7 +152,7 @@ Introduce native Z-Wave and Zigbee support in PFx while preserving PFx backend a
 - [x] Add config loader parsing for Zigbee keys.
 - [x] Implement `on`, `off`, `setBrightness`, `setColor`, `setColorTemp`, `getStatus`.
 - [x] Add warning semantics for unsupported clusters/features.
-- [x] Add operator guide `docs/ZIGBEE_QUICK_START.md`.
+- [x] Add operator guide `docs/QUICK_START_ZIGBEE.md`.
 
 ### Proposed INI Keys (Zigbee)
 
@@ -382,8 +382,8 @@ Verify:
 Confirm these docs match runtime behavior:
 
 - `docs/PR_ZWAVE_ZIGBEE_DIRECT.md`
-- `docs/ZWAVE_QUICK_START.md`
-- `docs/ZIGBEE_QUICK_START.md`
+- `docs/QUICK_START_ZWAVE.md`
+- `docs/QUICK_START_ZIGBEE.md`
 - `docs/CONFIG_INI.md`
 
 ## Primary Files Affected by Implementation PRs

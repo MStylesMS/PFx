@@ -248,7 +248,7 @@ hue_resource_type = room
 hue_profile       = color
 ```
 
-Use `scripts/hue-pair.sh [bridge-ip]` to obtain the app key and resource IDs. See `docs/HUE_QUICK_START.md` for a full walkthrough.
+Use `scripts/hue-pair.sh [bridge-ip]` to obtain the app key and resource IDs. See `docs/QUICK_START_HUE.md` for a full walkthrough.
 
 Example (LIFX LAN):
 
@@ -275,7 +275,7 @@ zwave_node_id = 12
 zwave_type = binary_switch
 ```
 
-See `docs/ZWAVE_QUICK_START.md` for setup and troubleshooting.
+See `docs/QUICK_START_ZWAVE.md` for setup and troubleshooting.
 
 Example (Zigbee direct):
 
@@ -291,7 +291,7 @@ zigbee_ieee = 0x00158d0002abcdef
 zigbee_type = color
 ```
 
-See `docs/ZIGBEE_QUICK_START.md` for setup and troubleshooting.
+See `docs/QUICK_START_ZIGBEE.md` for setup and troubleshooting.
 
 ### [input:<id>]
 

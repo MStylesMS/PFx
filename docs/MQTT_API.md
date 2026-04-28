@@ -105,7 +105,6 @@ When a playback command is issued the system may emit several related events. Be
 Notes:
 - A warning outcome is emitted (with `warning_type`) when both `volume` and `adjustVolume` are supplied; a subsequent success outcome is also emitted for the same command (legacy pattern maintained for backward compatibility with clients expecting a terminal success). Consumers may treat the warning outcome as authoritative and ignore the later success.
 - `background_music_started` and `background_volume_recomputed` events carry real-time telemetry; periodic state snapshots intentionally omit `effective_volume`, `pre_duck_volume`, and `ducked` to stay lightweight.
-- The full captured sample file lives at: `docs/examples/sample-volume-telemetry-events.json`.
 
 Client Guidance:
 - If you only care about final status, deduplicate by the tuple `(timestamp truncated to ms, command)` keeping the first non-success outcome (warning/failed) if present.

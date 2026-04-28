@@ -21,7 +21,7 @@ Follows the same backend strategy pattern as WiZ and Shelly:
 |---|---|
 | `lib/lights/backends/hue-backend.js` | Core Hue v2 backend |
 | `scripts/hue-pair.sh` | One-time pairing and resource-discovery script |
-| `docs/HUE_QUICK_START.md` | Operator setup guide |
+| `docs/QUICK_START_HUE.md` | Operator setup guide |
 | `test/unit/hue-backend.test.js` | Backend unit tests |
 
 **Modified files:** `light-zone.js`, `config-loader.js`, `config-loader.test.js`, `CONFIG_INI.md`
@@ -114,7 +114,7 @@ Supports color, color-temperature, and dim-only profiles via an explicit `hue_pr
 - [x] 🤖 `config-loader.test.js`: `[light:hue-test]` and minimal fixture → all `hue_*` fields asserted
 
 #### Docs
-- [x] 🤖 `docs/HUE_QUICK_START.md`: pairing walkthrough, INI example, scene-name table, common issues
+- [x] 🤖 `docs/QUICK_START_HUE.md`: pairing walkthrough, INI example, scene-name table, common issues
 - [x] 🤖 `docs/CONFIG_INI.md`: `[light:hue-zone]` example block; all `hue_*` fields documented
 - [x] 🤖 Delete `lib/controllers/hue-controller.js` (placeholder superseded)
 - [x] 🔌 Verify no remaining references to `hue-controller.js` — confirmed zero references
