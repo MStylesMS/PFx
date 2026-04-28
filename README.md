@@ -1,53 +1,56 @@
 # ParadoxFX (PFx)
 
 [![CI](https://github.com/MStylesMS/PFx/actions/workflows/ci.yml/badge.svg)](https://github.com/MStylesMS/PFx/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-PFx is a Node.js media and effects controller for escape-room style environments. It consumes MQTT commands and coordinates screens, audio, browser overlays, lights, relays, and input events.
+**PFx is the hardware abstraction layer for escape rooms.** It takes MQTT commands from a game engine and orchestrates screens, multi-zone audio with ducking, browser overlays, lights, and relays — running as a single Node.js service on a Raspberry Pi.
 
-This README is intentionally short for GitHub browsing. Use the docs links below for configuration, API details, and platform setup.
+<!-- TODO(2.3): replace with demo GIF / screenshot of PFx running a real cue -->
+<!-- ![PFx demo](docs/assets/pfx-demo.gif) -->
 
-## Quick links
+## Quick start
 
-- Quick start (single Pi output): [docs/QUICK_START_PFX.md](docs/QUICK_START_PFX.md)
-- Full user guide: [docs/PFX_USER_GUIDE.md](docs/PFX_USER_GUIDE.md)
-- Configuration reference (INI): [docs/CONFIG_INI.md](docs/CONFIG_INI.md)
-- MQTT API: [docs/MQTT_API.md](docs/MQTT_API.md)
-- Specification: [docs/SPEC.md](docs/SPEC.md)
-- Script index: [scripts/README.md](scripts/README.md)
+```bash
+sudo apt install -y nodejs npm mosquitto mpv xdotool x11-xserver-utils
+git clone https://github.com/MStylesMS/PFx.git && cd PFx
+npm install
+# Pick a starting template that matches your hardware (Pi4 / Pi5 / Linux):
+cp config/pfx-explained.ini pfx.ini
+npm start
+```
 
-## What PFx does
+Then publish a command from any MQTT client:
 
-- Runs zone-based screen/media playback (image, video, background audio, speech, effects)
-- Controls browser window focus for clock/UI overlays
-- Publishes zone state, warnings, and events over MQTT
-- Supports modern lighting integrations (Hue, WiZ, Shelly, and bridge-driven radio workflows)
-- Provides operational tooling for Raspberry Pi deployments
+```bash
+mosquitto_pub -t paradox/demo/screen/commands \
+  -m '{"command":"playVideo","video":"intro.mp4"}'
+```
 
-## Service deployment note
+Full walkthrough: [docs/QUICK_START_PFX.md](docs/QUICK_START_PFX.md).
 
-A sample systemd unit is included at [config/pfx.service](config/pfx.service). It is a template, not a one-size-fits-all production unit. Adjust user, paths, and hardening options before install.
+## What it does
 
-## Repository layout
+- **Screens** — image, video, queued playback, browser overlays (mpv + Chromium)
+- **Audio** — three concurrent categories per zone (background music, speech, SFX) with automatic ducking
+- **Lights** — Hue, WiZ, LIFX, Shelly direct; Z-Wave / Zigbee / Thread via PZB bridge
+- **Inputs & relays** — GPIO via Pio, button events, switch control
+- **Operational** — retained MQTT state, lifecycle status, structured warnings/events, systemd unit
 
-- Application entrypoint: [pfx.js](pfx.js)
-- Core runtime code: [lib](lib)
-- Tests: [test](test)
-- Documentation: [docs](docs)
-- Operational scripts: [scripts](scripts)
-- Configuration templates and desktop entries: [config](config)
+## Documentation
+
+| | |
+|---|---|
+| [Quick start](docs/QUICK_START_PFX.md) | Get one zone running on a Pi in 5 minutes |
+| [User guide](docs/PFX_USER_GUIDE.md) | Feature-by-feature walkthrough |
+| [Specification](docs/SPEC.md) | Functional spec — the contract |
+| [MQTT API](docs/MQTT_API.md) | Commands, events, payload schemas |
+| [INI reference](docs/CONFIG_INI.md) | All config keys |
+| [Scripts](scripts/README.md) | Operational tooling |
 
 ## How this repo was built
 
-PFx is built with AI-accelerated development against a deliberate methodology:
-
-1. **Doc-first design.** The functional spec, MQTT API, and INI reference are written before non-trivial code lands. See [docs/SPEC.md](docs/SPEC.md), [docs/MQTT_API.md](docs/MQTT_API.md), [docs/CONFIG_INI.md](docs/CONFIG_INI.md).
-2. **Phased delivery.** Each phase ships a fully working application with incremental features — no half-wired flags on `main`.
-3. **Check-before-code gate.** Any change that alters spec, API, INI keys, or scaffold updates the matching doc in the same commit as the implementation. The doc is the contract; the code is the implementation.
-4. **Reuse-first.** Existing helpers, zone base classes, and the MQTT wrapper are searched before new code is written.
-5. **Best-practices baseline.** Conventional commits, tests next to features, no scratch files at the repo root.
-
-The full agent brief lives in [.github/copilot-instructions.md](.github/copilot-instructions.md) and is auto-loaded by VS Code Copilot, Claude Code, Codex, Cursor, Aider, and Gemini-CLI.
+PFx is built AI-accelerated against a deliberate methodology: doc-first design, phased delivery (every phase ships a working app), and a check-before-code gate where the spec, MQTT API, and INI reference are updated in the same commit as the implementation. The full agent brief lives in [.github/copilot-instructions.md](.github/copilot-instructions.md) and is auto-loaded by VS Code Copilot, Claude Code, Codex, Cursor, Aider, and Gemini-CLI.
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
+Apache License 2.0 — see [LICENSE](LICENSE).
