@@ -51,7 +51,7 @@ PFx is organised around a small set of zone types. Each zone is declared in the 
 | Light     | `[lights:name]` | Hue, WiZ, LIFX, Shelly, Z-Wave, Zigbee groups |
 | Input     | `[input:name]`  | Buttons, contact sensors, Shelly i4 events |
 
-A zone has the topic structure `{baseTopic}/{commands|state|status|warnings|events}`. Zones are independent — a screen-zone failure does not stop audio.
+A zone has the topic structure `{baseTopic}/{commands|state|warnings|events}`. Zones are independent — a screen-zone failure does not stop audio.
 
 For full configuration syntax and every supported key, see [CONFIG_INI.md](CONFIG_INI.md).
 
@@ -160,8 +160,7 @@ Every zone uses the same topic shape:
 | Topic suffix | Direction | Retained | Purpose |
 |--------------|-----------|----------|---------|
 | `commands`   | inbound   | no       | JSON commands |
-| `state`      | outbound  | yes      | Current zone state |
-| `status`     | outbound  | yes      | Lifecycle: starting/ready/error |
+| `state`      | outbound  | yes      | Current zone state and lifecycle (starting/ready/error) |
 | `warnings`   | outbound  | no       | Recoverable issues |
 | `events`     | outbound  | no       | Discrete events (EOF, button, speech-done) |
 
@@ -233,7 +232,7 @@ Typical install flow:
 3. Copy `config/pfx.service` to `/etc/systemd/system/pfx.service` and edit.
 4. Place your INI at `/etc/pfx.ini`.
 5. `systemctl enable --now pfx`.
-6. Verify `/run/paradox/pfx.ready` appears and `paradox/.../status` topics report `ready`.
+6. Verify `/run/paradox/pfx.ready` appears and `paradox/.../state` topics report `ready` lifecycle status.
 
 For desktop autostart instead of systemd, see [../config/](../config) and `scripts/startup-xhost-config.sh`.
 

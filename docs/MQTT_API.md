@@ -1125,7 +1125,7 @@ Multi-zone audio devices support background music, speech, and sound effects wit
 
 ```
 paradox/zone1/audio/commands    # Commands to audio zone 1
-paradox/zone1/audio/status     # Status from audio zone 1
+paradox/zone1/audio/state      # State + lifecycle from audio zone 1
 ```
 
 ### Background Music Commands
@@ -2147,10 +2147,10 @@ mosquitto_pub -h localhost -t "paradox/living-room/lights/commands" \
 
 ### Monitoring Status Updates
 
-Subscribe to device status:
+Subscribe to device state:
 
 ```bash
-mosquitto_sub -h localhost -t "paradox/+/+/status"
+mosquitto_sub -h localhost -t "paradox/+/+/state"
 ```
 
 Subscribe to all system messages:
@@ -2172,7 +2172,6 @@ heartbeat_interval = 30000
 [screen:living-room]
 type = screen
 topic = paradox/living-room/screen
-status_topic = paradox/living-room/screen/status
 media_dir = /opt/media/living-room
 volume = 80
 

@@ -45,8 +45,7 @@ Each device type is a **zone** with its own MQTT topic namespace.
 
 ```
 {baseTopic}/commands   # inbound JSON commands
-{baseTopic}/state      # retained zone state
-{baseTopic}/status     # retained lifecycle (starting/ready/error)
+{baseTopic}/state      # retained zone state and lifecycle (starting/ready/error)
 {baseTopic}/warnings   # recoverable issues
 {baseTopic}/events     # discrete events (EOF, button, speech-done)
 ```
@@ -80,7 +79,7 @@ Audio supports three concurrent categories: background music (looping, ducked wh
 
 ## Critical constraints — do not break
 
-- **MQTT topic structure is sacred**: `{baseTopic}/{commands|state|status|warnings|events}`.
+- **MQTT topic structure is sacred**: `{baseTopic}/{commands|state|warnings|events}`.
 - **Command format**: `{"command": "actionName", "param": "value"}`. This is the contract with PxO, PxC, PxT, and operator UIs.
 - **Readiness marker**: PFx creates `/run/paradox/pfx.ready` after init. The game engine startup gates on this file. Do not remove or rename it.
 - **Service startup order**: `mosquitto` → `pfx.service` → game service.
