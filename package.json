@@ -32,9 +32,7 @@
     "dependencies": {
         "ini": "^4.1.1",
         "mqtt": "^5.13.2",
-        "node-mpv": "^1.5.0",
-        "zigbee-herdsman": "^3.4.20",
-        "zwave-js": "^15.21.0"
+        "node-mpv": "^1.5.0"
     },
     "devDependencies": {
         "aedes": "^0.51.2",
