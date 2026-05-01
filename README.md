@@ -32,7 +32,7 @@ Full walkthrough: [docs/QUICK_START_PFX.md](docs/QUICK_START_PFX.md).
 
 - **Screens** — image, video, queued playback, browser overlays (mpv + Chromium)
 - **Audio** — three concurrent categories per zone (background music, speech, SFX) with automatic ducking
-- **Lights** — Hue, WiZ, LIFX, Shelly direct; Z-Wave / Zigbee / Thread via PZB bridge
+- **Lights** — Hue, WiZ, LIFX, Shelly direct; Z-Wave / Zigbee / Thread via PxB bridge
 - **Inputs & relays** — GPIO via Pio, button events, switch control
 - **Operational** — retained MQTT state, lifecycle status, structured warnings/events, systemd unit
 

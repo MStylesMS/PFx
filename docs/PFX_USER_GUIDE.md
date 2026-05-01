@@ -116,9 +116,9 @@ Supported backends:
 - **WiZ** — direct UDP. See [QUICK_START_WIZ.md](QUICK_START_WIZ.md).
 - **LIFX** — direct LAN protocol.
 - **Shelly** — HTTP/MQTT relays and dimmers. See [QUICK_START_SHELLY.md](QUICK_START_SHELLY.md).
-- **Z-Wave** and **Zigbee** — delegated to PZB (Paradox Z Bridge) over MQTT. PFx forwards commands and consumes events. See [QUICK_START_ZWAVE.md](QUICK_START_ZWAVE.md) and [QUICK_START_ZIGBEE.md](QUICK_START_ZIGBEE.md).
+- **Z-Wave** and **Zigbee** — delegated to PxB (Paradox Bridge) over MQTT. PFx forwards commands and consumes events. See [QUICK_START_ZWAVE.md](QUICK_START_ZWAVE.md) and [QUICK_START_ZIGBEE.md](QUICK_START_ZIGBEE.md).
 
-> Z-Wave/Zigbee hardware is owned by PZB. Direct in-PFx radio code is being retired; use PZB as the bridge.
+> Z-Wave/Zigbee hardware is owned by PxB. Direct in-PFx radio code is being retired; use PxB as the bridge.
 
 Example:
 
@@ -131,7 +131,7 @@ Example:
 
 ## 6. Input zones
 
-Input zones translate hardware events (Shelly i4 buttons, contact sensors, GPIO via Pio, Z-Wave/Zigbee sensors via PZB) into MQTT events on the zone's `events` topic, plus a retained device-state snapshot on `state`.
+Input zones translate hardware events (Shelly i4 buttons, contact sensors, GPIO via Pio, Z-Wave/Zigbee sensors via PxB) into MQTT events on the zone's `events` topic, plus a retained device-state snapshot on `state`.
 
 A simple INI snippet:
 
@@ -182,7 +182,7 @@ PFx reads a single INI file at startup (path passed on the command line, typical
 
 - Global settings (MQTT broker, log level, media root)
 - One section per zone (`[screen:main]`, `[audio:main]`, `[lights:room]`, `[input:frontdoor]`)
-- Optional backend blocks (Hue bridge, WiZ subnet, Shelly endpoints, PZB topic base)
+- Optional backend blocks (Hue bridge, WiZ subnet, Shelly endpoints, PxB topic base)
 
 Minimal example:
 
