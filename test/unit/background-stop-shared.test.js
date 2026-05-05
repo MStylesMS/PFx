@@ -16,6 +16,7 @@ function makeMockAudioManager() {
         fadeBackgroundMusic: jest.fn().mockResolvedValue({ success: true }),
         playSpeech: jest.fn().mockResolvedValue({ success: true }),
         clearSpeechQueue: jest.fn().mockResolvedValue(),
+        stopSpeech: jest.fn().mockResolvedValue(),
         fadeSpeech: jest.fn(),
         skipSpeech: jest.fn(),
         pauseSpeech: jest.fn(),
@@ -119,5 +120,34 @@ describe('Shared background stop flow', () => {
         expect(zone._stopAudio).toHaveBeenCalledWith(0);
         expect(zone.currentState.status).toBe('idle');
         expect(mqtt.publish).toHaveBeenCalledWith('test/audio/state', expect.objectContaining({ status: 'idle' }), { retain: true });
+    });
+
+    test('AudioZone stopSpeech fade uses stopSpeech callback and resets status', async () => {
+        const mqtt = { publish: jest.fn() };
+        const zone = new AudioZone(makeAudioConfig(), mqtt, null);
+        zone.mpvInstances.speech = { status: 'playing' };
+        zone.audioManager.fadeSpeech.mockImplementation(async (_target, _duration, callback) => {
+            await callback();
+            return { success: true };
+        });
+
+        await zone._stopSpeech(2);
+
+        expect(zone.audioManager.fadeSpeech).toHaveBeenCalledWith(0, 2000, expect.any(Function));
+        expect(zone.audioManager.stopSpeech).toHaveBeenCalledTimes(1);
+        expect(zone.mpvInstances.speech.status).toBe('idle');
+        expect(mqtt.publish).toHaveBeenCalledWith('test/audio/events', expect.objectContaining({ speech_stopped: true, fade_time: 2 }), {});
+    });
+
+    test('ScreenZone stopSpeech fade failure falls back to clearSpeechQueue', async () => {
+        const mqtt = { publish: jest.fn() };
+        const zone = new ScreenZone(makeScreenConfig(), mqtt, null);
+        zone.audioManager.fadeSpeech.mockResolvedValue({ success: false, error: 'fade failed' });
+
+        await zone._stopSpeech(2);
+
+        expect(zone.audioManager.fadeSpeech).toHaveBeenCalledWith(0, 2000, expect.any(Function));
+        expect(zone.audioManager.clearSpeechQueue).toHaveBeenCalledTimes(1);
+        expect(mqtt.publish).toHaveBeenCalledWith('test/screen/events', expect.objectContaining({ speech_stopped: true }), {});
     });
 });
