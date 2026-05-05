@@ -12,7 +12,9 @@ Contents:
 
 ## Quick Overview
 
-ParadoxFX is configured using INI files. Pick a sample config from `config/` (e.g., `config/pfx-pi5-hh.ini`) and copy to `pfx.ini`. Sections are typically: `[mqtt]`, `[global]`, `[screen:<name>]`, `[audio:<name>]`, `[light:<id>]`, `[relay:<id>]`, `[controller:<type>]`.
+ParadoxFX is configured using INI files. Pick a sample config from `config/` (e.g., `config/pfx-pi5-hh.ini`) and copy to `pfx.ini`. Active PFx configs support `[mqtt]`, `[global]`, `[screen:<name>]`, and `[audio:<name>]` sections.
+
+Removed section types such as `[light:*]`, `[input:*]`, `[relay:*]`, `[output:*]`, and `[controller:*]` are no longer supported by PFx. Startup now fails fast if those sections are present. Move that hardware integration to PxB or keep it in archived migration docs only.
 
 General advice:
 - Keep environment- and deployment-specific settings (like X11 DISPLAY or mpvOntop) in local `pfx.ini` and out of shared branches when necessary.
@@ -49,7 +51,6 @@ General advice:
 | heartbeat_enabled | boolean | No | false | Enable heartbeat messages |
 | heartbeat_interval | integer(ms) | No | 10000 | Heartbeat interval in ms |
 | heartbeat_topic | string | No | paradox/heartbeat | Heartbeat MQTT topic |
-| lights_config | path | No | (none) | Optional path to supplemental lighting INI file. Relative paths are resolved from the main config file directory. `[global]` and `[mqtt]` sections from the supplemental file are ignored; device sections are merged. |
 | ducking_adjust | integer (negative %) | No | 0 | Background reduction percent applied while any duck trigger active (0 = no duck). Expressed as negative percentage (e.g. -40). |
 | pulseaudio_wait_ms | integer (ms) | No | 6000 | Max time PFX will wait at startup for PulseAudio to become responsive before skipping combined sink setup. Increase if you see early "PulseAudio not available" warnings on boot. |
 | pulseaudio_wait_interval_ms | integer (ms) | No | 500 | Poll interval while waiting for PulseAudio readiness. Lower for finer granularity; keep >=250ms to avoid excess polling. |
@@ -146,190 +147,15 @@ Audio-only zones. Common keys:
 - Default fallback is 100% if max_volume is not specified
 -->
 
-### [light:<id>] and [lightgroup:<id>] / [light-group:<id>]
+### Deprecated Section Types
 
-Lighting zones now initialize in PFx directly. Supported section naming variants include `lightgroup` and `light-group`.
+PFx no longer supports `[light:*]`, `[light-group:*]`, `[input:*]`, `[relay:*]`, `[output:*]`, or `[controller:*]` sections in active runtime configuration.
 
-| Setting | Type | Req | Default | Description |
-|---|---:|:--:|---|---|
-| type | string | Yes | light | `light`, `light_group`, `light-group`, or `lightgroup` |
-| topic | string | Yes | N/A | Zone base MQTT topic (`.../lights`) |
-| backend | string | No | passthrough | `passthrough`, `wiz`, `shelly`, `hue`, `lifx`, `zwave`, or `zigbee` |
-| generation | string/int | No | - | Device protocol generation (for example Shelly gen1/gen2) |
-| profile | string | No | - | Device behavior profile (`switch`, `dimmer`, `rgbw`, `input`) |
-| model | string | No | - | Device model identifier (metadata/routing hint) |
-| controller | string | No | - | Optional legacy alias. If `backend` omitted, `controller=wiz` selects WiZ backend. |
-| forward_topic | string | No | `{topic}/backend-commands` | Passthrough backend forward target |
-| bulb_ip | string | No | - | Required for WiZ backend |
-| wiz_port | integer | No | 38899 | WiZ UDP port |
-| scene_map | JSON | No | built-in scenes | Optional scene override map, keyed by scene name |
-| device_id / node_id | string | No | - | Optional device identifier |
-| lights / devices / device_list | CSV | No | - | Group membership list for light groups |
-| bulb_ips | CSV | No | - | Optional direct IP target list for `light-group` fan-out when not referencing individual light sections |
-| shelly_host | string | No | - | Shelly host/IP for backend `shelly` |
-| shelly_auth_user / shelly_auth_pass | string | No | - | Optional Shelly HTTP auth |
-| channel | integer | No | 0 | Output channel/component index |
-| target_hosts | CSV | No | - | Optional host fan-out list for backend groups |
-| hue_bridge_host | string | No* | - | Bridge IP or hostname — required for `backend = hue` |
-| hue_app_key | string | No* | - | Hue v2 app key obtained via `hue-pair.sh` — required for `backend = hue` |
-| hue_resource_id | string | No* | - | `grouped_light` service RID (from pairing script) — required for `backend = hue` |
-| hue_resource_type | string | No | `room` | `room`, `zone`, or `light` |
-| hue_profile | string | No | `color` | `color` (XY), `ct` (color-temperature mirek), or `dim` (brightness only) |
-| lifx_port | integer | No | `56700` | UDP port for LIFX LAN protocol — required for `backend = lifx` |
-| lifx_kelvin | integer | No | `3500` | Default white-point kelvin (1500–9000) for LIFX commands without explicit kelvin |
-| zwave_mode | string | No | `direct` | Z-Wave mode; currently only `direct` is implemented |
-| zwave_port | string | No* | - | Serial path for Z-Wave controller (for example `/dev/zwave`) — required for `backend = zwave` |
-| zwave_node_id | integer | No* | - | Z-Wave node id — required for `backend = zwave` |
-| zwave_type | string | No | `binary_switch` | `binary_switch`, `multilevel_switch`, or `color_dimmer` |
-| zwave_poll_ms | integer | No | - | Optional poll interval hint for future runtime polling |
-| zwave_security_mode | string | No | `none` | `none`, `s0`, or `s2` metadata hint |
-| zigbee_mode | string | No | `direct` | Zigbee mode; currently only `direct` is implemented |
-| zigbee_port | string | No* | - | Serial path for Zigbee coordinator (for example `/dev/zigbee`) — required for `backend = zigbee` |
-| zigbee_adapter | string | No | `ember` | Coordinator adapter type; HUSBZB-1 uses `ember` |
-| zigbee_ieee | string | No* | - | Device IEEE address — required for `backend = zigbee` |
-| zigbee_type | string | No | `onoff` | `onoff`, `dim`, `ct`, or `color` |
-| zigbee_db_path | string | No | `/opt/paradox/config/zigbee.db` | Coordinator database file path |
+- If those sections are present, PFx startup fails with an unsupported device type error.
+- Direct lighting, relay, and input integrations were removed from PFx or moved to PxB.
+- Keep legacy examples in archived migration docs only; do not use them in active `pfx.ini` files.
 
-Example (passthrough):
-
-```ini
-[light:room-lights]
-type = light
-topic = paradox/agent22/lights
-backend = passthrough
-forward_topic = paradox/agent22/lights/native/commands
-```
-
-Example (WiZ native):
-
-```ini
-[light:room-lights]
-type = light
-topic = paradox/agent22/lights
-backend = wiz
-bulb_ip = 192.168.1.120
-scene_map = {"normal":{"state":true,"dimming":80},"off":{"state":false}}
-```
-
-Example (room group fan-out):
-
-```ini
-[light:wiz-84]
-type = light
-topic = paradox/agent22/lights/wiz-84
-backend = wiz
-bulb_ip = 10.0.0.84
-
-[light:wiz-109]
-type = light
-topic = paradox/agent22/lights/wiz-109
-backend = wiz
-bulb_ip = 10.0.0.109
-
-[light-group:room-lights]
-type = light-group
-topic = paradox/agent22/lights
-backend = wiz
-devices = wiz-84,wiz-109
-```
-
-Example (Hue room via v2 API):
-
-```ini
-[light:hue-main-room]
-type              = light
-backend           = hue
-topic             = paradox/houdini/lights/main
-
-hue_bridge_host   = 192.168.1.100
-hue_app_key       = your-app-key-from-hue-pair-sh
-hue_resource_id   = xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx   ; grouped_light service RID
-hue_resource_type = room
-hue_profile       = color
-```
-
-Use `scripts/hue-pair.sh [bridge-ip]` to obtain the app key and resource IDs. See `docs/QUICK_START_HUE.md` for a full walkthrough.
-
-Example (LIFX LAN):
-
-```ini
-[light:lifx-overhead]
-type              = light
-backend           = lifx
-topic             = paradox/houdini/lights/lifx
-bulb_ip           = 192.168.1.55
-lifx_port         = 56700          ; optional, default 56700
-lifx_kelvin       = 3500           ; optional default white-point kelvin
-```
-
-Example (Z-Wave direct):
-
-```ini
-[light:entry-switch]
-type = light
-backend = zwave
-topic = paradox/houdini/lights/entry-switch
-zwave_mode = direct
-zwave_port = /dev/zwave
-zwave_node_id = 12
-zwave_type = binary_switch
-```
-
-See `docs/QUICK_START_ZWAVE.md` for setup and troubleshooting.
-
-Example (Zigbee direct):
-
-```ini
-[light:hall-color]
-type = light
-backend = zigbee
-topic = paradox/houdini/lights/hall-color
-zigbee_mode = direct
-zigbee_port = /dev/zigbee
-zigbee_adapter = ember
-zigbee_ieee = 0x00158d0002abcdef
-zigbee_type = color
-```
-
-See `docs/QUICK_START_ZIGBEE.md` for setup and troubleshooting.
-
-### [input:<id>]
-
-Input zones consume external event topics (for example Shelly Plus i4 button events) and can map them to MQTT commands.
-
-| Setting | Type | Req | Default | Description |
-|---|---:|:--:|---|---|
-| type | string | Yes | input | Must be `input` |
-| topic | string | Yes | N/A | Base topic for PFx input zone state/events |
-| backend | string | No | generic | Backend family (`shelly`, etc.) |
-| generation | string/int | No | - | Device generation marker |
-| profile | string | No | input | Input device profile |
-| model | string | No | - | Device model (for example `plus-i4`) |
-| input_topic | string | Yes* | - | MQTT topic to subscribe for events |
-| input_topics | CSV | Yes* | - | Multiple event topics |
-| input_map | JSON | No | {} | Event-to-command mapping (key: `input.event` or event-only fallback) |
-
-Example:
-
-```ini
-[input:shelly-i4-main]
-type = input
-topic = paradox/agent22/inputs/main
-backend = shelly
-generation = 2
-profile = input
-model = plus-i4
-input_topic = shellyplusi4-abc123/events/rpc
-input_map = {"0.single_push":{"topic":"paradox/agent22/lights/commands","payload":{"command":"setColorScene","scene":"normal"}}}
-```
-
-### [relay:<id>]
-
-Relay/controller sections define switching endpoints and include `controller`, `node_id`/`device_id`, and `topic`.
-
-### [controller:<type>]
-
-Controller-global settings (serial_port, bridge_ip, polling_interval, timeout, max_retries).
+For active PFx deployments, define only screen and audio zones.
 
 ---
 

@@ -3,7 +3,7 @@
 [![CI](https://github.com/MStylesMS/PFx/actions/workflows/ci.yml/badge.svg)](https://github.com/MStylesMS/PFx/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-**PFx is the hardware abstraction layer for escape rooms.** It takes MQTT commands from a game engine and orchestrates screens, multi-zone audio with ducking, browser overlays, lights, and relays — running as a single Node.js service on a Raspberry Pi.
+**PFx is the hardware abstraction layer for escape rooms.** It takes MQTT commands from a game engine and orchestrates screens, multi-zone audio with ducking, and browser overlays — running as a single Node.js service on a Raspberry Pi.
 
 <!-- TODO(2.3): replace with demo GIF / screenshot of PFx running a real cue -->
 <!-- ![PFx demo](docs/assets/pfx-demo.gif) -->
@@ -32,9 +32,9 @@ Full walkthrough: [docs/QUICK_START_PFX.md](docs/QUICK_START_PFX.md).
 
 - **Screens** — image, video, queued playback, browser overlays (mpv + Chromium)
 - **Audio** — three concurrent categories per zone (background music, speech, SFX) with automatic ducking
-- **Lights** — Hue, WiZ, LIFX, Shelly direct; Z-Wave / Zigbee / Thread via PxB bridge
-- **Inputs & relays** — GPIO via Pio, button events, switch control
 - **Operational** — retained MQTT state, lifecycle status, structured warnings/events, systemd unit
+
+PFx no longer supports direct lighting, relay, or input zones in active runtime configuration. Keep active PFx configs limited to `[screen:*]` and `[audio:*]` sections; migrate hardware integrations to PxB.
 
 ## Documentation
 

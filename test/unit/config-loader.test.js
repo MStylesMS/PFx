@@ -122,6 +122,24 @@ RESOLUTION_FALLBACK= 1024x768@60
             expect(device.resolutionFallback).toBe('1024x768@60');
         });
 
+        test('should reject removed device types with a migration message', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[light:room]
+type=light
+topic=paradox/room/lights
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+
+            await expect(ConfigLoader.load('test.ini')).rejects.toThrow(
+                "Unsupported device type 'light' for section light:room. PFx currently supports only screen and audio zones. Lights, relays, inputs, outputs, and controller backends were removed or moved to PxB."
+            );
+        });
+
         test('should handle file read errors', async () => {
             fs.readFile.mockRejectedValue(new Error('File not found'));
 

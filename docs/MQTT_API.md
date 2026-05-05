@@ -2,7 +2,7 @@
 
 This document provides the complete MQTT API specification for ParadoxFX (Paradox Effects), including command formats, message structures, topic patterns, and response formats.
 
-**Note**: This documentation reflects only the currently implemented commands. For a comprehensive list of documented but unimplemented commands, see [MISSING_FUNCTIONS.md](MISSING_FUNCTIONS.md).
+**Note**: This documentation reflects only the currently implemented PFx commands. Active PFx runtime support is limited to screen/media and audio zones. Legacy light/relay material has been removed from the active contract; those integrations now belong in PxB or archived migration docs.
 
 ## Table of Contents
 
@@ -13,8 +13,6 @@ This document provides the complete MQTT API specification for ParadoxFX (Parado
 - [Multi-Zone Audio](#multi-zone-audio)
 - [Screen/Media Commands](#screenmedia-commands)
 - [Multi-Zone Audio Commands](#multi-zone-audio-commands)
-- [Light Commands](#light-commands)
-- [Relay Commands](#relay-commands)
 - [System Messages](#system-messages)
 - [Error Handling](#error-handling)
 - [Examples](#examples)
@@ -144,7 +142,6 @@ paradox/living-room/screen/commands   # Commands to living room screen
 paradox/living-room/screen/state      # State from living room screen
 paradox/living-room/screen/events     # Event notifications
 paradox/living-room/screen/warnings   # Warnings and errors
-paradox/living-room/lights/commands   # Commands to living room lights
 paradox/devices                       # Global heartbeat topic
 ```
 
@@ -979,7 +976,7 @@ paradox/houdini/mirror/state {
 }
 ```
 
-This schema is authoritative for all screen zones. Non-screen devices (lights, relays, audio-only zones) publish simplified `current_state` objects containing the applicable fields (e.g., `status`, `volume`, `errors`, and device-specific keys).
+This schema is authoritative for all screen zones. Audio-only zones publish simplified `current_state` objects containing the applicable fields (for example `status`, `volume`, and error-related keys).
 
 If you want me to also add machine-readable JSON Schema for these messages (for validation or UI generation), I can add that to the docs as a follow-up.
 
@@ -1855,148 +1852,13 @@ Get current device configuration.
 }
 ```
 
-## Light Commands
+## Removed Commands
 
-Light devices control individual lights and light groups.
+Light and relay commands are no longer part of the active PFx MQTT contract.
 
-### Basic Light Control
-
-#### setColor
-
-Set light color and brightness.
-
-**Format:**
-
-```json
-{
-  "command": "setColor",
-  "color": "#FF6400",
-  "brightness": 75
-}
-```
-
-**Parameters:**
-
-- `Color` (required): Hex color code or RGB object
-- `Brightness` (optional): Brightness level 0-100
-
-#### on
-
-Turn light on.
-
-**Format:**
-
-```json
-{
-  "command": "on",
-  "brightness": 100
-}
-```
-
-#### off
-
-Turn light off.
-
-**Format:**
-
-```json
-{
-  "command": "off"
-}
-```
-
-### Light Group Control
-
-#### setGroupColor
-
-Set color for all lights in group.
-
-**Format:**
-
-```json
-{
-  "command": "setGroupColor",
-  "color": {"r": 255, "g": 100, "b": 0},
-  "brightness": 80,
-  "lights": ["light1", "light2"]
-}
-```
-
-#### fade
-
-Fade lights to target brightness over time.
-
-**Format:**
-
-```json
-{
-  "command": "fade",
-  "brightness": 50,
-  "duration": 30000
-}
-```
-
-**Parameters:**
-
-- `Brightness` (required): Target brightness 0-100
-- `Duration` (required): Fade duration in milliseconds
-
-## Relay Commands
-
-Relay devices control switches, outlets, and other on/off devices.
-
-#### on
-
-Turn relay on.
-
-**Format:**
-
-```json
-{
-  "command": "on"
-}
-```
-
-#### off
-
-Turn relay off.
-
-**Format:**
-
-```json
-{
-  "command": "off"
-}
-```
-
-#### toggle
-
-Toggle relay state.
-
-**Format:**
-
-```json
-{
-  "command": "toggle"
-}
-```
-
-#### pulse
-
-Pulse relay (on, then off after delay).
-
-**Format:**
-
-```json
-{
-  "command": "pulse",
-  "duration": 5000
-}
-```
-
-**Parameters:**
-
-- `Duration` (optional): Pulse duration in milliseconds, default: 1000
+- Use PFx for screen/media and audio zones only.
+- Move lighting, relay, and sensor integrations to PxB.
+- Treat older light/relay examples in archived docs as migration history, not active API surface.
 
 ## System Messages
 
@@ -2122,29 +1984,6 @@ mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
   -m '{"command": "stopAll"}'
 ```
 
-### Light Control Sequence
-
-1. **Turn on lights:**
-
-```bash
-mosquitto_pub -h localhost -t "paradox/living-room/lights/commands" \
-  -m '{"command": "on", "brightness": 100}'
-```
-
-2. **Set warm color:**
-
-```bash
-mosquitto_pub -h localhost -t "paradox/living-room/lights/commands" \
-  -m '{"command": "setColor", "color": "#FF8C00", "brightness": 75}'
-```
-
-3. **Fade to dim:**
-
-```bash
-mosquitto_pub -h localhost -t "paradox/living-room/lights/commands" \
-  -m '{"command": "fade", "brightness": 25, "duration": 10000}'
-```
-
 ### Monitoring Status Updates
 
 Subscribe to device state:
@@ -2174,11 +2013,6 @@ type = screen
 topic = paradox/living-room/screen
 media_dir = /opt/media/living-room
 volume = 80
-
-[light:living-room-hue]
-type = light
-topic = paradox/living-room/lights
-controller = hue
 ```
 
 **Key Configuration Parameters:**
@@ -2187,4 +2021,4 @@ controller = hue
 - `media_dir`: Base directory for media files (images, videos, audio)
 - `volume`: Base volume level for the device (0-100)
 
-For complete configuration options, see the [Configuration Guide](CONFIGURATION.md).
+For complete configuration options, see [CONFIG_INI.md](CONFIG_INI.md).
