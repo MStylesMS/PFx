@@ -1,5 +1,10 @@
 # WiZ Quick Start (PFx)
 
+> Deprecated: active PFx runtime no longer supports `light` zones or direct WiZ integration.
+> Keep this document only for migration history on legacy installs. New hardware
+> integrations should move to PxB, and active PFx configs should contain only `screen`
+> and `audio` sections.
+
 This guide covers the current PFx lighting implementation for WiZ.
 
 ## Current Capabilities

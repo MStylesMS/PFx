@@ -331,9 +331,7 @@ bridge_username = your-hue-username
 
 ### 7. Framework Provisions
 
-- **Effect Macros**: Framework structure for lighting effects (FADE, BLINK, etc.) to be implemented later
 - **Process Managers**: Framework for managing external media player instances (up to 8 concurrent) to be implemented later
-- **External Controllers**: Placeholder classes for Hue, WiZ, Zigbee, and Z-Wave integrations
 
 ### 8. Media Player Support
 
@@ -480,8 +478,6 @@ For detailed project structure and file organization, see [Appendix B: Project S
 │   │   ├── wiz-controller.js       # WiZ smart lighting
 │   │   ├── zigbee-controller.js    # Zigbee coordinator management
 │   │   └── zwave-controller.js     # Z-Wave network management
-│   ├── effects/
-│   │   └── effect-engine.js        # Multi-zone effect coordination
 │   └── utils/
 │       ├── logger.js               # Enhanced multi-zone logging
 │       └── utils.js                # Platform detection and optimization

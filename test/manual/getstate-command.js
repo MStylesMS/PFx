@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Test for getState command implementation
- * 
- * Tests that both ScreenZone and AudioZone properly handle getState commands
- * and publish status immediately when requested.
+ * Manual MQTT harness for the getState command.
+ *
+ * This is intentionally not a Jest unit test. Run it directly against a live PFx
+ * instance when you want to verify retained state publication end-to-end.
  */
 
 const mqtt = require('mqtt');
@@ -15,31 +15,28 @@ async function testGetStateCommand() {
         let testTimeout;
 
         client.on('connect', () => {
-            console.log('🔗 Connected to MQTT broker');
+            console.log('Connected to MQTT broker');
 
-            // Subscribe to state topic
             client.subscribe('paradox/houdini/mirror/state', (err) => {
                 if (err) {
                     reject(new Error(`Failed to subscribe: ${err.message}`));
                     return;
                 }
 
-                console.log('📡 Subscribed to state topic');
+                console.log('Subscribed to state topic');
 
-                // Send getState command
                 const command = { command: 'getState' };
-                client.publish('paradox/houdini/mirror/commands', JSON.stringify(command), (err) => {
-                    if (err) {
-                        reject(new Error(`Failed to publish command: ${err.message}`));
+                client.publish('paradox/houdini/mirror/commands', JSON.stringify(command), (publishError) => {
+                    if (publishError) {
+                        reject(new Error(`Failed to publish command: ${publishError.message}`));
                         return;
                     }
 
-                    console.log('📤 Sent getState command');
+                    console.log('Sent getState command');
 
-                    // Set timeout for test
                     testTimeout = setTimeout(() => {
                         if (!statusReceived) {
-                            reject(new Error('❌ Timeout: No state message received within 5 seconds'));
+                            reject(new Error('Timeout: no state message received within 5 seconds'));
                         }
                     }, 5000);
                 });
@@ -53,23 +50,20 @@ async function testGetStateCommand() {
 
                 try {
                     const state = JSON.parse(message.toString());
-                    console.log('✅ State message received');
-                    console.log('📊 State data:', {
+                    console.log('State message received');
+                    console.log('State data:', {
                         zone: state.zone || 'unknown',
                         status: state.current_state?.status || 'unknown',
                         lastCommand: state.current_state?.lastCommand || 'unknown'
                     });
 
-                    // Verify it contains expected fields
                     if (state.current_state && typeof state.current_state === 'object') {
-                        console.log('✅ State message has valid structure');
                         resolve();
                     } else {
-                        reject(new Error('❌ State message missing current_state field'));
+                        reject(new Error('State message missing current_state field'));
                     }
-
                 } catch (parseError) {
-                    reject(new Error(`❌ Failed to parse state message: ${parseError.message}`));
+                    reject(new Error(`Failed to parse state message: ${parseError.message}`));
                 }
 
                 client.end();
@@ -78,36 +72,26 @@ async function testGetStateCommand() {
 
         client.on('error', (err) => {
             clearTimeout(testTimeout);
-            reject(new Error(`❌ MQTT error: ${err.message}`));
+            reject(new Error(`MQTT error: ${err.message}`));
         });
     });
 }
 
-// Run test if called directly
 if (require.main === module) {
-    console.log('🧪 Testing getState command implementation...');
+    console.log('Testing getState command implementation...');
     console.log('===============================================');
 
     testGetStateCommand()
         .then(() => {
             console.log('===============================================');
-            console.log('✅ getState command test PASSED');
-            console.log('🎉 Implementation working correctly!');
+            console.log('getState command test passed');
             process.exit(0);
         })
         .catch((error) => {
             console.log('===============================================');
-            console.log('❌ getState command test FAILED');
-            console.error('💥 Error:', error.message);
+            console.error('getState command test failed:', error.message);
             process.exit(1);
         });
-} else {
-    // Placeholder so Jest doesn't treat this script harness as empty
-    describe('getState command placeholder', () => {
-        test('placeholder – manual script harness', () => {
-            expect(true).toBe(true);
-        });
-    });
 }
 
 module.exports = { testGetStateCommand };

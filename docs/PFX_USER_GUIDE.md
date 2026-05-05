@@ -205,6 +205,6 @@ For desktop autostart instead of systemd, see [../config/](../config) and `scrip
 - [MQTT_API.md](MQTT_API.md) — every command and event
 - [SPEC.md](SPEC.md) — functional specification
 - [json-schemas/](json-schemas/) — machine-readable command/event schemas
-- [QUICK_START_HUE.md](QUICK_START_HUE.md), [QUICK_START_WIZ.md](QUICK_START_WIZ.md), [QUICK_START_SHELLY.md](QUICK_START_SHELLY.md), [QUICK_START_ZIGBEE.md](QUICK_START_ZIGBEE.md), [QUICK_START_ZWAVE.md](QUICK_START_ZWAVE.md) — lighting backend setup
+- [QUICK_START_HUE.md](QUICK_START_HUE.md), [QUICK_START_WIZ.md](QUICK_START_WIZ.md), [QUICK_START_SHELLY.md](QUICK_START_SHELLY.md), [QUICK_START_ZIGBEE.md](QUICK_START_ZIGBEE.md), [QUICK_START_ZWAVE.md](QUICK_START_ZWAVE.md) — archived migration guides for removed lighting/input integrations
 - [../scripts/README.md](../scripts/README.md) — operational scripts
 - [../config/pfx.service](../config/pfx.service) — sample systemd unit
