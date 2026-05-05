@@ -99,4 +99,29 @@ describe('MpvZoneManager startup helpers', () => {
         expect(manager.ipcSocket).toBe(newSocket);
         createConnection.mockRestore();
     });
+
+    test('successful IPC responses clear pending command timeout', async () => {
+        jest.useFakeTimers();
+
+        try {
+            const manager = makeManager();
+            manager.ipcSocket = { write: jest.fn() };
+
+            const commandPromise = manager._sendIpcCommand('get_property', ['duration']);
+
+            expect(jest.getTimerCount()).toBe(1);
+
+            manager._handleIpcResponse(Buffer.from(JSON.stringify({
+                request_id: 1,
+                error: 'success',
+                data: 42
+            }) + '\n'));
+
+            await expect(commandPromise).resolves.toBe(42);
+            expect(manager.pendingCommands.size).toBe(0);
+            expect(jest.getTimerCount()).toBe(0);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
 });
