@@ -216,4 +216,24 @@ describe('MpvZoneManager startup helpers', () => {
             jest.useRealTimers();
         }
     });
+
+    test('scheduled restart is canceled when shutdown happens before delay elapses', async () => {
+        jest.useFakeTimers();
+
+        try {
+            const manager = makeManager({ mpvRestartDelayMs: 250 });
+            manager._restartInternal = jest.fn().mockResolvedValue();
+
+            manager._scheduleRestart(1, 'SIGTERM');
+            expect(jest.getTimerCount()).toBe(1);
+
+            await manager.shutdown();
+            await jest.advanceTimersByTimeAsync(250);
+
+            expect(manager._restartInternal).not.toHaveBeenCalled();
+            expect(manager.isRestarting).toBe(false);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
 });
