@@ -81,4 +81,43 @@ describe('Shared background stop flow', () => {
         expect(zone.mpvInstances.background.status).toBe('idle');
         expect(mqtt.publish).toHaveBeenCalledWith('test/screen/events', expect.objectContaining({ command: 'stopBackground' }), {});
     });
+
+    test('AudioZone stopAudio stops background conditionally and uses speech stop path', async () => {
+        const mqtt = { publish: jest.fn() };
+        const zone = new AudioZone(makeAudioConfig(), mqtt, null);
+        zone.currentState.backgroundMusic = { playing: true, file: 'bg.mp3', volume: 80, isDucked: false };
+        zone._stopBackgroundMusic = jest.fn().mockResolvedValue();
+        zone._stopSpeech = jest.fn().mockResolvedValue();
+
+        await zone._stopAudio(2);
+
+        expect(zone._stopBackgroundMusic).toHaveBeenCalledWith(2);
+        expect(zone._stopSpeech).toHaveBeenCalledWith(2);
+        expect(mqtt.publish).toHaveBeenCalledWith('test/audio/events', expect.objectContaining({ all_audio_stopped: true, fade_time: 2 }), {});
+    });
+
+    test('ScreenZone stopAudio always stops background and clears speech queue', async () => {
+        const mqtt = { publish: jest.fn() };
+        const zone = new ScreenZone(makeScreenConfig(), mqtt, null);
+        zone._stopBackgroundMusic = jest.fn().mockResolvedValue();
+
+        await zone._stopAudio(1);
+
+        expect(zone._stopBackgroundMusic).toHaveBeenCalledWith(1);
+        expect(zone.audioManager.clearSpeechQueue).toHaveBeenCalledTimes(1);
+        expect(mqtt.publish).toHaveBeenCalledWith('test/screen/events', expect.objectContaining({ all_audio_stopped: true, fade_time: 1 }), {});
+    });
+
+    test('stopAll sets zone status idle after stopAudio completes', async () => {
+        const mqtt = { publish: jest.fn() };
+        const zone = new AudioZone(makeAudioConfig(), mqtt, null);
+        zone.currentState.status = 'playing';
+        zone._stopAudio = jest.fn().mockResolvedValue();
+
+        await zone._stopAll(0);
+
+        expect(zone._stopAudio).toHaveBeenCalledWith(0);
+        expect(zone.currentState.status).toBe('idle');
+        expect(mqtt.publish).toHaveBeenCalledWith('test/audio/state', expect.objectContaining({ status: 'idle' }), { retain: true });
+    });
 });

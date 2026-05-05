@@ -100,4 +100,25 @@ describe('Phase 9 Telemetry', () => {
         const payload = success[1];
         expect(payload.parameters.effective_volume).toBeDefined();
     });
+
+    test('ScreenZone sound effect telemetry event presence', async () => {
+        const mqtt = makeMockMqtt();
+        const zone = new ScreenZone({
+            name: 'sz1',
+            baseTopic: 't/sz1',
+            baseVolumes: { background: 100, speech: 90, effects: 80, video: 95 },
+            duckingAdjust: -40,
+            background_volume: 100,
+            speech_volume: 90,
+            effects_volume: 80,
+            video_volume: 95
+        }, mqtt, {});
+        stubValidate(zone);
+        await zone._playSoundEffect('boom.mp3', { volume: 140 });
+        const eventCall = mqtt.publish.mock.calls.find(c => /sound_effect_played/.test(JSON.stringify(c[1])));
+        expect(eventCall).toBeTruthy();
+        const payload = eventCall[1];
+        expect(payload.volume).toBeDefined();
+        expect(payload.pre_duck).toBeDefined();
+    });
 });
