@@ -13,7 +13,8 @@ ParadoxFX (PFx) is a Node.js media and effects controller. It receives MQTT comm
 7. [Configuration (INI)](#7-configuration-ini)
 8. [Operational tooling](#8-operational-tooling)
 9. [Deployment](#9-deployment)
-10. [Further reading](#10-further-reading)
+10. [Testing an install](#10-testing-an-install)
+11. [Further reading](#11-further-reading)
 
 ---
 
@@ -198,7 +199,31 @@ For desktop autostart instead of systemd, see [../config/](../config) and `scrip
 
 ---
 
-## 10. Further reading
+## 10. Testing an install
+
+Use the interactive install test after PFx is running and your outputs are wired. It asks which outputs to cover, publishes the current screen/audio/browser smoke commands one step at a time, prompts for pass or fail after each step, and writes a markdown report under `test/manual/reports/` for follow-up fixes.
+
+Recommended entrypoints:
+
+```bash
+npm run test:install
+```
+
+Compatibility wrapper:
+
+```bash
+./test/manual/test-all.sh
+```
+
+The script starts by asking whether to test HDMI0, HDMI1, and analog audio where those options are valid for the detected Pi model. It then reads your PFx config path, suggests command topics from the configured zones when possible, asks for the media prefix, and uses only bundled assets from `PFx/media/*`.
+
+Prerequisites:
+
+- PFx is running and connected to the local MQTT broker.
+- `mosquitto_pub` is installed on the host running the test.
+- Your configured `media_dir` points at `PFx/media` or `PFx/media/test`.
+
+## 11. Further reading
 
 - [QUICK_START_PFX.md](QUICK_START_PFX.md) — single-output Pi quick start
 - [CONFIG_INI.md](CONFIG_INI.md) — complete INI reference

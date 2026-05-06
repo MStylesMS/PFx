@@ -15,6 +15,7 @@
         "test:coverage": "jest --coverage",
         "test:ci": "SKIP_INTEGRATION_TESTS=1 jest --coverage --ci",
         "test:manual": "ENABLE_REAL_PLAYBACK=true jest test/manual/ --verbose --runInBand",
+        "test:install": "node test/manual/install-test.js",
         "check-media": "node -e \"const fs=require('fs'); const path='media/test'; console.log('Media files:', fs.existsSync(path) ? fs.readdirSync(path).filter(f=>!f.startsWith('.')).join(', ') : 'Directory not found');\"",
         "lint": "echo 'No linter configured yet'",
         "validate": "node -c pfx.js"

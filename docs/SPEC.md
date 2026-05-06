@@ -2,7 +2,7 @@
 
 ## Overview
 
-ParadoxFX (formerly ImageSwitcher) is a comprehensive Node.js application designed to control multi-zone media playback, lighting, and automation devices via MQTT commands. Originally designed for Raspberry Pi single-screen installations, it has evolved to support multiple hardware platforms with advanced multi-zone audio/video capabilities for interactive installations, escape rooms, theaters, and immersive experiences.
+ParadoxFX is a Node.js application designed to control multi-zone media playback, audio, and browser-overlay behavior via MQTT commands. Originally designed for Raspberry Pi single-screen installations, it has evolved to support multiple hardware platforms with advanced multi-zone audio/video capabilities for interactive installations, escape rooms, theaters, and immersive experiences.
 
 ## Terminology
 
@@ -203,12 +203,14 @@ ParadoxFX implements intelligent screen power management that balances energy ef
 
 ### 6. Comprehensive Device Configuration
 
-Platform-optimized configurations are provided as templates for each supported hardware platform. All device configurations are stored in a single `pfx.ini` file using section-based format:
+Platform-optimized configurations are provided as templates for each supported hardware platform. All active PFx configurations are stored in a single `pfx.ini` file using section-based format:
 
-- Single INI file contains all device types (screens, lights, relays, audio zones)
-- Each device gets its own section with platform-specific optimizations
+- Single INI file contains active screen and audio zones
+- Each zone gets its own section with platform-specific optimizations
 - All devices share a single MQTT broker connection with intelligent routing
 - Enhanced audio system configuration with three-subsystem architecture
+
+Removed section types such as `light`, `input`, `relay`, `output`, and `controller` are no longer part of the active PFx runtime contract. Move those hardware integrations to PxB or archived migration docs.
 
 #### **Example: Raspberry Pi 4 Dual-Zone Configuration**
 
@@ -248,17 +250,6 @@ background_music_volume = 70
 effects_volume = 100
 speech_volume = 90
 
-# Lighting integration
-[light:zone1-main]
-type = light
-topic = paradox/zone1/lights/main
-controller = hue
-bridge_ip = 192.168.1.100
-
-[controller:hue]
-type = hue
-bridge_ip = 192.168.1.100
-bridge_username = your-hue-username
 ```
 
 ### 7. Enhanced Architecture
@@ -273,11 +264,11 @@ bridge_username = your-hue-username
 - **Shared MQTT Broker**: All devices and zones use intelligent connection multiplexing  
 - **Enhanced Audio Manager**: Three-subsystem audio architecture with MPV-based playback
 - **Hardware Optimization**: Platform-specific performance tuning and hardware acceleration
-- **Modular Device System**: Extensible framework for screens, lights, relays, and custom devices
+- **Zone-Focused Runtime**: Active runtime support is limited to screen and audio zones
 - **Real-time Coordination**: Subsystem coordination for seamless multi-zone experiences
 - **Device Routing**: Commands are automatically routed to correct device handlers based on MQTT topic
 - **Audio Integration**: Audio effects are tied to specific screen devices
-- **External API Placeholders**: Framework includes placeholders for Hue, WiZ, Zigbee, and Z-Wave controllers
+- **External Hardware Boundary**: Lighting, relay, and sensor ownership now lives in PxB rather than active PFx runtime
 
 ### 6. Status and Error Reporting
 
@@ -314,7 +305,7 @@ bridge_username = your-hue-username
 ```json
 {
   "timestamp": "2025-07-03T10:30:00Z",
-  "device_name": "pi4-controller-01", 
+  "device_name": "pi4-host-01", 
   "hostname": "paradox-pi4",
   "ip_address": "192.168.1.100",
   "uptime": 86400000,
@@ -461,10 +452,7 @@ For detailed project structure and file organization, see [Appendix B: Project S
 │   │   ├── mqtt-client.js          # Intelligent MQTT connection management
 │   │   └── message-router.js       # Multi-zone command routing
 │   ├── devices/
-│   │   ├── screen-device.js        # Enhanced screen device with AudioManager
-│   │   ├── light-device.js         # Hue/WiZ/Zigbee light control
-│   │   ├── light-group-device.js   # Synchronized light group management
-│   │   └── relay-device.js         # Z-Wave/Zigbee relay control
+│   │   └── screen-device.js        # Enhanced screen device with AudioManager
 │   ├── media/
 │   │   ├── audio-manager.js        # Three-subsystem audio architecture
 │   │   ├── media-player-factory.js # Platform-optimized player selection
@@ -473,11 +461,10 @@ For detailed project structure and file organization, see [Appendix B: Project S
 │   │   └── players/
 │   │       ├── base-player.js      # Base class for all media players
 │   │       └── mpv-player.js       # Primary MPV media player (images, video, audio)
-│   ├── controllers/
-│   │   ├── hue-controller.js       # Philips Hue bridge integration
-│   │   ├── wiz-controller.js       # WiZ smart lighting
-│   │   ├── zigbee-controller.js    # Zigbee coordinator management
-│   │   └── zwave-controller.js     # Z-Wave network management
+│   ├── zones/
+│   │   ├── audio-zone.js           # Audio zone runtime facade
+│   │   ├── base-zone.js            # Shared zone lifecycle helpers
+│   │   └── screen-zone.js          # Screen/media zone runtime facade
 │   └── utils/
 │       ├── logger.js               # Enhanced multi-zone logging
 │       └── utils.js                # Platform detection and optimization
