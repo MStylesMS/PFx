@@ -9,7 +9,7 @@ ParadoxFX is a Node.js multi-modal media and effects controller. It receives MQT
 - **Runtime**: Node.js 18+
 - **Audio**: PulseAudio with multi-zone ducking (background music, speech, SFX)
 - **Video**: mpv (Pi4+), vlc, fbi for framebuffer
-- **Lights**: Hue, WiZ, LIFX, Shelly (direct); Zigbee + Z-Wave via **PZB** over MQTT
+- **Lights**: Hue, WiZ, LIFX, Shelly (direct); Zigbee + Z-Wave via **PxB** over MQTT
 - **Config**: INI file with `[screen:zone]`, `[audio:zone]`, `[lights:*]`, `[input:*]` sections
 - **Entry point**: `pfx.js`
 
@@ -22,10 +22,10 @@ PFx is one of seven Paradox products. Be aware of siblings when designing contra
 - **PxC** — configurable clock app framework (React build)
 - **PxT** — player terminal kiosk (Electron)
 - **Pio** — GPIO-to-MQTT bridge (C++)
-- **PZB** — Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
+- **PxB** — Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
 - Rooms: `agent22`, `houdinis-challenge` — game packages consumed by PxO + PFx
 
-PFx does **not** own radio hardware directly. PZB does. PFx consumes PZB over MQTT (inputs from `{node.base_topic}/events`, outputs to `{node.base_topic}/commands`). Direct in-PFx Z-Wave/Zigbee code is being retired.
+PFx does **not** own radio hardware directly. PxB does. PFx consumes PxB over MQTT (inputs from `{node.base_topic}/events`, outputs to `{node.base_topic}/commands`). Direct in-PFx Z-Wave/Zigbee code is being retired.
 
 ## How this repo is built — development methodology
 

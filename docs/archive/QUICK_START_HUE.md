@@ -1,5 +1,10 @@
 # Hue v2 Quick Start (PFx)
 
+> Deprecated: active PFx runtime no longer supports `light` zones or direct Hue integration.
+> Use this guide only as migration history for older installs. New hardware integrations
+> should move to PxB, and active PFx configs should contain only `screen` and `audio`
+> sections.
+
 This guide walks through pairing PFx with a Philips Hue bridge using the Clip v2 API and configuring a lighting zone in your INI file.
 
 **Requirements:** `curl`, `jq` (both standard on Raspberry Pi OS)

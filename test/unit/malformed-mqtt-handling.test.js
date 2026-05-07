@@ -184,6 +184,15 @@ describe('Malformed MQTT Message Handling', () => {
             expect(mockZone.messages.some(m => m.type === 'events')).toBe(true);
         });
 
+        test('should not promote deprecated audio field into received event file metadata', async () => {
+            const command = { command: 'playSpeech', audio: 'legacy.mp3', volume: 80 };
+            await zoneManager._handleZoneCommand('testZone', mockZone, command);
+
+            const event = mockZone.messages.find(m => m.type === 'events' && m.data.command_received === 'playSpeech' && m.data.valid === true);
+            expect(event).toBeTruthy();
+            expect(event.data.file).toBeUndefined();
+        });
+
         test('should handle very large messages', async () => {
             const largeCommand = { Command: 'testCommand', data: 'x'.repeat(10000) };
             await zoneManager._handleZoneCommand('testZone', mockZone, largeCommand);

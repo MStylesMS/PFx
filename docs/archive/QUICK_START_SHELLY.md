@@ -1,5 +1,10 @@
 # Shelly Quick Start (PFx)
 
+> Deprecated: active PFx runtime no longer supports Shelly-backed `light` or `input`
+> zones. Keep this guide only for migration history on legacy installs. New hardware
+> integrations should move to PxB, and active PFx configs should contain only `screen`
+> and `audio` sections.
+
 This guide covers the current Shelly implementation in PFx.
 
 ## Supported Scope

@@ -2,7 +2,7 @@
 
 This document provides the complete MQTT API specification for ParadoxFX (Paradox Effects), including command formats, message structures, topic patterns, and response formats.
 
-**Note**: This documentation reflects only the currently implemented commands. For a comprehensive list of documented but unimplemented commands, see [MISSING_FUNCTIONS.md](MISSING_FUNCTIONS.md).
+**Note**: This documentation reflects only the currently implemented PFx commands. Active PFx runtime support is limited to screen/media and audio zones. Legacy light/relay material has been removed from the active contract; those integrations now belong in PxB or archived migration docs.
 
 ## Table of Contents
 
@@ -13,8 +13,6 @@ This document provides the complete MQTT API specification for ParadoxFX (Parado
 - [Multi-Zone Audio](#multi-zone-audio)
 - [Screen/Media Commands](#screenmedia-commands)
 - [Multi-Zone Audio Commands](#multi-zone-audio-commands)
-- [Light Commands](#light-commands)
-- [Relay Commands](#relay-commands)
 - [System Messages](#system-messages)
 - [Error Handling](#error-handling)
 - [Examples](#examples)
@@ -144,7 +142,6 @@ paradox/living-room/screen/commands   # Commands to living room screen
 paradox/living-room/screen/state      # State from living room screen
 paradox/living-room/screen/events     # Event notifications
 paradox/living-room/screen/warnings   # Warnings and errors
-paradox/living-room/lights/commands   # Commands to living room lights
 paradox/devices                       # Global heartbeat topic
 ```
 
@@ -525,13 +522,13 @@ Display an image on the screen.
 ```json
 {
   "command": "setImage",
-  "image": "image.jpg"
+  "file": "image.jpg"
 }
 ```
 
 **Parameters:**
 
-- `Image` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - Supported formats: JPEG, PNG, GIF, BMP, TIFF, WebP
 
 **Examples:**
@@ -539,14 +536,14 @@ Display an image on the screen.
 ```json
 {
   "command": "setImage",
-  "image": "lobby.jpg"
+  "file": "lobby.jpg"
 }
 ```
 
 ```json
 {
   "command": "setImage",
-  "image": "backgrounds/lobby.jpg"
+  "file": "backgrounds/lobby.jpg"
 }
 ```
 
@@ -563,7 +560,7 @@ Play a video file with optional volume control and background ducking.
 ```json
 {
   "command": "playVideo",
-  "video": "intro.mp4",
+  "file": "intro.mp4",
   "volumeAdjust": -10,
   "ducking": -24,
   "loop": false
@@ -572,7 +569,7 @@ Play a video file with optional volume control and background ducking.
 
 **Parameters:**
 
-- `Video` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `VolumeAdjust` (optional): Volume adjustment percentage (-100 to +100), applied to device base VOLUME setting
 - `Channel` (optional): Audio channel routing
 - `Ducking` (optional): Background music volume reduction in units. Use negative values only (e.g., -24 to reduce by 24 units). Default: -24 for videos, 0 for images. Positive values are ignored with warning.
@@ -591,14 +588,14 @@ Ducking resolution precedence (highest → lowest):
 ```json
 {
   "command": "playVideo",
-  "video": "intro.mp4"
+  "file": "intro.mp4"
 }
 ```
 
 ```json
 {
   "command": "playVideo",
-  "video": "room1/intro.mp4",
+  "file": "room1/intro.mp4",
   "volumeAdjust": 20,
   "ducking": -30
 }
@@ -607,7 +604,7 @@ Ducking resolution precedence (highest → lowest):
 ```json
 {
   "command": "playVideo",
-  "video": "background.mp4",
+  "file": "background.mp4",
   "loop": true
 }
 ```
@@ -979,7 +976,7 @@ paradox/houdini/mirror/state {
 }
 ```
 
-This schema is authoritative for all screen zones. Non-screen devices (lights, relays, audio-only zones) publish simplified `current_state` objects containing the applicable fields (e.g., `status`, `volume`, `errors`, and device-specific keys).
+This schema is authoritative for all screen zones. Audio-only zones publish simplified `current_state` objects containing the applicable fields (for example `status`, `volume`, and error-related keys).
 
 If you want me to also add machine-readable JSON Schema for these messages (for validation or UI generation), I can add that to the docs as a follow-up.
 
@@ -1006,14 +1003,14 @@ Play an audio file with optional volume control.
 ```json
 {
   "command": "playAudio",
-  "audio": "background.mp3",
+  "file": "background.mp3",
   "volumeAdjust": -20
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `VolumeAdjust` (optional): Volume adjustment percentage (-100 to +100), applied to device base VOLUME setting
 - `Channel` (optional): Audio channel routing
 
@@ -1024,14 +1021,14 @@ Play an audio file with optional volume control.
 ```json
 {
   "command": "playAudio",
-  "audio": "ambient.mp3"
+  "file": "ambient.mp3"
 }
 ```
 
 ```json
 {
   "command": "playAudio",
-  "audio": "music/background.mp3",
+  "file": "music/background.mp3",
   "volumeAdjust": 15
 }
 ```
@@ -1047,7 +1044,7 @@ Play audio effects (supports polyphonic playback).
 ```json
 {
   "command": "playAudioFX",
-  "audio": "effects/explosion.wav",
+  "file": "effects/explosion.wav",
   "type": "one-shot",
   "volumeAdjust": 10
 }
@@ -1055,7 +1052,7 @@ Play audio effects (supports polyphonic playback).
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Type` (optional): Playback type ("one-shot", "loop"), default: "one-shot"
 - `VolumeAdjust` (optional): Volume adjustment percentage (-100 to +100), applied to device base VOLUME setting
 
@@ -1064,14 +1061,14 @@ Play audio effects (supports polyphonic playback).
 ```json
 {
   "command": "playAudioFX",
-  "audio": "doorbell.wav"
+  "file": "doorbell.wav"
 }
 ```
 
 ```json
 {
   "command": "playAudioFX",
-  "audio": "fx/ambient_loop.wav",
+  "file": "fx/ambient_loop.wav",
   "type": "loop",
   "volumeAdjust": -30
 }
@@ -1139,14 +1136,14 @@ Play background music with seamless looping and volume control.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient/forest.mp3",
+  "file": "ambient/forest.mp3",
   "volume": 70
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 
 **Features:**
@@ -1159,14 +1156,14 @@ Play background music with seamless looping and volume control.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient.mp3"
+  "file": "ambient.mp3"
 }
 ```
 
 ```json
 {
   "command": "playBackground",
-  "audio": "music/mystical.mp3",
+  "file": "music/mystical.mp3",
   "volume": 60
 }
 ```
@@ -1238,14 +1235,14 @@ Play speech audio with automatic background music ducking.
 ```json
 {
   "command": "playSpeech",
-  "audio": "hint1.wav",
+  "file": "hint1.wav",
   "volume": 85
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Speech file relative to device MEDIA_DIR
+- `File` (required): Speech file relative to device MEDIA_DIR
 - `Volume` (optional): Volume level 0-100, default: 80
 
 #### stopSpeech
@@ -1271,14 +1268,14 @@ Play sound effect.
 ```json
 {
   "command": "playAudioFX",
-  "audio": "click.wav",
+  "file": "click.wav",
   "volume": 75
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Effect file relative to device MEDIA_DIR
+- `File` (required): Effect file relative to device MEDIA_DIR
 - `Volume` (optional): Volume level 0-100, default: 80
 
 ### Queue Inspection
@@ -1378,14 +1375,14 @@ Stop all currently playing sound effects.
 ```json
 {
   "command": "playAudioFX",
-  "audio": "click.wav",
+  "file": "click.wav",
   "volume": 75
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Effect file relative to device MEDIA_DIR
+- `File` (required): Effect file relative to device MEDIA_DIR
 - `Volume` (optional): Volume level 0-100, default: 80
 
 ### Queue Inspection
@@ -1393,14 +1390,14 @@ Stop all currently playing sound effects.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient/forest.mp3",
+  "file": "ambient/forest.mp3",
   "volume": 70
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 
 **Features:**
@@ -1413,14 +1410,14 @@ Stop all currently playing sound effects.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient.mp3"
+  "file": "ambient.mp3"
 }
 ```
 
 ```json
 {
   "command": "playBackground",
-  "audio": "music/mystical.mp3",
+  "file": "music/mystical.mp3",
   "volume": 60
 }
 ```
@@ -1509,7 +1506,7 @@ Play speech audio with automatic background music ducking.
 ```json
 {
   "command": "playSpeech",
-  "audio": "voice/instructions.mp3",
+  "file": "voice/instructions.mp3",
   "volume": 90,
   "ducking": -26
 }
@@ -1517,7 +1514,7 @@ Play speech audio with automatic background music ducking.
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 - `Ducking` (optional): Background music volume reduction in units. Use negative values only (e.g., -26 to reduce by 26 units). Default: -26. Positive values are ignored with warning.
 
@@ -1565,14 +1562,14 @@ Manual unduck removes the specified duck(s) immediately and the zone recalculate
 ```json
 {
   "command": "playSpeech",
-  "audio": "hints/clue1.mp3"
+  "file": "hints/clue1.mp3"
 }
 ```
 
 ```json
 {
   "command": "playSpeech",
-  "audio": "narration/intro.mp3",
+  "file": "narration/intro.mp3",
   "volume": 95,
   "ducking": -10
 }
@@ -1705,14 +1702,14 @@ Play sound effects with ultra-low latency and parallel playback.
 ```json
 {
   "command": "playSoundEffect",
-  "audio": "effects/button_click.wav",
+  "file": "effects/button_click.wav",
   "volume": 100
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 
 **Features:**
@@ -1726,14 +1723,14 @@ Play sound effects with ultra-low latency and parallel playback.
 ```json
 {
   "command": "playSoundEffect",
-  "audio": "fx/click.wav"
+  "file": "fx/click.wav"
 }
 ```
 
 ```json
 {
   "command": "playSoundEffect",
-  "audio": "feedback/success.wav",
+  "file": "feedback/success.wav",
   "volume": 80
 }
 ```
@@ -1855,148 +1852,13 @@ Get current device configuration.
 }
 ```
 
-## Light Commands
+## Removed Commands
 
-Light devices control individual lights and light groups.
+Light and relay commands are no longer part of the active PFx MQTT contract.
 
-### Basic Light Control
-
-#### setColor
-
-Set light color and brightness.
-
-**Format:**
-
-```json
-{
-  "command": "setColor",
-  "color": "#FF6400",
-  "brightness": 75
-}
-```
-
-**Parameters:**
-
-- `Color` (required): Hex color code or RGB object
-- `Brightness` (optional): Brightness level 0-100
-
-#### on
-
-Turn light on.
-
-**Format:**
-
-```json
-{
-  "command": "on",
-  "brightness": 100
-}
-```
-
-#### off
-
-Turn light off.
-
-**Format:**
-
-```json
-{
-  "command": "off"
-}
-```
-
-### Light Group Control
-
-#### setGroupColor
-
-Set color for all lights in group.
-
-**Format:**
-
-```json
-{
-  "command": "setGroupColor",
-  "color": {"r": 255, "g": 100, "b": 0},
-  "brightness": 80,
-  "lights": ["light1", "light2"]
-}
-```
-
-#### fade
-
-Fade lights to target brightness over time.
-
-**Format:**
-
-```json
-{
-  "command": "fade",
-  "brightness": 50,
-  "duration": 30000
-}
-```
-
-**Parameters:**
-
-- `Brightness` (required): Target brightness 0-100
-- `Duration` (required): Fade duration in milliseconds
-
-## Relay Commands
-
-Relay devices control switches, outlets, and other on/off devices.
-
-#### on
-
-Turn relay on.
-
-**Format:**
-
-```json
-{
-  "command": "on"
-}
-```
-
-#### off
-
-Turn relay off.
-
-**Format:**
-
-```json
-{
-  "command": "off"
-}
-```
-
-#### toggle
-
-Toggle relay state.
-
-**Format:**
-
-```json
-{
-  "command": "toggle"
-}
-```
-
-#### pulse
-
-Pulse relay (on, then off after delay).
-
-**Format:**
-
-```json
-{
-  "command": "pulse",
-  "duration": 5000
-}
-```
-
-**Parameters:**
-
-- `Duration` (optional): Pulse duration in milliseconds, default: 1000
+- Use PFx for screen/media and audio zones only.
+- Move lighting, relay, and sensor integrations to PxB.
+- Treat older light/relay examples in archived docs as migration history, not active API surface.
 
 ## System Messages
 
@@ -2098,21 +1960,21 @@ Non-fatal issues are reported as warnings:
 
 ```bash
 mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
-  -m '{"command": "setImage", "image": "background.jpg"}'
+  -m '{"command": "setImage", "file": "background.jpg"}'
 ```
 
 2. **Play intro video:**
 
 ```bash
 mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
-  -m '{"command": "playVideo", "video": "intro.mp4", "volumeAdjust": -20}'
+  -m '{"command": "playVideo", "file": "intro.mp4", "volumeAdjust": -20}'
 ```
 
 3. **Play background music:**
 
 ```bash
 mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
-  -m '{"command": "playAudio", "audio": "ambient.mp3", "volumeAdjust": -40}'
+  -m '{"command": "playAudio", "file": "ambient.mp3", "volumeAdjust": -40}'
 ```
 
 4. **Stop all playback:**
@@ -2120,29 +1982,6 @@ mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
 ```bash
 mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
   -m '{"command": "stopAll"}'
-```
-
-### Light Control Sequence
-
-1. **Turn on lights:**
-
-```bash
-mosquitto_pub -h localhost -t "paradox/living-room/lights/commands" \
-  -m '{"command": "on", "brightness": 100}'
-```
-
-2. **Set warm color:**
-
-```bash
-mosquitto_pub -h localhost -t "paradox/living-room/lights/commands" \
-  -m '{"command": "setColor", "color": "#FF8C00", "brightness": 75}'
-```
-
-3. **Fade to dim:**
-
-```bash
-mosquitto_pub -h localhost -t "paradox/living-room/lights/commands" \
-  -m '{"command": "fade", "brightness": 25, "duration": 10000}'
 ```
 
 ### Monitoring Status Updates
@@ -2174,11 +2013,6 @@ type = screen
 topic = paradox/living-room/screen
 media_dir = /opt/media/living-room
 volume = 80
-
-[light:living-room-hue]
-type = light
-topic = paradox/living-room/lights
-controller = hue
 ```
 
 **Key Configuration Parameters:**
@@ -2187,4 +2021,4 @@ controller = hue
 - `media_dir`: Base directory for media files (images, videos, audio)
 - `volume`: Base volume level for the device (0-100)
 
-For complete configuration options, see the [Configuration Guide](CONFIGURATION.md).
+For complete configuration options, see [CONFIG_INI.md](CONFIG_INI.md).

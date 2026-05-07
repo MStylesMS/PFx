@@ -54,7 +54,12 @@ function makeMockMqtt() {
 
 // Bypass actual file validation
 function stubValidate(zone) {
-    zone._validateMediaFile = jest.fn().mockImplementation((p) => ({ exists: true, path: p.startsWith('/tmp') ? p : '/tmp/' + p }));
+    zone._validateMediaFile = jest.fn().mockImplementation((p) => {
+        if (!p) {
+            return { exists: false, error: 'Media path is required' };
+        }
+        return { exists: true, path: p.startsWith('/tmp') ? p : '/tmp/' + p };
+    });
 }
 
 describe('Phase 9 Telemetry', () => {
@@ -99,5 +104,48 @@ describe('Phase 9 Telemetry', () => {
         expect(success).toBeTruthy();
         const payload = success[1];
         expect(payload.parameters.effective_volume).toBeDefined();
+    });
+
+    test('ScreenZone sound effect telemetry event presence', async () => {
+        const mqtt = makeMockMqtt();
+        const zone = new ScreenZone({
+            name: 'sz1',
+            baseTopic: 't/sz1',
+            baseVolumes: { background: 100, speech: 90, effects: 80, video: 95 },
+            duckingAdjust: -40,
+            background_volume: 100,
+            speech_volume: 90,
+            effects_volume: 80,
+            video_volume: 95
+        }, mqtt, {});
+        stubValidate(zone);
+        await zone._playSoundEffect('boom.mp3', { volume: 140 });
+        const eventCall = mqtt.publish.mock.calls.find(c => /sound_effect_played/.test(JSON.stringify(c[1])));
+        expect(eventCall).toBeTruthy();
+        const payload = eventCall[1];
+        expect(payload.volume).toBeDefined();
+        expect(payload.pre_duck).toBeDefined();
+    });
+
+    test('AudioZone ignores deprecated audio field for speech playback', async () => {
+        const mqtt = makeMockMqtt();
+        const zone = new AudioZone({ name: 'az4', baseTopic: 't/az4', speech_volume: 90 }, mqtt, {});
+        stubValidate(zone);
+        await zone.initialize();
+
+        await expect(zone.handleCommand({ command: 'playSpeech', audio: 'legacy.mp3', volume: 80 })).rejects.toThrow('Speech path is required');
+
+        expect(zone.audioManager.playSpeech).not.toHaveBeenCalled();
+    });
+
+    test('ScreenZone ignores deprecated audio field for sound effect playback', async () => {
+        const mqtt = makeMockMqtt();
+        const zone = new ScreenZone({ name: 'sz2', baseTopic: 't/sz2', effects_volume: 80 }, mqtt, {});
+        stubValidate(zone);
+        zone.isInitialized = true;
+
+        await expect(zone.handleCommand({ command: 'playAudioFX', audio: 'legacy.wav', volume: 80 })).rejects.toThrow('Sound effect path is required');
+
+        expect(zone.audioManager.playSoundEffect).not.toHaveBeenCalled();
     });
 });

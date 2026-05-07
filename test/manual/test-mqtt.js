@@ -179,24 +179,24 @@ class MqttTester {
             {
                 name: 'setImage (minimal)',
                 description: 'Display an image file',
-                command: { command: 'setImage', image: 'test-image.jpg' }
+                command: { command: 'setImage', file: 'test-image.jpg' }
             },
             {
                 name: 'setImage (with subdirectory)',
                 description: 'Display an image from subdirectory',
-                command: { command: 'setImage', image: 'backgrounds/lobby.jpg' }
+                command: { command: 'setImage', file: 'backgrounds/lobby.jpg' }
             },
 
             // Video Commands
             {
                 name: 'playVideo (minimal)',
                 description: 'Play a video file',
-                command: { command: 'playVideo', video: 'intro.mp4' }
+                command: { command: 'playVideo', file: 'intro.mp4' }
             },
             {
                 name: 'playVideo (full options)',
                 description: 'Play a video with volume adjustment and channel',
-                command: { command: 'playVideo', video: 'videos/intro.mp4', volumeAdjust: -10, channel: 'default' }
+                command: { command: 'playVideo', file: 'videos/intro.mp4', volumeAdjust: -10, channel: 'default' }
             },
             {
                 name: 'stopVideo',
@@ -223,27 +223,27 @@ class MqttTester {
             {
                 name: 'playAudio (minimal)',
                 description: 'Play an audio file',
-                command: { command: 'playAudio', audio: 'background.mp3' }
+                command: { command: 'playAudio', file: 'background.mp3' }
             },
             {
                 name: 'playAudio (full options)',
                 description: 'Play audio with volume adjustment and channel',
-                command: { command: 'playAudio', audio: 'music/background.mp3', volumeAdjust: 20, channel: 'default' }
+                command: { command: 'playAudio', file: 'music/background.mp3', volumeAdjust: 20, channel: 'default' }
             },
             {
                 name: 'playAudioFX (minimal)',
                 description: 'Play an audio effect',
-                command: { command: 'playAudioFX', audio: 'doorbell.wav' }
+                command: { command: 'playAudioFX', file: 'doorbell.wav' }
             },
             {
                 name: 'playAudioFX (full options)',
                 description: 'Play audio effect with all options',
-                command: { command: 'playAudioFX', audio: 'effects/explosion.wav', type: 'one-shot', volumeAdjust: 10 }
+                command: { command: 'playAudioFX', file: 'effects/explosion.wav', type: 'one-shot', volumeAdjust: 10 }
             },
             {
                 name: 'playAudioFX (loop)',
                 description: 'Play looping audio effect',
-                command: { command: 'playAudioFX', audio: 'effects/ambient.wav', type: 'loop', volumeAdjust: -30 }
+                command: { command: 'playAudioFX', file: 'effects/ambient.wav', type: 'loop', volumeAdjust: -30 }
             },
             {
                 name: 'stopAudio',

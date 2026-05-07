@@ -65,7 +65,7 @@ async function testMqttCommands() {
                 console.log('📸 Test 1: Set Image Command');
                 const imageCommand = {
                     Command: 'setImage',
-                    Image: 'default.mp4'
+                    File: 'default.mp4'
                 };
                 client.publish(testConfig.testTopic, JSON.stringify(imageCommand));
             }, 1000);
@@ -74,7 +74,7 @@ async function testMqttCommands() {
                 console.log('🎬 Test 2: Play Video Command');
                 const videoCommand = {
                     Command: 'playVideo',
-                    Video: 'intro_short.mp4',
+                    File: 'intro_short.mp4',
                     Channel: 1
                 };
                 client.publish(testConfig.testTopic, JSON.stringify(videoCommand));
@@ -84,7 +84,7 @@ async function testMqttCommands() {
                 console.log('🔊 Test 3: Audio Test Command');
                 const audioCommand = {
                     Command: 'playAudio',
-                    Audio: 'default.mp4',
+                    File: 'default.mp4',
                     Channel: 1
                 };
                 client.publish(testConfig.testTopic, JSON.stringify(audioCommand));

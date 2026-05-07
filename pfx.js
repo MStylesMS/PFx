@@ -30,8 +30,6 @@ class PFxApplication {
             const argv = minimist(process.argv.slice(2));
             const configFile = argv.config || argv.c || argv._[0] || 'pfx.ini';
             const configPath = path.resolve(configFile);
-            const lightsConfigFile = argv['lights-config'] || argv.lightsConfig || null;
-            const lightsConfigPath = lightsConfigFile ? path.resolve(lightsConfigFile) : null;
             const logDirOverride = argv['log-dir'] || argv.logDir || argv['log-directory'] || argv.logDirectory || null;
 
             // Load version first (needed for startup message)
@@ -54,9 +52,7 @@ class PFxApplication {
             }
             
             // Load configuration
-            this.config = await ConfigLoader.load(configPath, {
-                lightsConfigPath
-            });
+            this.config = await ConfigLoader.load(configPath, {});
 
             if (logDirOverride) {
                 this.config.global.log_directory = path.resolve(logDirOverride);

@@ -58,7 +58,7 @@ describe('ScreenDevice', () => {
         });
 
         test('should handle setImage command', async () => {
-            const command = { command: 'setImage', image: 'test.png' };
+            const command = { command: 'setImage', file: 'test.png' };
 
             await screenDevice.handleCommand(command);
 
@@ -75,7 +75,7 @@ describe('ScreenDevice', () => {
         });
 
         test('should handle playVideo command', async () => {
-            const command = { command: 'playVideo', video: 'test.mp4' };
+            const command = { command: 'playVideo', file: 'test.mp4' };
 
             await screenDevice.handleCommand(command);
 
@@ -85,7 +85,7 @@ describe('ScreenDevice', () => {
         });
 
         test('should handle playAudio command', async () => {
-            const command = { command: 'playAudio', audio: 'test.mp3' };
+            const command = { command: 'playAudio', file: 'test.mp3' };
 
             await screenDevice.handleCommand(command);
 
@@ -108,8 +108,8 @@ describe('ScreenDevice', () => {
 
         test('should handle stopVideo command', async () => {
             // First add some videos
-            await screenDevice.handleCommand({ command: 'playVideo', video: 'test1.mp4' });
-            await screenDevice.handleCommand({ command: 'playVideo', video: 'test2.mp4' });
+            await screenDevice.handleCommand({ command: 'playVideo', file: 'test1.mp4' });
+            await screenDevice.handleCommand({ command: 'playVideo', file: 'test2.mp4' });
 
             jest.clearAllMocks();
 
@@ -122,8 +122,8 @@ describe('ScreenDevice', () => {
 
         test('should handle stopAll command', async () => {
             // First add some media
-            await screenDevice.handleCommand({ command: 'playVideo', video: 'test.mp4' });
-            await screenDevice.handleCommand({ command: 'playAudio', audio: 'test.mp3' });
+            await screenDevice.handleCommand({ command: 'playVideo', file: 'test.mp4' });
+            await screenDevice.handleCommand({ command: 'playAudio', file: 'test.mp3' });
 
             jest.clearAllMocks();
 
@@ -147,7 +147,7 @@ describe('ScreenDevice', () => {
         });
 
         test('should handle videoQueue command', async () => {
-            await screenDevice.handleCommand({ command: 'playVideo', video: 'test.mp4' });
+            await screenDevice.handleCommand({ command: 'playVideo', file: 'test.mp4' });
             jest.clearAllMocks();
 
             await screenDevice.handleCommand({ command: 'videoQueue' });
@@ -169,9 +169,9 @@ describe('ScreenDevice', () => {
         });
 
         test('should handle command with missing parameters', async () => {
-            const command = { command: 'setImage' }; // Missing Image parameter
+            const command = { command: 'setImage' }; // Missing File parameter
 
-            await expect(screenDevice.handleCommand(command)).rejects.toThrow('Image path is required');
+            await expect(screenDevice.handleCommand(command)).rejects.toThrow('File path is required');
         });
     });
 
@@ -183,7 +183,7 @@ describe('ScreenDevice', () => {
         test('should respect video queue maximum', async () => {
             // Add videos up to the limit
             for (let i = 0; i < mockConfig.videoQueueMax + 2; i++) {
-                await screenDevice.handleCommand({ command: 'playVideo', video: `test${i}.mp4` });
+                await screenDevice.handleCommand({ command: 'playVideo', file: `test${i}.mp4` });
             }
 
             expect(screenDevice.videoQueue).toHaveLength(mockConfig.videoQueueMax);
@@ -193,8 +193,8 @@ describe('ScreenDevice', () => {
         });
 
         test('should not add duplicate videos to queue', async () => {
-            await screenDevice.handleCommand({ command: 'playVideo', video: 'test.mp4' });
-            await screenDevice.handleCommand({ command: 'playVideo', video: 'test.mp4' });
+            await screenDevice.handleCommand({ command: 'playVideo', file: 'test.mp4' });
+            await screenDevice.handleCommand({ command: 'playVideo', file: 'test.mp4' });
 
             expect(screenDevice.videoQueue.filter(v => v === 'test.mp4')).toHaveLength(1);
         });
@@ -202,7 +202,7 @@ describe('ScreenDevice', () => {
         test('should respect audio queue maximum', async () => {
             // Add audio files up to the limit
             for (let i = 0; i < mockConfig.audioQueueMax + 2; i++) {
-                await screenDevice.handleCommand({ command: 'playAudio', audio: `test${i}.mp3` });
+                await screenDevice.handleCommand({ command: 'playAudio', file: `test${i}.mp3` });
             }
 
             expect(screenDevice.audioQueue).toHaveLength(mockConfig.audioQueueMax);
@@ -243,7 +243,7 @@ describe('ScreenDevice', () => {
             await screenDevice.initialize();
 
             // Add some media
-            await screenDevice.handleCommand({ command: 'playVideo', video: 'test.mp4' });
+            await screenDevice.handleCommand({ command: 'playVideo', file: 'test.mp4' });
 
             await expect(screenDevice.shutdown()).resolves.toBeUndefined();
         });
