@@ -1003,14 +1003,14 @@ Play an audio file with optional volume control.
 ```json
 {
   "command": "playAudio",
-  "audio": "background.mp3",
+  "file": "background.mp3",
   "volumeAdjust": -20
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `VolumeAdjust` (optional): Volume adjustment percentage (-100 to +100), applied to device base VOLUME setting
 - `Channel` (optional): Audio channel routing
 
@@ -1021,14 +1021,14 @@ Play an audio file with optional volume control.
 ```json
 {
   "command": "playAudio",
-  "audio": "ambient.mp3"
+  "file": "ambient.mp3"
 }
 ```
 
 ```json
 {
   "command": "playAudio",
-  "audio": "music/background.mp3",
+  "file": "music/background.mp3",
   "volumeAdjust": 15
 }
 ```
@@ -1044,7 +1044,7 @@ Play audio effects (supports polyphonic playback).
 ```json
 {
   "command": "playAudioFX",
-  "audio": "effects/explosion.wav",
+  "file": "effects/explosion.wav",
   "type": "one-shot",
   "volumeAdjust": 10
 }
@@ -1052,7 +1052,7 @@ Play audio effects (supports polyphonic playback).
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Type` (optional): Playback type ("one-shot", "loop"), default: "one-shot"
 - `VolumeAdjust` (optional): Volume adjustment percentage (-100 to +100), applied to device base VOLUME setting
 
@@ -1061,14 +1061,14 @@ Play audio effects (supports polyphonic playback).
 ```json
 {
   "command": "playAudioFX",
-  "audio": "doorbell.wav"
+  "file": "doorbell.wav"
 }
 ```
 
 ```json
 {
   "command": "playAudioFX",
-  "audio": "fx/ambient_loop.wav",
+  "file": "fx/ambient_loop.wav",
   "type": "loop",
   "volumeAdjust": -30
 }
@@ -1136,14 +1136,14 @@ Play background music with seamless looping and volume control.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient/forest.mp3",
+  "file": "ambient/forest.mp3",
   "volume": 70
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 
 **Features:**
@@ -1156,14 +1156,14 @@ Play background music with seamless looping and volume control.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient.mp3"
+  "file": "ambient.mp3"
 }
 ```
 
 ```json
 {
   "command": "playBackground",
-  "audio": "music/mystical.mp3",
+  "file": "music/mystical.mp3",
   "volume": 60
 }
 ```
@@ -1235,14 +1235,14 @@ Play speech audio with automatic background music ducking.
 ```json
 {
   "command": "playSpeech",
-  "audio": "hint1.wav",
+  "file": "hint1.wav",
   "volume": 85
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Speech file relative to device MEDIA_DIR
+- `File` (required): Speech file relative to device MEDIA_DIR
 - `Volume` (optional): Volume level 0-100, default: 80
 
 #### stopSpeech
@@ -1268,14 +1268,14 @@ Play sound effect.
 ```json
 {
   "command": "playAudioFX",
-  "audio": "click.wav",
+  "file": "click.wav",
   "volume": 75
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Effect file relative to device MEDIA_DIR
+- `File` (required): Effect file relative to device MEDIA_DIR
 - `Volume` (optional): Volume level 0-100, default: 80
 
 ### Queue Inspection
@@ -1375,14 +1375,14 @@ Stop all currently playing sound effects.
 ```json
 {
   "command": "playAudioFX",
-  "audio": "click.wav",
+  "file": "click.wav",
   "volume": 75
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Effect file relative to device MEDIA_DIR
+- `File` (required): Effect file relative to device MEDIA_DIR
 - `Volume` (optional): Volume level 0-100, default: 80
 
 ### Queue Inspection
@@ -1390,14 +1390,14 @@ Stop all currently playing sound effects.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient/forest.mp3",
+  "file": "ambient/forest.mp3",
   "volume": 70
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 
 **Features:**
@@ -1410,14 +1410,14 @@ Stop all currently playing sound effects.
 ```json
 {
   "command": "playBackground",
-  "audio": "ambient.mp3"
+  "file": "ambient.mp3"
 }
 ```
 
 ```json
 {
   "command": "playBackground",
-  "audio": "music/mystical.mp3",
+  "file": "music/mystical.mp3",
   "volume": 60
 }
 ```
@@ -1506,7 +1506,7 @@ Play speech audio with automatic background music ducking.
 ```json
 {
   "command": "playSpeech",
-  "audio": "voice/instructions.mp3",
+  "file": "voice/instructions.mp3",
   "volume": 90,
   "ducking": -26
 }
@@ -1514,7 +1514,7 @@ Play speech audio with automatic background music ducking.
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 - `Ducking` (optional): Background music volume reduction in units. Use negative values only (e.g., -26 to reduce by 26 units). Default: -26. Positive values are ignored with warning.
 
@@ -1562,14 +1562,14 @@ Manual unduck removes the specified duck(s) immediately and the zone recalculate
 ```json
 {
   "command": "playSpeech",
-  "audio": "hints/clue1.mp3"
+  "file": "hints/clue1.mp3"
 }
 ```
 
 ```json
 {
   "command": "playSpeech",
-  "audio": "narration/intro.mp3",
+  "file": "narration/intro.mp3",
   "volume": 95,
   "ducking": -10
 }
@@ -1702,14 +1702,14 @@ Play sound effects with ultra-low latency and parallel playback.
 ```json
 {
   "command": "playSoundEffect",
-  "audio": "effects/button_click.wav",
+  "file": "effects/button_click.wav",
   "volume": 100
 }
 ```
 
 **Parameters:**
 
-- `Audio` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
 
 **Features:**
@@ -1723,14 +1723,14 @@ Play sound effects with ultra-low latency and parallel playback.
 ```json
 {
   "command": "playSoundEffect",
-  "audio": "fx/click.wav"
+  "file": "fx/click.wav"
 }
 ```
 
 ```json
 {
   "command": "playSoundEffect",
-  "audio": "feedback/success.wav",
+  "file": "feedback/success.wav",
   "volume": 80
 }
 ```
@@ -1974,7 +1974,7 @@ mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
 
 ```bash
 mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
-  -m '{"command": "playAudio", "audio": "ambient.mp3", "volumeAdjust": -40}'
+  -m '{"command": "playAudio", "file": "ambient.mp3", "volumeAdjust": -40}'
 ```
 
 4. **Stop all playback:**

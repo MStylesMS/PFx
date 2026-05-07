@@ -413,7 +413,7 @@ function screenSteps(output, mediaPrefix) {
             description: `Starts looping background music on ${output.label}.`,
             lookFor: `Looping background music should start on ${output.label} and continue until a later cleanup step.`,
             actions: [
-                { topic: output.topic, payload: { command: 'playBackground', audio: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.background), loop: true, volume: 70 }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'playBackground', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.background), loop: true, volume: 70 }, delayAfterMs: 1000 }
             ]
         },
         {
@@ -432,7 +432,7 @@ function screenSteps(output, mediaPrefix) {
             description: `Plays a spoken device-identification clip over the background loop.`,
             lookFor: `The spoken clip should be heard on ${output.label}, the background should duck while it plays, and then recover.`,
             actions: [
-                { topic: output.topic, payload: { command: 'playSpeech', audio: runtimeAsset(mediaPrefix, output.speechAsset), volume: 85 }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'playSpeech', file: runtimeAsset(mediaPrefix, output.speechAsset), volume: 85 }, delayAfterMs: 1000 }
             ]
         },
         {
@@ -441,7 +441,7 @@ function screenSteps(output, mediaPrefix) {
             description: `Plays a short sound effect while background audio is still running.`,
             lookFor: `The sound effect should be audible on ${output.label} without permanently stopping the background loop.`,
             actions: [
-                { topic: output.topic, payload: { command: 'playSoundEffect', audio: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.effect), volume: 85 }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'playSoundEffect', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.effect), volume: 85 }, delayAfterMs: 1000 }
             ]
         },
         {
@@ -486,7 +486,7 @@ function audioSteps(output, mediaPrefix) {
             description: `Starts looping background music on ${output.label}.`,
             lookFor: `Looping background music should start on ${output.label}.`,
             actions: [
-                { topic: output.topic, payload: { command: 'playBackground', audio: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.background), loop: true, volume: 70 }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'playBackground', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.background), loop: true, volume: 70 }, delayAfterMs: 1000 }
             ]
         },
         {
@@ -505,7 +505,7 @@ function audioSteps(output, mediaPrefix) {
             description: `Plays the analog-device speech cue over the background loop.`,
             lookFor: `The speech cue should play on ${output.label}, the background should duck, and then return.`,
             actions: [
-                { topic: output.topic, payload: { command: 'playSpeech', audio: runtimeAsset(mediaPrefix, output.speechAsset), volume: 85 }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'playSpeech', file: runtimeAsset(mediaPrefix, output.speechAsset), volume: 85 }, delayAfterMs: 1000 }
             ]
         },
         {
@@ -514,7 +514,7 @@ function audioSteps(output, mediaPrefix) {
             description: `Plays a short effect while the background loop is still active.`,
             lookFor: `The sound effect should be audible on ${output.label} without killing the background loop.`,
             actions: [
-                { topic: output.topic, payload: { command: 'playSoundEffect', audio: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.effect), volume: 85 }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'playSoundEffect', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.effect), volume: 85 }, delayAfterMs: 1000 }
             ]
         },
         {

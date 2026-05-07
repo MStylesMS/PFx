@@ -92,9 +92,9 @@ Multiple audio zones can run in parallel on a host with multiple sinks (e.g., HD
 Examples:
 
 ```json
-{"command":"playBackground","audio":"ambient.mp3","volume":60}
-{"command":"playSpeech","audio":"hint1.wav"}
-{"command":"playEffect","audio":"chime.wav","volume":80}
+{"command":"playBackground","file":"ambient.mp3","volume":60}
+{"command":"playSpeech","file":"hint1.wav"}
+{"command":"playEffect","file":"chime.wav","volume":80}
 {"command":"setBackgroundVolume","volume":30}
 {"command":"stopSpeech"}
 ```

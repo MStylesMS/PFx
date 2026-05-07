@@ -19,7 +19,7 @@ class MockAudioZone extends BaseZone {
 
     async handleCommand(command) {
         if (command.command === 'playSpeech') {
-            await this.playSpeech(command.audio, command.volume, command.ducking);
+            await this.playSpeech(command.file, command.volume, command.ducking);
         }
     }
 
