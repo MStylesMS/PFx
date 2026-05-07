@@ -33,7 +33,7 @@ Minimal smoke test (after install and `pfx start`):
 
 ```bash
 mosquitto_pub -t paradox/screen/main/commands \
-  -m '{"command":"showImage","file":"default.png"}'
+  -m '{"command":"setImage","file":"default.png"}'
 ```
 
 For a guided single-output Pi setup, see [QUICK_START_PFX.md](QUICK_START_PFX.md).
@@ -65,9 +65,9 @@ A screen zone owns one display output and renders three things:
 Common commands:
 
 ```json
-{"command":"showImage","file":"intro.png"}
+{"command":"setImage","file":"intro.png"}
 {"command":"playVideo","file":"reveal.mp4"}
-{"command":"queueVideo","file":"loop.mp4"}
+{"command":"stopVideo"}
 {"command":"showBrowser"}
 {"command":"hideBrowser"}
 {"command":"stopAll"}
