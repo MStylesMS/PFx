@@ -522,13 +522,13 @@ Display an image on the screen.
 ```json
 {
   "command": "setImage",
-  "image": "image.jpg"
+  "file": "image.jpg"
 }
 ```
 
 **Parameters:**
 
-- `Image` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - Supported formats: JPEG, PNG, GIF, BMP, TIFF, WebP
 
 **Examples:**
@@ -536,14 +536,14 @@ Display an image on the screen.
 ```json
 {
   "command": "setImage",
-  "image": "lobby.jpg"
+  "file": "lobby.jpg"
 }
 ```
 
 ```json
 {
   "command": "setImage",
-  "image": "backgrounds/lobby.jpg"
+  "file": "backgrounds/lobby.jpg"
 }
 ```
 
@@ -560,7 +560,7 @@ Play a video file with optional volume control and background ducking.
 ```json
 {
   "command": "playVideo",
-  "video": "intro.mp4",
+  "file": "intro.mp4",
   "volumeAdjust": -10,
   "ducking": -24,
   "loop": false
@@ -569,7 +569,7 @@ Play a video file with optional volume control and background ducking.
 
 **Parameters:**
 
-- `Video` (required): Filename or subdirectory path relative to device MEDIA_DIR
+- `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `VolumeAdjust` (optional): Volume adjustment percentage (-100 to +100), applied to device base VOLUME setting
 - `Channel` (optional): Audio channel routing
 - `Ducking` (optional): Background music volume reduction in units. Use negative values only (e.g., -24 to reduce by 24 units). Default: -24 for videos, 0 for images. Positive values are ignored with warning.
@@ -588,14 +588,14 @@ Ducking resolution precedence (highest → lowest):
 ```json
 {
   "command": "playVideo",
-  "video": "intro.mp4"
+  "file": "intro.mp4"
 }
 ```
 
 ```json
 {
   "command": "playVideo",
-  "video": "room1/intro.mp4",
+  "file": "room1/intro.mp4",
   "volumeAdjust": 20,
   "ducking": -30
 }
@@ -604,7 +604,7 @@ Ducking resolution precedence (highest → lowest):
 ```json
 {
   "command": "playVideo",
-  "video": "background.mp4",
+  "file": "background.mp4",
   "loop": true
 }
 ```
@@ -1960,14 +1960,14 @@ Non-fatal issues are reported as warnings:
 
 ```bash
 mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
-  -m '{"command": "setImage", "image": "background.jpg"}'
+  -m '{"command": "setImage", "file": "background.jpg"}'
 ```
 
 2. **Play intro video:**
 
 ```bash
 mosquitto_pub -h localhost -t "paradox/living-room/screen/commands" \
-  -m '{"command": "playVideo", "video": "intro.mp4", "volumeAdjust": -20}'
+  -m '{"command": "playVideo", "file": "intro.mp4", "volumeAdjust": -20}'
 ```
 
 3. **Play background music:**

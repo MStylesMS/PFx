@@ -392,7 +392,7 @@ function screenSteps(output, mediaPrefix) {
             description: `Shows a static image on ${output.label}.`,
             lookFor: `The default image should appear on ${output.label} only, remain stable, and not affect other outputs.`,
             actions: [
-                { topic: output.topic, payload: { command: 'setImage', image: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.image) }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'setImage', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.image) }, delayAfterMs: 1000 }
             ]
         },
         {
@@ -401,7 +401,7 @@ function screenSteps(output, mediaPrefix) {
             description: `Plays a short test video on ${output.label}.`,
             lookFor: `The short intro video should play on ${output.label} without routing to the wrong display.`,
             actions: [
-                { topic: output.topic, payload: { command: 'playVideo', video: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.video), volume: 80 }, delayAfterMs: 1000 }
+                { topic: output.topic, payload: { command: 'playVideo', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.video), volume: 80 }, delayAfterMs: 1000 }
             ],
             cleanupActions: [
                 { topic: output.topic, payload: { command: 'stopVideo' }, delayAfterMs: 500 }
@@ -544,8 +544,8 @@ function crossOutputSteps(outputs, mediaPrefix) {
             description: 'Shows different still images on HDMI0 and HDMI1 at the same time.',
             lookFor: 'HDMI0 should show the first transition image and HDMI1 should show the last transition image. The displays should not be swapped.',
             actions: [
-                { topic: hdmi0.topic, payload: { command: 'setImage', image: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.transitionFirst) }, delayAfterMs: 500 },
-                { topic: hdmi1.topic, payload: { command: 'setImage', image: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.transitionLast) }, delayAfterMs: 1000 }
+                { topic: hdmi0.topic, payload: { command: 'setImage', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.transitionFirst) }, delayAfterMs: 500 },
+                { topic: hdmi1.topic, payload: { command: 'setImage', file: runtimeAsset(mediaPrefix, DEFAULT_ASSETS.transitionLast) }, delayAfterMs: 1000 }
             ]
         }
     ];

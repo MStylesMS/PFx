@@ -23,7 +23,7 @@ Then publish a command from any MQTT client:
 
 ```bash
 mosquitto_pub -t paradox/demo/screen/commands \
-  -m '{"command":"playVideo","video":"intro.mp4"}'
+  -m '{"command":"playVideo","file":"intro.mp4"}'
 ```
 
 Full walkthrough: [docs/QUICK_START_PFX.md](docs/QUICK_START_PFX.md).

@@ -43,11 +43,11 @@ function showScreenCommands() {
     const examples = [
         {
             name: 'setImage (minimal)',
-            json: { command: 'setImage', image: 'test-image.jpg' }
+            json: { command: 'setImage', file: 'test-image.jpg' }
         },
         {
             name: 'playVideo (with options)',
-            json: { command: 'playVideo', video: 'videos/intro.mp4', volumeAdjust: -10, channel: 'default' }
+            json: { command: 'playVideo', file: 'videos/intro.mp4', volumeAdjust: -10, channel: 'default' }
         },
         {
             name: 'playAudio (minimal)',

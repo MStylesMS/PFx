@@ -43,7 +43,7 @@ sleep 3
 # Test 4: Video with default ducking (30%)
 echo "🎬 Test 4: Video with default ducking (30%)"
 mosquitto_pub -h $MQTT_HOST -p $MQTT_PORT -t "$BASE_TOPIC/commands" \
-  -m '{"command": "playVideo", "video": "intro.mp4"}'
+  -m '{"command": "playVideo", "file": "intro.mp4"}'
 echo "Command sent: playVideo without ducking parameter (uses default 30%)"
 echo ""
 
@@ -52,7 +52,7 @@ sleep 5
 # Test 5: Video with custom ducking (60%)
 echo "🎬 Test 5: Video with custom ducking (60%)"
 mosquitto_pub -h $MQTT_HOST -p $MQTT_PORT -t "$BASE_TOPIC/commands" \
-  -m '{"command": "playVideo", "video": "intro.mp4", "ducking": 60}'
+  -m '{"command": "playVideo", "file": "intro.mp4", "ducking": 60}'
 echo "Command sent: playVideo with 60% ducking"
 echo ""
 
@@ -61,7 +61,7 @@ sleep 5
 # Test 6: Video with no ducking (0%)
 echo "🎬 Test 6: Video with no ducking (0%)"
 mosquitto_pub -h $MQTT_HOST -p $MQTT_PORT -t "$BASE_TOPIC/commands" \
-  -m '{"command": "playVideo", "video": "intro.mp4", "ducking": 0}'
+  -m '{"command": "playVideo", "file": "intro.mp4", "ducking": 0}'
 echo "Command sent: playVideo with 0% ducking"
 echo ""
 

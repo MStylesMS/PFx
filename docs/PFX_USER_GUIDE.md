@@ -33,7 +33,7 @@ Minimal smoke test (after install and `pfx start`):
 
 ```bash
 mosquitto_pub -t paradox/screen/main/commands \
-  -m '{"command":"showImage","image":"default.png"}'
+  -m '{"command":"showImage","file":"default.png"}'
 ```
 
 For a guided single-output Pi setup, see [QUICK_START_PFX.md](QUICK_START_PFX.md).
@@ -65,9 +65,9 @@ A screen zone owns one display output and renders three things:
 Common commands:
 
 ```json
-{"command":"showImage","image":"intro.png"}
-{"command":"playVideo","video":"reveal.mp4"}
-{"command":"queueVideo","video":"loop.mp4"}
+{"command":"showImage","file":"intro.png"}
+{"command":"playVideo","file":"reveal.mp4"}
+{"command":"queueVideo","file":"loop.mp4"}
 {"command":"showBrowser"}
 {"command":"hideBrowser"}
 {"command":"stopAll"}
@@ -129,7 +129,7 @@ Every zone uses the same topic shape:
 Command shape:
 
 ```json
-{"command":"playVideo","video":"clip.mp4"}
+{"command":"playVideo","file":"clip.mp4"}
 ```
 
 Outcome and event payloads conform to JSON schemas in [json-schemas/](json-schemas/). The full command catalog, payload fields, and event examples are in [MQTT_API.md](MQTT_API.md).

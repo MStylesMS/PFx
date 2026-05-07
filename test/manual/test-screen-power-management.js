@@ -72,10 +72,10 @@ class ScreenPowerTest {
         const tests = [
             { name: 'Sleep Screen', command: { Command: 'sleepScreen' }, delay: 3000 },
             { name: 'Wake Screen', command: { Command: 'wakeScreen' }, delay: 3000 },
-            { name: 'Auto-wake with Image', command: { Command: 'setImage', Image: 'default.mp4' }, delay: 3000 },
+            { name: 'Auto-wake with Image', command: { Command: 'setImage', File: 'default.mp4' }, delay: 3000 },
             { name: 'Sleep Again', command: { Command: 'sleepScreen' }, delay: 3000 },
-            { name: 'Auto-wake with Video', command: { Command: 'playVideo', Video: 'intro_short.mp4' }, delay: 5000 },
-            { name: 'Test HDMI Audio Wake', command: { Command: 'playAudio', Audio: 'default.mp4' }, delay: 3000 },
+            { name: 'Auto-wake with Video', command: { Command: 'playVideo', File: 'intro_short.mp4' }, delay: 5000 },
+            { name: 'Test HDMI Audio Wake', command: { Command: 'playAudio', File: 'default.mp4' }, delay: 3000 },
             { name: 'Final Sleep Test', command: { Command: 'sleepScreen' }, delay: 2000 }
         ];
 
@@ -114,7 +114,7 @@ class ScreenPowerTest {
         console.log('📸 Testing image auto-wake...');
         this.mqttClient.publish(testConfig.commandTopic, JSON.stringify({ 
             Command: 'setImage', 
-            Image: 'default.mp4' 
+            File: 'default.mp4' 
         }));
         await this.sleep(3000);
 
@@ -126,7 +126,7 @@ class ScreenPowerTest {
         console.log('🎬 Testing video auto-wake...');
         this.mqttClient.publish(testConfig.commandTopic, JSON.stringify({ 
             Command: 'playVideo', 
-            Video: 'intro_short.mp4' 
+            File: 'intro_short.mp4' 
         }));
         await this.sleep(5000);
 

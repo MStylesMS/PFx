@@ -179,24 +179,24 @@ class MqttTester {
             {
                 name: 'setImage (minimal)',
                 description: 'Display an image file',
-                command: { command: 'setImage', image: 'test-image.jpg' }
+                command: { command: 'setImage', file: 'test-image.jpg' }
             },
             {
                 name: 'setImage (with subdirectory)',
                 description: 'Display an image from subdirectory',
-                command: { command: 'setImage', image: 'backgrounds/lobby.jpg' }
+                command: { command: 'setImage', file: 'backgrounds/lobby.jpg' }
             },
 
             // Video Commands
             {
                 name: 'playVideo (minimal)',
                 description: 'Play a video file',
-                command: { command: 'playVideo', video: 'intro.mp4' }
+                command: { command: 'playVideo', file: 'intro.mp4' }
             },
             {
                 name: 'playVideo (full options)',
                 description: 'Play a video with volume adjustment and channel',
-                command: { command: 'playVideo', video: 'videos/intro.mp4', volumeAdjust: -10, channel: 'default' }
+                command: { command: 'playVideo', file: 'videos/intro.mp4', volumeAdjust: -10, channel: 'default' }
             },
             {
                 name: 'stopVideo',

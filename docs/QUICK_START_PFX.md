@@ -65,13 +65,13 @@ npm start
 In another terminal:
 
 ```bash
-mosquitto_pub -h localhost -t "paradox/demo/screen/commands" -m '{"command":"setImage","image":"default.png"}'
+mosquitto_pub -h localhost -t "paradox/demo/screen/commands" -m '{"command":"setImage","file":"default.png"}'
 ```
 
 Then test video:
 
 ```bash
-mosquitto_pub -h localhost -t "paradox/demo/screen/commands" -m '{"command":"playVideo","video":"default.mp4"}'
+mosquitto_pub -h localhost -t "paradox/demo/screen/commands" -m '{"command":"playVideo","file":"default.mp4"}'
 ```
 
 ## 6) Optional: install as systemd service

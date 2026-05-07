@@ -61,8 +61,8 @@ async function testScreenDeviceCommands() {
     // Instead, we'll test the command structure
 
     const testCommands = [
-        { Command: 'setImage', Image: '/opt/paradox/apps/pfx/media/test/defaults/default.jpg' },
-        { Command: 'playAudio', Audio: '/opt/paradox/apps/pfx/media/test/defaults/default.mp3', Channel: 'main' },
+        { Command: 'setImage', File: '/opt/paradox/apps/pfx/media/test/defaults/default.jpg' },
+        { Command: 'playAudio', File: '/opt/paradox/apps/pfx/media/test/defaults/default.mp3', Channel: 'main' },
         { Command: 'setVolume', Volume: 85 },
         { Command: 'getStatus' }
     ];

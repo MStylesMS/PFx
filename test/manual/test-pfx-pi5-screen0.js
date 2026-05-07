@@ -132,7 +132,7 @@ ${displayCheck}
             console.log('------------------------');
             const imageResult = await this.sendCommand({
                 Command: 'setImage',
-                Image: 'default.jpg'  // Relative to media_dir
+                File: 'default.jpg'  // Relative to media_dir
             }, 'Display test image on screen 0');
 
             if (imageResult) {
@@ -145,7 +145,7 @@ ${displayCheck}
             console.log('--------------------------------');
             const videoResult = await this.sendCommand({
                 Command: 'playVideo',
-                Video: 'default.mp4',  // Relative to media_dir
+                File: 'default.mp4',  // Relative to media_dir
                 Volume: 80
             }, 'Play test video with audio on screen 0');
 
@@ -159,7 +159,7 @@ ${displayCheck}
             console.log('--------------------------');
             const audioResult = await this.sendCommand({
                 Command: 'playAudio',
-                Audio: 'default.mp4',  // Can use video file for audio
+                File: 'default.mp4',  // Can use video file for audio
                 Volume: 70
             }, 'Play audio only to HDMI0');
 
