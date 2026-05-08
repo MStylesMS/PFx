@@ -29,7 +29,7 @@
     "interactive"
   ],
   "author": "Mark Stevens",
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "ini": "^4.1.1",
     "mqtt": "^5.13.2",
