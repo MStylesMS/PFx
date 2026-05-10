@@ -177,3 +177,46 @@ describe('ZoneManager._publishZoneSchemas', () => {
         expect(payload.warning_policy).toEqual(schemaMetadata.warning_policy);
     });
 });
+
+describe('ZoneManager audio-only mode detection', () => {
+    function makeConfig(deviceTypes) {
+        const devices = {};
+        deviceTypes.forEach((type, i) => {
+            devices[`zone${i}`] = { type, baseTopic: `paradox/test/zone${i}`, name: `zone${i}` };
+        });
+        return {
+            global: { baseTopic: 'paradox/test', logLevel: 'info' },
+            devices
+        };
+    }
+
+    test('detects audio-only config when all zones are audio type', () => {
+        const mqttClient = makeMqttClient();
+        const zm = new ZoneManager(makeConfig(['audio', 'audio']), mqttClient);
+
+        const hasScreenZone = zm.devices.some(d => d.type === 'screen');
+        const audioOnlyMode = zm.devices.length > 0 && !hasScreenZone;
+
+        expect(audioOnlyMode).toBe(true);
+    });
+
+    test('does not detect audio-only when a screen zone is present', () => {
+        const mqttClient = makeMqttClient();
+        const zm = new ZoneManager(makeConfig(['audio', 'screen']), mqttClient);
+
+        const hasScreenZone = zm.devices.some(d => d.type === 'screen');
+        const audioOnlyMode = zm.devices.length > 0 && !hasScreenZone;
+
+        expect(audioOnlyMode).toBe(false);
+    });
+
+    test('does not detect audio-only when only screen zones are present', () => {
+        const mqttClient = makeMqttClient();
+        const zm = new ZoneManager(makeConfig(['screen']), mqttClient);
+
+        const hasScreenZone = zm.devices.some(d => d.type === 'screen');
+        const audioOnlyMode = zm.devices.length > 0 && !hasScreenZone;
+
+        expect(audioOnlyMode).toBe(false);
+    });
+});

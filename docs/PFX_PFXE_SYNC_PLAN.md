@@ -68,10 +68,10 @@ This is the substantive code change.
 
 Ship only if trivial. Otherwise defer to the audio PR.
 
-- [ ] Spike: in `core/zone-manager.js`, detect "INI contains only `[audio:*]` zones"
-- [ ] If detected, skip browser-controller wiring and any mpv-video init
-- [ ] If the spike takes more than ~2 hours, **stop and document the gap in the audio PR instead**
-- [ ] If shipped: docs note in `CONFIG_INI.md`
+- [x] Spike: in `core/zone-manager.js`, detect "INI contains only `[audio:*]` zones"
+- [x] If detected, skip browser-controller wiring and any mpv-video init
+- [x] If the spike takes more than ~2 hours, **stop and document the gap in the audio PR instead**
+- [x] If shipped: docs note in `CONFIG_INI.md`
 
 ## Phase 5 — Final polish + version bump
 

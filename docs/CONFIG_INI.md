@@ -150,6 +150,35 @@ Audio-only zones. Common keys:
 
 ---
 
+## Audio-only mode
+
+When a PFx config contains **only** `[audio:*]` sections (no `[screen:*]` sections), PFx operates in audio-only mode:
+
+- No MPV video player is started — no display or X11 connection is required.
+- No Chromium browser overlay is created.
+- Unclutter (cursor-hiding helper) is not started.
+- Background music, speech queuing, sound effects, and ducking all work normally.
+
+This mode is useful for Pi deployments that drive a speaker rack or intercom without an attached monitor. Configure PulseAudio or PipeWire sinks as usual; the `audio_device`, `audio_channels`, and `combined_sinks` keys all apply.
+
+Example minimal audio-only config:
+
+```ini
+[global]
+heartbeat_topic = paradox/heartbeat
+
+[mqtt]
+broker = localhost
+
+[audio:room]
+type         = audio
+topic        = paradox/houdini/audio
+audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
+volume       = 100
+```
+
+---
+
 ## Platform Notes (Pi5)
 
 - Pi5 is HDMI-only for analog audio. Use `hdmi0` / `hdmi1` mappings or PipeWire sink names.
