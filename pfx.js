@@ -4,7 +4,7 @@
  * Paradox Effects (ParadoxFX) - Main Application Entry Point
  * 
  * Multi-modal media and effect controller for interactive installations.
- * Supports screens, lights, and relays via MQTT commands.
+ * Supports screen and audio zones via MQTT commands.
  */
 
 const path = require('path');

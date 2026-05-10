@@ -63,15 +63,15 @@ describe('ZoneManager._publishDiscovery', () => {
 
     test('includes commandsTopic, stateTopic and schemaTopic for each zone', () => {
         const { zm, mqttClient } = makeZoneManager('paradox/test');
-        zm.zones.set('lights1', makeZone('light', 'paradox/test/lights1'));
+        zm.zones.set('audio1', makeZone('audio', 'paradox/test/audio1'));
 
         zm._publishDiscovery();
 
         const [, payload] = mqttClient.publish.mock.calls[0];
         const zoneObj = payload.zones[0];
-        expect(zoneObj.commandsTopic).toBe('paradox/test/lights1/commands');
-        expect(zoneObj.stateTopic).toBe('paradox/test/lights1/state');
-        expect(zoneObj.schemaTopic).toBe('paradox/test/lights1/schema');
+        expect(zoneObj.commandsTopic).toBe('paradox/test/audio1/commands');
+        expect(zoneObj.stateTopic).toBe('paradox/test/audio1/state');
+        expect(zoneObj.schemaTopic).toBe('paradox/test/audio1/schema');
     });
 
     test('skips publish when baseTopic is an empty string', () => {

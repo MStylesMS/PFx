@@ -14,8 +14,6 @@ Contents:
 
 ParadoxFX is configured using INI files. Pick a sample config from `config/` (e.g., `config/pfx-pi5-hh.ini`) and copy to `pfx.ini`. Active PFx configs support `[mqtt]`, `[global]`, `[screen:<name>]`, and `[audio:<name>]` sections.
 
-Removed section types such as `[light:*]`, `[input:*]`, `[relay:*]`, `[output:*]`, and `[controller:*]` are no longer supported by PFx. Startup now fails fast if those sections are present. Move that hardware integration to PxB or keep it in archived migration docs only.
-
 General advice:
 - Keep environment- and deployment-specific settings (like X11 DISPLAY or mpvOntop) in local `pfx.ini` and out of shared branches when necessary.
 - Use `log_level = debug` for troubleshooting window/MPV/browser issues.
@@ -146,16 +144,6 @@ Audio-only zones. Common keys:
 - Values above 100% are supported for systems requiring boosted audio
 - Default fallback is 100% if max_volume is not specified
 -->
-
-### Deprecated Section Types
-
-PFx no longer supports `[light:*]`, `[light-group:*]`, `[input:*]`, `[relay:*]`, `[output:*]`, or `[controller:*]` sections in active runtime configuration.
-
-- If those sections are present, PFx startup fails with an unsupported device type error.
-- Direct lighting, relay, and input integrations were removed from PFx or moved to PxB.
-- Keep legacy examples in archived migration docs only; do not use them in active `pfx.ini` files.
-
-For active PFx deployments, define only screen and audio zones.
 
 ---
 

@@ -22,7 +22,7 @@ Interactive tests that validate MQTT connectivity and demonstrate all device com
 **Purpose**: Test MQTT broker communication and provide examples of all supported commands:
 
 - **Verify MQTT connectivity** with publish/subscribe test
-- **Test all device commands** for screens, lights, and relays
+- **Test all device commands** for screens and audio zones
 - **Interactive demonstration** of command formats and options
 - **Real-time command validation** with actual MQTT broker
 

@@ -103,19 +103,7 @@ Ducking, queue ordering, and volume telemetry are described in [MQTT_API.md](MQT
 
 ---
 
-## 5. Removed hardware integrations
-
-PFx no longer owns direct lighting, relay, or input zones.
-
-- Lighting backends, relays, and hardware inputs were removed from active PFx runtime support.
-- Z-Wave and Zigbee hardware ownership lives in PxB.
-- Legacy setup documents may remain in the repository for migration history, but active PFx configs should contain only screen and audio sections.
-
-If you still have old `[light:*]`, `[input:*]`, `[relay:*]`, or `[controller:*]` sections in a PFx INI, remove or migrate them before startup.
-
----
-
-## 6. MQTT contract
+## 5. MQTT contract
 
 Every zone uses the same topic shape:
 
@@ -138,7 +126,7 @@ PFx also publishes a readiness marker file at `/run/paradox/pfx.ready` once star
 
 ---
 
-## 7. Configuration (INI)
+## 6. Configuration (INI)
 
 PFx reads a single INI file at startup (path passed on the command line, typically `/etc/pfx.ini`). The file declares:
 
@@ -167,7 +155,7 @@ Every supported key, default value, and platform note is in [CONFIG_INI.md](CONF
 
 ---
 
-## 8. Operational tooling
+## 7. Operational tooling
 
 The `scripts/` directory contains helpers for setup, debugging, and field troubleshooting:
 
@@ -182,7 +170,7 @@ The full catalog with usage notes is in [../scripts/README.md](../scripts/README
 
 ---
 
-## 9. Deployment
+## 8. Deployment
 
 A sample systemd unit lives at [../config/pfx.service](../config/pfx.service). It is a template — adjust `User=`, `ExecStart=`, working directory, and hardening options before installing.
 
@@ -230,6 +218,5 @@ Prerequisites:
 - [MQTT_API.md](MQTT_API.md) — every command and event
 - [SPEC.md](SPEC.md) — functional specification
 - [json-schemas/](json-schemas/) — machine-readable command/event schemas
-- [archive/QUICK_START_HUE.md](archive/QUICK_START_HUE.md), [archive/QUICK_START_WIZ.md](archive/QUICK_START_WIZ.md), [archive/QUICK_START_SHELLY.md](archive/QUICK_START_SHELLY.md), [archive/QUICK_START_ZIGBEE.md](archive/QUICK_START_ZIGBEE.md), [archive/QUICK_START_ZWAVE.md](archive/QUICK_START_ZWAVE.md), [archive/PR_DEVICE_INPUT_STATE_CONTRACT.md](archive/PR_DEVICE_INPUT_STATE_CONTRACT.md) — archived migration guides for removed lighting/input integrations
 - [../scripts/README.md](../scripts/README.md) — operational scripts
 - [../config/pfx.service](../config/pfx.service) — sample systemd unit

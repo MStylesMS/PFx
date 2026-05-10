@@ -2,8 +2,6 @@
 
 This document provides the complete MQTT API specification for ParadoxFX (Paradox Effects), including command formats, message structures, topic patterns, and response formats.
 
-**Note**: This documentation reflects only the currently implemented PFx commands. Active PFx runtime support is limited to screen/media and audio zones. Legacy light/relay material has been removed from the active contract; those integrations now belong in PxB or archived migration docs.
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -1851,14 +1849,6 @@ Get current device configuration.
   "command": "getConfig"
 }
 ```
-
-## Removed Commands
-
-Light and relay commands are no longer part of the active PFx MQTT contract.
-
-- Use PFx for screen/media and audio zones only.
-- Move lighting, relay, and sensor integrations to PxB.
-- Treat older light/relay examples in archived docs as migration history, not active API surface.
 
 ## System Messages
 

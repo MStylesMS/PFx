@@ -159,15 +159,6 @@ class MqttTester {
             case 'screen':
                 await this.testScreenCommands(deviceName, deviceConfig, commandTopic);
                 break;
-            case 'light':
-                await this.testLightCommands(deviceName, deviceConfig, commandTopic);
-                break;
-            case 'light_group':
-                await this.testLightGroupCommands(deviceName, deviceConfig, commandTopic);
-                break;
-            case 'relay':
-                await this.testRelayCommands(deviceName, deviceConfig, commandTopic);
-                break;
             default:
                 console.log(`⚠️  Unknown device type: ${deviceConfig.type}`);
         }
@@ -295,97 +286,6 @@ class MqttTester {
                 name: 'getConfig',
                 description: 'Get device configuration',
                 command: { command: 'getConfig' }
-            }
-        ];
-
-        await this.executeCommands(commands, commandTopic, deviceName);
-    }
-
-    async testLightCommands(deviceName, deviceConfig, commandTopic) {
-        const commands = [
-            {
-                name: 'on (minimal)',
-                description: 'Turn light on',
-                command: { command: 'on' }
-            },
-            {
-                name: 'on (with brightness)',
-                description: 'Turn light on with specific brightness',
-                command: { command: 'on', brightness: 80 }
-            },
-            {
-                name: 'off',
-                description: 'Turn light off',
-                command: { command: 'off' }
-            },
-            {
-                name: 'setColor (hex)',
-                description: 'Set light color using hex code',
-                command: { command: 'setColor', color: '#FF6400', brightness: 75 }
-            },
-            {
-                name: 'setColor (RGB)',
-                description: 'Set light color using RGB values',
-                command: { command: 'setColor', color: { r: 255, g: 100, b: 0 }, brightness: 90 }
-            }
-        ];
-
-        await this.executeCommands(commands, commandTopic, deviceName);
-    }
-
-    async testLightGroupCommands(deviceName, deviceConfig, commandTopic) {
-        const commands = [
-            {
-                name: 'on (group)',
-                description: 'Turn all lights in group on',
-                command: { command: 'on', brightness: 100 }
-            },
-            {
-                name: 'off (group)',
-                description: 'Turn all lights in group off',
-                command: { command: 'off' }
-            },
-            {
-                name: 'setGroupColor',
-                description: 'Set color for all lights in group',
-                command: { command: 'setGroupColor', color: { r: 255, g: 100, b: 0 }, brightness: 80, lights: ['light1', 'light2'] }
-            },
-            {
-                name: 'fade',
-                description: 'Fade lights to target brightness',
-                command: { command: 'fade', brightness: 50, duration: 10000 }
-            }
-        ];
-
-        await this.executeCommands(commands, commandTopic, deviceName);
-    }
-
-    async testRelayCommands(deviceName, deviceConfig, commandTopic) {
-        const commands = [
-            {
-                name: 'on',
-                description: 'Turn relay on',
-                command: { command: 'on' }
-            },
-            {
-                name: 'off',
-                description: 'Turn relay off',
-                command: { command: 'off' }
-            },
-            {
-                name: 'toggle',
-                description: 'Toggle relay state',
-                command: { command: 'toggle' }
-            },
-            {
-                name: 'pulse (minimal)',
-                description: 'Pulse relay with default duration',
-                command: { command: 'pulse' }
-            },
-            {
-                name: 'pulse (with duration)',
-                description: 'Pulse relay with custom duration',
-                command: { command: 'pulse', duration: 5000 }
             }
         ];
 
