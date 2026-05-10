@@ -49,7 +49,7 @@ This is the substantive code change.
 - [x] Remove from `docs/SPEC.md`, `docs/PFX_USER_GUIDE.md`, and `docs/CONFIG_INI.md` every reference to the removed commands (no "deprecated" mentions — fully purge)
 - [x] Remove related JSON schemas under `docs/json-schemas/`
 - [x] Remove unit tests for the removed commands; add a test asserting the warning is emitted when they are invoked
-- [ ] Integration test against a PFxE-style EDN sequence (uses `showBrowser` / `hideBrowser` only; auto-enable verified at zone init)
+- [x] Integration test against a PFxE-style EDN sequence (uses `showBrowser` / `hideBrowser` only; auto-enable verified at zone init)
 
 ## Phase 3 — Multi-channel audio support
 
