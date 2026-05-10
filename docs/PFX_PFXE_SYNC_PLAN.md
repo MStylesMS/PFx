@@ -55,12 +55,12 @@ This is the substantive code change.
 
 **Model: Sonnet 4.6 - High**
 
-- [ ] Add `audio_channels` INI key to `[audio:*]` and `[screen:*]` (values: `stereo`, `5.1`, `7.1`, or explicit `--audio-channels` string)
-- [ ] Plumb to mpv args in `mpv-zone-manager.js`
-- [ ] Document expected PulseAudio/PipeWire sink configuration (link to a short ops note)
-- [ ] Update `docs/CONFIG_INI.md` and `docs/PFX_USER_GUIDE.md` with a "Multi-channel audio" section explaining: required sink config, codec considerations, how to verify with `pactl list sinks short`
-- [ ] Unit test: mpv args contain expected `--audio-channels` flag for each config value
-- [ ] Manual hardware test note in the test plan (cannot fully unit-test multi-channel)
+- [x] Add `audio_channels` INI key to `[audio:*]` and `[screen:*]` (values: `stereo`, `5.1`, `7.1`, or explicit `--audio-channels` string)
+- [x] Plumb to mpv args in `mpv-zone-manager.js`
+- [x] Document expected PulseAudio/PipeWire sink configuration (link to a short ops note)
+- [x] Update `docs/CONFIG_INI.md` and `docs/PFX_USER_GUIDE.md` with a "Multi-channel audio" section explaining: required sink config, codec considerations, how to verify with `pactl list sinks short`
+- [x] Unit test: mpv args contain expected `--audio-channels` flag for each config value
+- [x] Manual hardware test note in the test plan (cannot fully unit-test multi-channel)
 
 ## Phase 4 — Optional: audio-only auto-mode
 

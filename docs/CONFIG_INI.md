@@ -76,6 +76,7 @@ Defines video+audio screen zones. Common keys:
 | browser_url | string | No | (none) | URL to open in the Chromium browser overlay at zone startup. When set, the browser process is launched hidden behind MPV during initialization. Use `showBrowser` / `hideBrowser` MQTT commands to control overlay visibility. Leave unset to disable the browser overlay entirely. Example: `browser_url = http://localhost/clock/` |
 | default_image | string | No | default.png | Startup image |
 | mpv_video_options | string | No | - | Extra mpv CLI options |
+| audio_channels | string | No | (none) | Audio channel layout passed to mpv via `--audio-channels` (e.g. `stereo`, `5.1`, `7.1`). Leave unset to let mpv follow the sink's channel count. Run `mpv --audio-channels=help` for supported layouts. |
 | mpvOntop | boolean | No | true | If `false` remove `--ontop` from mpv args (useful when Chromium must be on top) |
 | max_volume | integer | No | 100 | Maximum allowed volume % (0-200, enforced by MPV --volume-max) |
 
@@ -137,6 +138,7 @@ Audio-only zones. Common keys:
 | background_music_volume | integer | No | 100 | Music volume |
 | ducking_adjust | integer (negative %) | No | 0 | Background reduction percent while duck active (speech / manual / video trigger). |
 | mpv_audio_options | string | No | - | Extra mpv audio options |
+| audio_channels | string | No | (none) | Audio channel layout passed to mpv via `--audio-channels` (e.g. `stereo`, `5.1`, `7.1`). Leave unset to let mpv follow the sink's channel count. |
 | max_volume | integer | No | 100 | Maximum allowed volume % for all audio subsystems (0-200) |
 
 <!-- Volume Management Notes:

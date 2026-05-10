@@ -101,6 +101,32 @@ Examples:
 
 Ducking, queue ordering, and volume telemetry are described in [MQTT_API.md](MQTT_API.md). Device discovery and aliases are covered in [CONFIG_INI.md](CONFIG_INI.md) and [../scripts/README.md](../scripts/README.md) (`pi-audio-discovery.sh`).
 
+### Multi-channel audio
+
+PFx can tell mpv which channel layout to use when sending audio to a configured sink. Set `audio_channels` in either a `[screen:*]` or `[audio:*]` INI section:
+
+```ini
+[audio:surround]
+type          = audio
+topic         = paradox/houdini/surround
+audio_device  = pulse/alsa_output.platform-107c701400.hdmi.hdmi-surround
+audio_channels = 5.1
+```
+
+Accepted values are any layout string mpv accepts for `--audio-channels`: `stereo`, `5.1`, `7.1`, `7.1(wide)`, etc. Run `mpv --audio-channels=help` to list supported layouts on your system.
+
+**Required sink configuration** — the PulseAudio / PipeWire sink must already be configured for the target channel count before PFx starts. Verify with:
+
+```bash
+pactl list sinks short
+```
+
+The sink's sample spec must show the correct channel count (e.g. `s16le 6ch 48000Hz` for 5.1). If the sink reports `2ch`, mpv will output stereo regardless of the `audio_channels` setting.
+
+For PipeWire-based systems (Pi OS Bookworm and later), configure `audio.channels` and `audio.position` in a WirePlumber device rule. Consult the [WirePlumber documentation](https://pipewire.pages.freedesktop.org/wireplumber/) for per-device channel configuration.
+
+> **Verification**: after starting PFx with `audio_channels` set, run `ps aux | grep mpv` — the `--audio-channels=` flag must appear in every audio-related mpv process listing.
+
 ---
 
 ## 5. MQTT contract
