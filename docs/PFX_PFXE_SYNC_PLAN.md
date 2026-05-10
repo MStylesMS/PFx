@@ -77,10 +77,10 @@ Ship only if trivial. Otherwise defer to the audio PR.
 
 **Model: Sonnet 4.6 - Medium**
 
-- [ ] `CHANGELOG.md` entry for 2.1.0
-- [ ] `package.json` version → `2.1.0`
-- [ ] `npm test` clean
-- [ ] PR title: `Release: PFx 2.1.0 — PFxE vocabulary compatibility + final hardware purge`
+- [x] `CHANGELOG.md` entry for 2.1.0
+- [x] `package.json` version → `2.1.0`
+- [x] `npm test` clean
+- [x] PR title: `Release: PFx 2.1.0 — PFxE vocabulary compatibility + final hardware purge`
 
 ## Acceptance criteria
 
