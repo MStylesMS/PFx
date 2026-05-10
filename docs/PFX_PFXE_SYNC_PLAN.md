@@ -23,18 +23,18 @@ PFx retains all current functionality. This plan **adds** PFxE-vocabulary compat
 
 Mechanical cleanup. Search-and-destroy.
 
-- [ ] Remove the `config-loader.js` deprecation message and the code that emits it (the deprecation surface itself)
-- [ ] Grep PFx for `lights|relay|inputZone|\[input:|\[lights:|\[relay:|hue|wiz|lifx|shelly|zigbee|zwave` — remove all non-archive references
-- [ ] Remove from `docs/MQTT_API.md` any command families for lights/relays/inputs
-- [ ] Remove from `docs/CONFIG_INI.md` any `[lights:*]`, `[input:*]`, `[relay:*]` sections
-- [ ] Remove from `docs/SPEC.md` and `docs/PFX_USER_GUIDE.md` any mention of these device types
-- [ ] Remove JSON schemas under `docs/json-schemas/` for lights/relays/inputs
-- [ ] Remove example config sections under `config/`
-- [ ] Remove tests under `test/unit/` and `test/integration/` for these device types
-- [ ] Remove related scripts under `scripts/`
-- [ ] Update `README.md` — PFx is now "multi-zone media + audio controller" (no lights/relays/inputs language)
-- [ ] Update `.github/copilot-instructions.md` to drop the lights/relays/inputs references
-- [ ] `npm test` clean
+- [x] Remove the `config-loader.js` deprecation message and the code that emits it (the deprecation surface itself)
+- [x] Grep PFx for `lights|relay|inputZone|\[input:|\[lights:|\[relay:|hue|wiz|lifx|shelly|zigbee|zwave` — remove all non-archive references
+- [x] Remove from `docs/MQTT_API.md` any command families for lights/relays/inputs
+- [x] Remove from `docs/CONFIG_INI.md` any `[lights:*]`, `[input:*]`, `[relay:*]` sections
+- [x] Remove from `docs/SPEC.md` and `docs/PFX_USER_GUIDE.md` any mention of these device types
+- [x] Remove JSON schemas under `docs/json-schemas/` for lights/relays/inputs
+- [x] Remove example config sections under `config/`
+- [x] Remove tests under `test/unit/` and `test/integration/` for these device types
+- [x] Remove related scripts under `scripts/`
+- [x] Update `README.md` — PFx is now "multi-zone media + audio controller" (no lights/relays/inputs language)
+- [x] Update `.github/copilot-instructions.md` to drop the lights/relays/inputs references
+- [x] `npm test` clean
 
 ## Phase 2 — PFxE-vocabulary compatibility
 
