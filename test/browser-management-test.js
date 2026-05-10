@@ -43,7 +43,8 @@ class BrowserManagementTest {
                     display: ':0',
                     targetMonitor: 0,
                     volume: 80,
-                    baseTopic: 'paradox'
+                    baseTopic: 'paradox',
+                    browserUrl: 'http://localhost/clock/'
                 }
             }
         };
@@ -83,49 +84,35 @@ class BrowserManagementTest {
         }
 
         try {
-            // Test 1: Enable browser (background launch)
-            this.logger.info('Test 1: Enable browser (background launch)');
-            await zone.handleCommand({
-                command: 'enableBrowser',
-                url: 'http://localhost/clock/'
-            });
-            await this._delay(2000);
-
-            // Test 2: Show browser (pure window management)
-            this.logger.info('Test 2: Show browser (pure window management)');
+            // Browser is auto-enabled at zone init via browser_url config — see _getTestConfig().
+            // Test 1: Show browser
+            this.logger.info('Test 1: Show browser (pure window management)');
             await zone.handleCommand({
                 command: 'showBrowser'
             });
             await this._delay(3000);
 
-            // Test 3: Hide browser (back to MPV)
-            this.logger.info('Test 3: Hide browser (pure window management)');
+            // Test 2: Hide browser (back to MPV)
+            this.logger.info('Test 2: Hide browser (pure window management)');
             await zone.handleCommand({
                 command: 'hideBrowser'
             });
             await this._delay(3000);
 
-            // Test 4: Change browser URL
-            this.logger.info('Test 4: Set browser URL');
+            // Test 3: Change browser URL
+            this.logger.info('Test 3: Set browser URL');
             await zone.handleCommand({
                 command: 'setBrowserUrl',
                 url: 'https://www.google.com'
             });
             await this._delay(2000);
 
-            // Test 5: Show browser again with new URL
-            this.logger.info('Test 5: Show browser with new URL');
+            // Test 4: Show browser again with new URL
+            this.logger.info('Test 4: Show browser with new URL');
             await zone.handleCommand({
                 command: 'showBrowser'
             });
             await this._delay(3000);
-
-            // Test 6: Disable browser
-            this.logger.info('Test 6: Disable browser');
-            await zone.handleCommand({
-                command: 'disableBrowser'
-            });
-            await this._delay(2000);
 
             this.logger.info('All tests completed successfully!');
 

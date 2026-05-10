@@ -623,39 +623,17 @@ Stop current video playback.
 }
 ```
 
-### Browser/Clock Commands
+### Browser Commands
 
-Generic browser control to show/hide a Chromium-based UI (e.g., the clock at http://localhost/clock/). These commands are zone-aware and will target the screen zone’s display.
+Generic browser overlay control to show/hide a Chromium-based UI (e.g., the clock
+at `http://localhost/clock/`). The browser overlay is enabled automatically at zone
+startup when `browser_url` is set in the zone's INI config. Use `showBrowser` /
+`hideBrowser` to control its visibility during gameplay.
 
-#### enableBrowser
-
-Launch the browser on the target screen and optionally focus it.
-
-Format:
-
-```json
-{
-  "command": "enableBrowser",
-  "url": "http://localhost/clock/",
-  "screen": 1,
-  "focus": true
-}
-```
-
-Parameters:
-- url (optional): Page to open. Default: http://localhost/clock/
-- screen (optional): Screen index or identifier; if omitted, use zone’s configured screen.
-- focus (optional): Bring window to front. Default: true.
-
-#### disableBrowser
-
-Terminate the browser instance managed by this zone.
-
-Format:
-
-```json
-{ "command": "disableBrowser" }
-```
+> **PFx ↔ PFxE difference**: PFxE supports a `moveBrowser` command to reposition
+> and resize the browser window. PFx does not — the browser overlay is always
+> full-screen on PFx. Sending `moveBrowser` to a PFx zone returns a warning on
+> `{baseTopic}/warnings` and is otherwise ignored.
 
 #### showBrowser
 
@@ -686,8 +664,6 @@ Format:
 
 Parameters:
 - None. This is pure window management and does not publish clock fade commands.
-
-
 
 ### Screen Power Management Commands
 
@@ -749,151 +725,30 @@ Wake the zone's display from sleep mode and restore default display state.
 
 **Note:** Most media commands (`setImage`, `playVideo`) automatically wake sleeping displays, making explicit `wakeScreen` commands typically unnecessary during normal operation. Sleep commands are ignored during active video playbook to prevent interruption.
 
-### Browser Management Commands
+### Browser Overlay Details
 
-ParadoxFX supports browser integration for displaying web content alongside multimedia. Browser management provides **pure window focus control** with **process lifecycle management**.
+The browser overlay lifecycle is managed automatically:
 
-#### enableBrowser
+- **Startup**: When `browser_url` is set in `[screen:<name>]` of `pfx.ini`, the browser
+  is launched hidden behind MPV during zone initialization. No operator command is needed.
+- **Visibility**: Use `showBrowser` to bring the overlay to front; `hideBrowser` to return
+  to MPV. The browser process continues running in the background when hidden.
+- **URL changes**: Use `setBrowserUrl` to restart the browser with a new URL.
+- **Keep-alive**: Use `setBrowserKeepAlive` to control automatic restart on crash.
+- **Window switching**: Uses `xdotool windowactivate` (Option 6) for reliable focus switching.
+- **No fade effects**: show/hide commands perform pure window management only;
+  clock fade effects are managed separately via PxC MQTT commands.
 
-⚠️ **Launch browser process in foreground**. Browser will be visible until manually hidden.
+**Removed commands** (PFx 2.1.0+): `enableBrowser`, `disableBrowser`, `verifyBrowser`
+are no longer accepted as operator commands. Sending them returns a warning on
+`{baseTopic}/warnings`. Configure `browser_url` in the INI instead.
 
-```json
-{
-  "command": "enableBrowser",
-  "url": "http://localhost/clock/"
-}
-```
-
-**Parameters:**
-- `url` (optional): Initial URL to load (default: `http://localhost/clock/`)
-
-**Behavior:** 
-- Launches Chromium process with specified URL
-- ⚠️ **Browser window appears in foreground initially**
-- Must manually send `hideBrowser` after page loads (typically 10 seconds)
-- Uses isolated profile: `/tmp/pfx-browser-{zoneName}/`
-
-> **💡 Scheduling Tip**: To launch hidden, send `enableBrowser` followed by `hideBrowser` with a 10-second delay to allow page loading.
-
-#### disableBrowser
-
-Terminate browser process and clean up all resources.
-
-```json
-{
-  "command": "disableBrowser"
-}
-```
-
-**Behavior:**
-- Terminates browser process completely
-- Cleans up temporary profile directory
-- Returns focus to MPV content
-
-#### showBrowser
-
-**Pure window management**: Bring browser window to front using window focus switching.
-
-```json
-{
-  "command": "showBrowser"
-}
-```
-
-**Behavior:**
-- Uses `xdotool windowactivate` to bring browser to front
-- MPV window is pushed behind browser
-- **No fade effects or clock commands** - pure window layering
-- Browser must be enabled first with `enableBrowser`
-
-#### hideBrowser
-
-**Pure window management**: Return focus to MPV by bringing MPV window to front.
-
-```json
-{
-  "command": "hideBrowser"
-}
-```
-
-**Behavior:**
-- Uses `xdotool windowactivate` to bring MPV to front
-- Browser window is pushed behind MPV (still running, just hidden)
-- **No fade effects or clock commands** - pure window layering
-- Browser process continues running in background
-
-### Browser Window Management Architecture
-
-Browser management provides **pure window focus control** with clear separation of concerns:
-
-**Process Lifecycle:**
-- `enableBrowser`: Launch browser process (⚠️ **visible in foreground initially**)
-- `disableBrowser`: Terminate browser process completely
-
-**Window Focus Control:**
-- `showBrowser`: Bring browser window to front (pure window management)
-- `hideBrowser`: Bring MPV window to front (pure window management)
-
-**Key Design Principles:**
-- **No automatic fade effects**: show/hide commands perform only window switching
-- **⚠️ Foreground launch**: enableBrowser starts browser visible in foreground - manually hide after page loads
-- **External fade control**: Clock fade effects managed separately via clock MQTT commands
-- **Proven technique**: Uses Option 6 (`xdotool windowactivate`) for reliable window switching
-
-> **📝 Note**: `enableBrowser` will launch the browser in front. If you want it hidden, you must send a `hideBrowser` command manually after the page has finished loading. Generally, 10 seconds should be more than enough for most pages if you want to schedule a `hideBrowser` command to be sent after the `enableBrowser` command.
-
-**Clock Integration (Separate):**
-If you want clock fade effects with browser switching, send separate commands:
+**Clock integration** (if clock fade is desired):
 
 ```bash
-# Manual fade sequence example
 mosquitto_pub -t "paradox/houdini/clock/commands" -m '{"command": "fadeOut"}'
 mosquitto_pub -t "paradox/zone1/commands" -m '{"command": "showBrowser"}'
 mosquitto_pub -t "paradox/houdini/clock/commands" -m '{"command": "fadeIn"}'
-```
-4. Update zone status with focus and content tracking
-
-**Clock MQTT Topic**: `paradox/houdini/clock/commands`
-
-#### verifyBrowser
-
-Check browser health and restart if needed (automated health monitoring).
-
-**Format:**
-
-```json
-{
-  "command": "verifyBrowser"
-}
-```
-
-**Behavior:**
-- Requests current browser state from the PFX zone
-- Waits briefly (500ms) for state update to arrive
-- If browser is not running or responding, automatically restarts it
-- Uses the previously configured URL or zone default
-- Useful for sequence-based reliability checks and automated recovery
-
-**Use Cases:**
-- Sequence steps that need to ensure browser is healthy before proceeding
-- Automated recovery from browser crashes during game sequences
-- System initialization and startup verification
-- Periodic health checks in long-running games
-
-**Status Reporting**: Browser status is included in zone status updates:
-
-```json
-{
-  "focus": "chromium",
-  "content": "http://localhost/clock/",
-  "browser": {
-    "enabled": true,
-    "url": "http://localhost/clock/",
-    "process_id": 12345,
-    "window_id": "0x123456"
-    "foreground": true
-  }
-}
 ```
 
 ### System / State Message Schema (Full)
@@ -945,7 +800,7 @@ paradox/houdini/mirror/state {
   "current_state": {
     "status": "showing_image",
     "volume": 100,
-    "lastCommand": "enableBrowser",
+    "lastCommand": "showBrowser",
     "errors": [],
     "currentImage": "black_screen.png",
     "currentVideo": null,

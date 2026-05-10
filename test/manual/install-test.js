@@ -457,21 +457,19 @@ function screenSteps(output, mediaPrefix) {
             {
                 output: output.label,
                 title: `${output.label}: show browser overlay`,
-                description: `Enables the browser overlay and brings it to the front.`,
+                description: `Shows the browser overlay (browser is auto-enabled at zone startup via browser_url config).`,
                 lookFor: `A Chromium window should appear on ${output.label}. The page content may be blank or show a local error page if no clock/UI is being served.`,
                 actions: [
-                    { topic: output.topic, payload: { command: 'enableBrowser', url: DEFAULT_ASSETS.browserUrl }, delayAfterMs: 1500 },
                     { topic: output.topic, payload: { command: 'showBrowser' }, delayAfterMs: 1500 }
                 ]
             },
             {
                 output: output.label,
                 title: `${output.label}: hide browser overlay`,
-                description: `Hides and disables the browser overlay after the visibility check.`,
+                description: `Hides the browser overlay after the visibility check.`,
                 lookFor: `The Chromium window should disappear from ${output.label}.`,
                 actions: [
-                    { topic: output.topic, payload: { command: 'hideBrowser' }, delayAfterMs: 1000 },
-                    { topic: output.topic, payload: { command: 'disableBrowser' }, delayAfterMs: 1000 }
+                    { topic: output.topic, payload: { command: 'hideBrowser' }, delayAfterMs: 1000 }
                 ]
             }
         ] : [])
@@ -559,7 +557,6 @@ async function cleanupOutputs(brokerHost, brokerPort, outputs) {
 
         if (output.kind === 'screen' && output.testBrowser) {
             actions.push({ topic: output.topic, payload: { command: 'hideBrowser' }, delayAfterMs: 0 });
-            actions.push({ topic: output.topic, payload: { command: 'disableBrowser' }, delayAfterMs: 0 });
         }
     }
 

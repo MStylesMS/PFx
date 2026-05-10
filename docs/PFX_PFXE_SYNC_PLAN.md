@@ -42,13 +42,13 @@ Mechanical cleanup. Search-and-destroy.
 
 This is the substantive code change.
 
-- [ ] Audit and **remove all internal call sites** of `enableBrowser` / `disableBrowser` / `verifyBrowser` (controllers, helpers, state tracking, tests, schemas)
-- [ ] Change `ScreenZone` to auto-enable the browser during zone init when a browser URL is configured (no operator action needed)
-- [ ] Add `enableBrowser` / `disableBrowser` / `verifyBrowser` / `moveBrowser` to the command router's **unknown-command warning path** — each emits a warning to MQTT (`{baseTopic}/warnings`), the log, and stderr explaining the command is no longer supported (or, for `moveBrowser`, not meaningful on PFx since the overlay is full-screen)
-- [ ] Update `docs/MQTT_API.md` to drop the removed commands entirely; add a brief "PFx ↔ PFxE differences" note covering `moveBrowser` warning behavior
-- [ ] Remove from `docs/SPEC.md`, `docs/PFX_USER_GUIDE.md`, and `docs/CONFIG_INI.md` every reference to the removed commands (no "deprecated" mentions — fully purge)
-- [ ] Remove related JSON schemas under `docs/json-schemas/`
-- [ ] Remove unit tests for the removed commands; add a test asserting the warning is emitted when they are invoked
+- [x] Audit and **remove all internal call sites** of `enableBrowser` / `disableBrowser` / `verifyBrowser` (controllers, helpers, state tracking, tests, schemas)
+- [x] Change `ScreenZone` to auto-enable the browser during zone init when a browser URL is configured (no operator action needed)
+- [x] Add `enableBrowser` / `disableBrowser` / `verifyBrowser` / `moveBrowser` to the command router's **unknown-command warning path** — each emits a warning to MQTT (`{baseTopic}/warnings`), the log, and stderr explaining the command is no longer supported (or, for `moveBrowser`, not meaningful on PFx since the overlay is full-screen)
+- [x] Update `docs/MQTT_API.md` to drop the removed commands entirely; add a brief "PFx ↔ PFxE differences" note covering `moveBrowser` warning behavior
+- [x] Remove from `docs/SPEC.md`, `docs/PFX_USER_GUIDE.md`, and `docs/CONFIG_INI.md` every reference to the removed commands (no "deprecated" mentions — fully purge)
+- [x] Remove related JSON schemas under `docs/json-schemas/`
+- [x] Remove unit tests for the removed commands; add a test asserting the warning is emitted when they are invoked
 - [ ] Integration test against a PFxE-style EDN sequence (uses `showBrowser` / `hideBrowser` only; auto-enable verified at zone init)
 
 ## Phase 3 — Multi-channel audio support

@@ -73,6 +73,7 @@ Defines video+audio screen zones. Common keys:
 | output_name | string | No | (auto) | Optional xrandr output name (e.g. `HDMI-1`). When omitted PFx will try to resolve the monitor by `targetMonitor` index. |
 | resolution_mode | string | No | (none) | Desired display mode (e.g. `640x480@60`). Applied via `xrandr` before MPV starts. |
 | resolution_fallback | string | No | (none) | Secondary mode tried when the primary fails. Same syntax as `resolution_mode`. |
+| browser_url | string | No | (none) | URL to open in the Chromium browser overlay at zone startup. When set, the browser process is launched hidden behind MPV during initialization. Use `showBrowser` / `hideBrowser` MQTT commands to control overlay visibility. Leave unset to disable the browser overlay entirely. Example: `browser_url = http://localhost/clock/` |
 | default_image | string | No | default.png | Startup image |
 | mpv_video_options | string | No | - | Extra mpv CLI options |
 | mpvOntop | boolean | No | true | If `false` remove `--ontop` from mpv args (useful when Chromium must be on top) |
