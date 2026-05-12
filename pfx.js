@@ -117,6 +117,7 @@ class PFxApplication {
             } else {
                 this.logger.info('File logging disabled (no log_directory configured)');
             }
+            this.logger.info(`Config: ${configPath}`);
             this.logger.info(`Loaded configuration for ${Object.keys(this.config.devices).length} devices`);
 
             // Detect OS and log system information
