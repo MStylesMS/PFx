@@ -34,8 +34,6 @@ Full walkthrough: [docs/QUICK_START_PFX.md](docs/QUICK_START_PFX.md).
 - **Audio** — three concurrent categories per zone (background music, speech, SFX) with automatic ducking
 - **Operational** — retained MQTT state, lifecycle status, structured warnings/events, systemd unit
 
-PFx no longer supports direct lighting, relay, or input zones in active runtime configuration. Keep active PFx configs limited to `[screen:*]` and `[audio:*]` sections; migrate hardware integrations to PxB.
-
 ## Documentation
 
 | | |

@@ -22,15 +22,8 @@ async function showCommands() {
                 case 'screen':
                     showScreenCommands();
                     break;
-                case 'light':
-                    showLightCommands();
-                    break;
-                case 'light_group':
-                    showLightGroupCommands();
-                    break;
-                case 'relay':
-                    showRelayCommands();
-                    break;
+                default:
+                    console.log(`  (no demo commands for type: ${deviceConfig.type})`);
             }
         }
 
@@ -60,52 +53,6 @@ function showScreenCommands() {
         {
             name: 'transition',
             json: { command: 'transition', video: 'intro.mp4', image: 'final.jpg' }
-        }
-    ];
-
-    examples.forEach(ex => {
-        console.log(`\n📝 ${ex.name}:`);
-        console.log(`   ${JSON.stringify(ex.json, null, 2)}`);
-    });
-}
-
-function showLightCommands() {
-    const examples = [
-        {
-            name: 'on (with brightness)',
-            json: { command: 'on', brightness: 80 }
-        },
-        {
-            name: 'setColor (RGB)',
-            json: { command: 'setColor', color: { r: 255, g: 100, b: 0 }, brightness: 90 }
-        }
-    ];
-
-    examples.forEach(ex => {
-        console.log(`\n📝 ${ex.name}:`);
-        console.log(`   ${JSON.stringify(ex.json, null, 2)}`);
-    });
-}
-
-function showLightGroupCommands() {
-    const examples = [
-        {
-            name: 'setGroupColor',
-            json: { command: 'setGroupColor', color: { r: 255, g: 100, b: 0 }, brightness: 80, lights: ['light1', 'light2'] }
-        }
-    ];
-
-    examples.forEach(ex => {
-        console.log(`\n📝 ${ex.name}:`);
-        console.log(`   ${JSON.stringify(ex.json, null, 2)}`);
-    });
-}
-
-function showRelayCommands() {
-    const examples = [
-        {
-            name: 'pulse (with duration)',
-            json: { Command: 'pulse', Duration: 5000 }
         }
     ];
 

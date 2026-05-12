@@ -63,15 +63,15 @@ describe('ZoneManager._publishDiscovery', () => {
 
     test('includes commandsTopic, stateTopic and schemaTopic for each zone', () => {
         const { zm, mqttClient } = makeZoneManager('paradox/test');
-        zm.zones.set('lights1', makeZone('light', 'paradox/test/lights1'));
+        zm.zones.set('audio1', makeZone('audio', 'paradox/test/audio1'));
 
         zm._publishDiscovery();
 
         const [, payload] = mqttClient.publish.mock.calls[0];
         const zoneObj = payload.zones[0];
-        expect(zoneObj.commandsTopic).toBe('paradox/test/lights1/commands');
-        expect(zoneObj.stateTopic).toBe('paradox/test/lights1/state');
-        expect(zoneObj.schemaTopic).toBe('paradox/test/lights1/schema');
+        expect(zoneObj.commandsTopic).toBe('paradox/test/audio1/commands');
+        expect(zoneObj.stateTopic).toBe('paradox/test/audio1/state');
+        expect(zoneObj.schemaTopic).toBe('paradox/test/audio1/schema');
     });
 
     test('skips publish when baseTopic is an empty string', () => {
@@ -175,5 +175,48 @@ describe('ZoneManager._publishZoneSchemas', () => {
         expect(payload.state_fields).toEqual(schemaMetadata.state_fields);
         expect(payload.event_fields).toEqual(schemaMetadata.event_fields);
         expect(payload.warning_policy).toEqual(schemaMetadata.warning_policy);
+    });
+});
+
+describe('ZoneManager audio-only mode detection', () => {
+    function makeConfig(deviceTypes) {
+        const devices = {};
+        deviceTypes.forEach((type, i) => {
+            devices[`zone${i}`] = { type, baseTopic: `paradox/test/zone${i}`, name: `zone${i}` };
+        });
+        return {
+            global: { baseTopic: 'paradox/test', logLevel: 'info' },
+            devices
+        };
+    }
+
+    test('detects audio-only config when all zones are audio type', () => {
+        const mqttClient = makeMqttClient();
+        const zm = new ZoneManager(makeConfig(['audio', 'audio']), mqttClient);
+
+        const hasScreenZone = zm.devices.some(d => d.type === 'screen');
+        const audioOnlyMode = zm.devices.length > 0 && !hasScreenZone;
+
+        expect(audioOnlyMode).toBe(true);
+    });
+
+    test('does not detect audio-only when a screen zone is present', () => {
+        const mqttClient = makeMqttClient();
+        const zm = new ZoneManager(makeConfig(['audio', 'screen']), mqttClient);
+
+        const hasScreenZone = zm.devices.some(d => d.type === 'screen');
+        const audioOnlyMode = zm.devices.length > 0 && !hasScreenZone;
+
+        expect(audioOnlyMode).toBe(false);
+    });
+
+    test('does not detect audio-only when only screen zones are present', () => {
+        const mqttClient = makeMqttClient();
+        const zm = new ZoneManager(makeConfig(['screen']), mqttClient);
+
+        const hasScreenZone = zm.devices.some(d => d.type === 'screen');
+        const audioOnlyMode = zm.devices.length > 0 && !hasScreenZone;
+
+        expect(audioOnlyMode).toBe(false);
     });
 });

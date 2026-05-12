@@ -4,7 +4,7 @@
  * Paradox Effects (ParadoxFX) - Main Application Entry Point
  * 
  * Multi-modal media and effect controller for interactive installations.
- * Supports screens, lights, and relays via MQTT commands.
+ * Supports screen and audio zones via MQTT commands.
  */
 
 const path = require('path');
@@ -117,6 +117,7 @@ class PFxApplication {
             } else {
                 this.logger.info('File logging disabled (no log_directory configured)');
             }
+            this.logger.info(`Config: ${configPath}`);
             this.logger.info(`Loaded configuration for ${Object.keys(this.config.devices).length} devices`);
 
             // Detect OS and log system information
@@ -241,13 +242,19 @@ class PFxApplication {
         if (this._unclutterProcs) return;
         this._unclutterProcs = new Map();
 
-        // Discover displays from zone configs
+        // Discover displays from zone configs — skip audio-only zones (they don't use a display)
         try {
             const displays = new Set();
             for (const deviceName of Object.keys(this.config.devices || {})) {
                 const dev = this.config.devices[deviceName];
+                if (dev.type !== 'screen') continue;
                 const d = dev.display || dev.display_name || process.env.DISPLAY || ':0';
                 displays.add(d);
+            }
+
+            if (displays.size === 0) {
+                this.logger.info('Audio-only config — no display zones; skipping unclutter');
+                return;
             }
 
             for (const display of displays) {

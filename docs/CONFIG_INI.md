@@ -14,8 +14,6 @@ Contents:
 
 ParadoxFX is configured using INI files. Pick a sample config from `config/` (e.g., `config/pfx-pi5-hh.ini`) and copy to `pfx.ini`. Active PFx configs support `[mqtt]`, `[global]`, `[screen:<name>]`, and `[audio:<name>]` sections.
 
-Removed section types such as `[light:*]`, `[input:*]`, `[relay:*]`, `[output:*]`, and `[controller:*]` are no longer supported by PFx. Startup now fails fast if those sections are present. Move that hardware integration to PxB or keep it in archived migration docs only.
-
 General advice:
 - Keep environment- and deployment-specific settings (like X11 DISPLAY or mpvOntop) in local `pfx.ini` and out of shared branches when necessary.
 - Use `log_level = debug` for troubleshooting window/MPV/browser issues.
@@ -75,8 +73,10 @@ Defines video+audio screen zones. Common keys:
 | output_name | string | No | (auto) | Optional xrandr output name (e.g. `HDMI-1`). When omitted PFx will try to resolve the monitor by `targetMonitor` index. |
 | resolution_mode | string | No | (none) | Desired display mode (e.g. `640x480@60`). Applied via `xrandr` before MPV starts. |
 | resolution_fallback | string | No | (none) | Secondary mode tried when the primary fails. Same syntax as `resolution_mode`. |
+| browser_url | string | No | (none) | URL to open in the Chromium browser overlay at zone startup. When set, the browser process is launched hidden behind MPV during initialization. Use `showBrowser` / `hideBrowser` MQTT commands to control overlay visibility. Leave unset to disable the browser overlay entirely. Example: `browser_url = http://localhost/clock/` |
 | default_image | string | No | default.png | Startup image |
 | mpv_video_options | string | No | - | Extra mpv CLI options |
+| audio_channels | string | No | (none) | Audio channel layout passed to mpv via `--audio-channels` (e.g. `stereo`, `5.1`, `7.1`). Leave unset to let mpv follow the sink's channel count. Run `mpv --audio-channels=help` for supported layouts. |
 | mpvOntop | boolean | No | true | If `false` remove `--ontop` from mpv args (useful when Chromium must be on top) |
 | max_volume | integer | No | 100 | Maximum allowed volume % (0-200, enforced by MPV --volume-max) |
 
@@ -138,6 +138,7 @@ Audio-only zones. Common keys:
 | background_music_volume | integer | No | 100 | Music volume |
 | ducking_adjust | integer (negative %) | No | 0 | Background reduction percent while duck active (speech / manual / video trigger). |
 | mpv_audio_options | string | No | - | Extra mpv audio options |
+| audio_channels | string | No | (none) | Audio channel layout passed to mpv via `--audio-channels` (e.g. `stereo`, `5.1`, `7.1`). Leave unset to let mpv follow the sink's channel count. |
 | max_volume | integer | No | 100 | Maximum allowed volume % for all audio subsystems (0-200) |
 
 <!-- Volume Management Notes:
@@ -147,15 +148,34 @@ Audio-only zones. Common keys:
 - Default fallback is 100% if max_volume is not specified
 -->
 
-### Deprecated Section Types
+---
 
-PFx no longer supports `[light:*]`, `[light-group:*]`, `[input:*]`, `[relay:*]`, `[output:*]`, or `[controller:*]` sections in active runtime configuration.
+## Audio-only mode
 
-- If those sections are present, PFx startup fails with an unsupported device type error.
-- Direct lighting, relay, and input integrations were removed from PFx or moved to PxB.
-- Keep legacy examples in archived migration docs only; do not use them in active `pfx.ini` files.
+When a PFx config contains **only** `[audio:*]` sections (no `[screen:*]` sections), PFx operates in audio-only mode:
 
-For active PFx deployments, define only screen and audio zones.
+- No MPV video player is started — no display or X11 connection is required.
+- No Chromium browser overlay is created.
+- Unclutter (cursor-hiding helper) is not started.
+- Background music, speech queuing, sound effects, and ducking all work normally.
+
+This mode is useful for Pi deployments that drive a speaker rack or intercom without an attached monitor. Configure PulseAudio or PipeWire sinks as usual; the `audio_device`, `audio_channels`, and `combined_sinks` keys all apply.
+
+Example minimal audio-only config:
+
+```ini
+[global]
+heartbeat_topic = paradox/heartbeat
+
+[mqtt]
+broker = localhost
+
+[audio:room]
+type         = audio
+topic        = paradox/houdini/audio
+audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
+volume       = 100
+```
 
 ---
 

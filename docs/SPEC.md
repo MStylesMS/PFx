@@ -210,8 +210,6 @@ Platform-optimized configurations are provided as templates for each supported h
 - All devices share a single MQTT broker connection with intelligent routing
 - Enhanced audio system configuration with three-subsystem architecture
 
-Removed section types such as `light`, `input`, `relay`, `output`, and `controller` are no longer part of the active PFx runtime contract. Move those hardware integrations to PxB or archived migration docs.
-
 #### **Example: Raspberry Pi 4 Dual-Zone Configuration**
 
 ```ini
@@ -268,7 +266,7 @@ speech_volume = 90
 - **Real-time Coordination**: Subsystem coordination for seamless multi-zone experiences
 - **Device Routing**: Commands are automatically routed to correct device handlers based on MQTT topic
 - **Audio Integration**: Audio effects are tied to specific screen devices
-- **External Hardware Boundary**: Lighting, relay, and sensor ownership now lives in PxB rather than active PFx runtime
+- **External Hardware Boundary**: Hardware control (GPIO, radio devices, sensors) is delegated to Pio and PxB over MQTT
 
 ### 6. Status and Error Reporting
 

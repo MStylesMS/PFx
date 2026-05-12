@@ -236,4 +236,43 @@ describe('MpvZoneManager startup helpers', () => {
             jest.useRealTimers();
         }
     });
+
+    test('includes --audio-channels in spawn args when audioChannels is configured', () => {
+        const manager = makeManager({ audioChannels: '5.1' });
+        manager.ipcSocketPath = '/tmp/test-mpv.sock';
+
+        const args = manager._buildSpawnArgs();
+
+        expect(args).toContain('--audio-channels=5.1');
+    });
+
+    test('includes --audio-channels=stereo when audioChannels is stereo', () => {
+        const manager = makeManager({ audioChannels: 'stereo' });
+        manager.ipcSocketPath = '/tmp/test-mpv.sock';
+
+        const args = manager._buildSpawnArgs();
+
+        expect(args).toContain('--audio-channels=stereo');
+    });
+
+    test('omits --audio-channels when audioChannels is not configured', () => {
+        const manager = makeManager();
+        manager.ipcSocketPath = '/tmp/test-mpv.sock';
+
+        const args = manager._buildSpawnArgs();
+
+        expect(args.find(a => a.startsWith('--audio-channels'))).toBeUndefined();
+    });
+
+    test('--audio-channels appears after IPC socket and profile args', () => {
+        const manager = makeManager({ audioChannels: '7.1' });
+        manager.ipcSocketPath = '/tmp/test-mpv.sock';
+
+        const args = manager._buildSpawnArgs();
+
+        const ipcIdx = args.findIndex(a => a.startsWith('--input-ipc-server'));
+        const chanIdx = args.findIndex(a => a.startsWith('--audio-channels'));
+        expect(ipcIdx).toBeGreaterThanOrEqual(0);
+        expect(chanIdx).toBeGreaterThan(ipcIdx);
+    });
 });

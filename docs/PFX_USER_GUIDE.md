@@ -101,21 +101,35 @@ Examples:
 
 Ducking, queue ordering, and volume telemetry are described in [MQTT_API.md](MQTT_API.md). Device discovery and aliases are covered in [CONFIG_INI.md](CONFIG_INI.md) and [../scripts/README.md](../scripts/README.md) (`pi-audio-discovery.sh`).
 
+### Multi-channel audio
+
+PFx can tell mpv which channel layout to use when sending audio to a configured sink. Set `audio_channels` in either a `[screen:*]` or `[audio:*]` INI section:
+
+```ini
+[audio:surround]
+type          = audio
+topic         = paradox/houdini/surround
+audio_device  = pulse/alsa_output.platform-107c701400.hdmi.hdmi-surround
+audio_channels = 5.1
+```
+
+Accepted values are any layout string mpv accepts for `--audio-channels`: `stereo`, `5.1`, `7.1`, `7.1(wide)`, etc. Run `mpv --audio-channels=help` to list supported layouts on your system.
+
+**Required sink configuration** — the PulseAudio / PipeWire sink must already be configured for the target channel count before PFx starts. Verify with:
+
+```bash
+pactl list sinks short
+```
+
+The sink's sample spec must show the correct channel count (e.g. `s16le 6ch 48000Hz` for 5.1). If the sink reports `2ch`, mpv will output stereo regardless of the `audio_channels` setting.
+
+For PipeWire-based systems (Pi OS Bookworm and later), configure `audio.channels` and `audio.position` in a WirePlumber device rule. Consult the [WirePlumber documentation](https://pipewire.pages.freedesktop.org/wireplumber/) for per-device channel configuration.
+
+> **Verification**: after starting PFx with `audio_channels` set, run `ps aux | grep mpv` — the `--audio-channels=` flag must appear in every audio-related mpv process listing.
+
 ---
 
-## 5. Removed hardware integrations
-
-PFx no longer owns direct lighting, relay, or input zones.
-
-- Lighting backends, relays, and hardware inputs were removed from active PFx runtime support.
-- Z-Wave and Zigbee hardware ownership lives in PxB.
-- Legacy setup documents may remain in the repository for migration history, but active PFx configs should contain only screen and audio sections.
-
-If you still have old `[light:*]`, `[input:*]`, `[relay:*]`, or `[controller:*]` sections in a PFx INI, remove or migrate them before startup.
-
----
-
-## 6. MQTT contract
+## 5. MQTT contract
 
 Every zone uses the same topic shape:
 
@@ -138,7 +152,7 @@ PFx also publishes a readiness marker file at `/run/paradox/pfx.ready` once star
 
 ---
 
-## 7. Configuration (INI)
+## 6. Configuration (INI)
 
 PFx reads a single INI file at startup (path passed on the command line, typically `/etc/pfx.ini`). The file declares:
 
@@ -167,7 +181,7 @@ Every supported key, default value, and platform note is in [CONFIG_INI.md](CONF
 
 ---
 
-## 8. Operational tooling
+## 7. Operational tooling
 
 The `scripts/` directory contains helpers for setup, debugging, and field troubleshooting:
 
@@ -182,7 +196,7 @@ The full catalog with usage notes is in [../scripts/README.md](../scripts/README
 
 ---
 
-## 9. Deployment
+## 8. Deployment
 
 A sample systemd unit lives at [../config/pfx.service](../config/pfx.service). It is a template — adjust `User=`, `ExecStart=`, working directory, and hardening options before installing.
 
@@ -230,6 +244,5 @@ Prerequisites:
 - [MQTT_API.md](MQTT_API.md) — every command and event
 - [SPEC.md](SPEC.md) — functional specification
 - [json-schemas/](json-schemas/) — machine-readable command/event schemas
-- [archive/QUICK_START_HUE.md](archive/QUICK_START_HUE.md), [archive/QUICK_START_WIZ.md](archive/QUICK_START_WIZ.md), [archive/QUICK_START_SHELLY.md](archive/QUICK_START_SHELLY.md), [archive/QUICK_START_ZIGBEE.md](archive/QUICK_START_ZIGBEE.md), [archive/QUICK_START_ZWAVE.md](archive/QUICK_START_ZWAVE.md), [archive/PR_DEVICE_INPUT_STATE_CONTRACT.md](archive/PR_DEVICE_INPUT_STATE_CONTRACT.md) — archived migration guides for removed lighting/input integrations
 - [../scripts/README.md](../scripts/README.md) — operational scripts
 - [../config/pfx.service](../config/pfx.service) — sample systemd unit

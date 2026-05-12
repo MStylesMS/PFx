@@ -4,20 +4,19 @@ This is the single source of AI/agent context for this repository. `CLAUDE.md` a
 
 ## What PFx is
 
-ParadoxFX is a Node.js multi-modal media and effects controller. It receives MQTT commands and coordinates screens (mpv), multi-zone audio (PulseAudio), browser overlays (Chromium), lights, relays, and input events. It is the hardware abstraction layer for the Paradox escape-room system and runs as `pfx.service` on Raspberry Pi 4/5; it also runs on desktop Linux for development.
+ParadoxFX is a Node.js multi-modal media and effects controller. It receives MQTT commands and coordinates screens (mpv), multi-zone audio (PulseAudio), and browser overlays (Chromium). It is the media and audio runtime for the Paradox escape-room system and runs as `pfx.service` on Raspberry Pi 4/5; it also runs on desktop Linux for development.
 
 - **Runtime**: Node.js 18+
 - **Audio**: PulseAudio with multi-zone ducking (background music, speech, SFX)
 - **Video**: mpv (Pi4+), vlc, fbi for framebuffer
-- **Lights**: Hue, WiZ, LIFX, Shelly (direct); Zigbee + Z-Wave via **PxB** over MQTT
-- **Config**: INI file with `[screen:zone]`, `[audio:zone]`, `[lights:*]`, `[input:*]` sections
+- **Config**: INI file with `[screen:zone]` and `[audio:zone]` sections
 - **Entry point**: `pfx.js`
 
 ## Paradox family
 
 PFx is one of seven Paradox products. Be aware of siblings when designing contracts.
 
-- **PFx** — media / audio / lights / relays controller (this repo)
+- **PFx** — media / audio controller (this repo)
 - **PxO** — game orchestration engine (EDN, state machine)
 - **PxC** — configurable clock app framework (React build)
 - **PxT** — player terminal kiosk (Electron)
@@ -25,7 +24,7 @@ PFx is one of seven Paradox products. Be aware of siblings when designing contra
 - **PxB** — Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
 - Rooms: `agent22`, `houdinis-challenge` — game packages consumed by PxO + PFx
 
-PFx does **not** own radio hardware directly. PxB does. PFx consumes PxB over MQTT (inputs from `{node.base_topic}/events`, outputs to `{node.base_topic}/commands`). Direct in-PFx Z-Wave/Zigbee code is being retired.
+PFx does **not** own radio hardware, lights, relays, or GPIO. PxB owns radio devices; Pio owns GPIO. Hardware commands route to PxB over MQTT.
 
 ## How this repo is built — development methodology
 
@@ -69,10 +68,6 @@ type = audio
 topic = paradox/houdini/audio
 device = analog
 volume = 100
-
-[lights:room]
-topic = paradox/houdini/lights
-backend = hue
 ```
 
 Audio supports three concurrent categories: background music (looping, ducked when speech plays), speech (queued, exclusive, triggers ducking), and SFX (fire-and-forget). A zone can drive multiple outputs; device aliases `hdmi` and `analog` resolve per platform.
@@ -83,16 +78,14 @@ Audio supports three concurrent categories: background music (looping, ducked wh
 - **Command format**: `{"command": "actionName", "param": "value"}`. This is the contract with PxO, PxC, PxT, and operator UIs.
 - **Readiness marker**: PFx creates `/run/paradox/pfx.ready` after init. The game engine startup gates on this file. Do not remove or rename it.
 - **Service startup order**: `mosquitto` → `pfx.service` → game service.
-- **INI section naming**: `[screen:name]`, `[audio:name]`, `[lights:name]`, `[input:name]`, `[relay:name]`. Don't rename without spec update.
+- **INI section naming**: `[screen:name]`, `[audio:name]`. Don't add new section types without a spec update.
 - **Don't bypass the MQTT wrapper.** Use the published client; don't reach for a raw `mqtt` import.
 - **Tests live next to features.** `test/unit/` mirrors `lib/`; integration tests run hardware paths.
 
 ## Common command shapes
 
-- Screen: `playVideo`, `queueVideo`, `showImage`, `showBrowser`, `hideBrowser`, `stopAll`
+- Screen: `playVideo`, `queueVideo`, `setImage`, `showBrowser`, `hideBrowser`, `stopAll`
 - Audio: `playBackground`, `playSpeech`, `playEffect`, `setBackgroundVolume`, `stopSpeech`, `stopAll`
-- Lights: `setLight`, `setScene`, `allOff`, `allOn`
-- Input: emits events; not commanded
 
 Outcome and event payloads conform to JSON schemas in `docs/json-schemas/`.
 
