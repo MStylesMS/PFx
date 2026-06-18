@@ -14,7 +14,7 @@ ParadoxFX is a Node.js multi-modal media and effects controller. It receives MQT
 
 ## Paradox family
 
-PFx is one of seven Paradox products. Be aware of siblings when designing contracts.
+PFx is one of the Paradox products. Be aware of siblings when designing contracts.
 
 - **PFx** — media / audio controller (this repo)
 - **PxO** — game orchestration engine (EDN, state machine)
@@ -22,6 +22,7 @@ PFx is one of seven Paradox products. Be aware of siblings when designing contra
 - **PxT** — player terminal kiosk (Electron)
 - **Pio** — GPIO-to-MQTT bridge (C++)
 - **PxB** — Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
+- **PxP** — Paradox Prime operator/admin hub (configures & manages this app; not part of a running game)
 - Rooms: `agent22`, `houdinis-challenge` — game packages consumed by PxO + PFx
 
 PFx does **not** own radio hardware, lights, relays, or GPIO. PxB owns radio devices; Pio owns GPIO. Hardware commands route to PxB over MQTT.
