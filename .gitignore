@@ -23,6 +23,9 @@ coverage/
 # Optional npm cache directory
 .npm
 
+# npm lock file
+package-lock.json
+
 # Optional REPL history
 .node_repl_history
 
