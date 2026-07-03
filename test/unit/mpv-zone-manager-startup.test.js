@@ -126,6 +126,27 @@ describe('MpvZoneManager startup helpers', () => {
         }
     });
 
+    test('failed IPC writes reject the command and clear pending state', async () => {
+        jest.useFakeTimers();
+
+        try {
+            const manager = makeManager();
+            manager.ipcSocket = {
+                write: jest.fn(() => {
+                    throw new Error('socket closed');
+                })
+            };
+
+            const commandPromise = manager._sendIpcCommand('get_property', ['duration']);
+
+            await expect(commandPromise).rejects.toThrow('IPC write failed: socket closed');
+            expect(manager.pendingCommands.size).toBe(0);
+            expect(jest.getTimerCount()).toBe(0);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
     test('stop clears simulated playback timer before sending stop command', async () => {
         jest.useFakeTimers();
 

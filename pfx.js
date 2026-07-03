@@ -194,6 +194,8 @@ class PFxApplication {
     }
 
     async shutdown() {
+        if (this._shuttingDown) return;
+        this._shuttingDown = true;
         console.log('****************************************');
         this.logger.info('PFX shutting down politely, which may take a few seconds.');
         console.log('****************************************');
@@ -224,6 +226,14 @@ class PFxApplication {
         process.on('SIGTERM', () => this.shutdown());
         process.on('uncaughtException', (error) => {
             this.logger.error('Uncaught exception:', error);
+            // EPIPE means a socket (mpv IPC) closed while we were writing — the
+            // zone manager will recover. Shutting down on every EPIPE causes a
+            // cascade of shutdown() calls and kills pfx unnecessarily.
+            if (error.code === 'EPIPE') {
+                this.logger.warn('EPIPE on IPC socket — ignoring, zone manager will recover');
+                return;
+            }
+            if (this._shuttingDown) return;
             this.shutdown();
         });
         process.on('unhandledRejection', (reason, promise) => {
