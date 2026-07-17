@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HDMI-1 — LG (Goldstar) LG TV — display control probe</title>
+<style>
+  :root {
+    --bg: #14181c;
+    --panel: #1e252c;
+    --text: #e8eef4;
+    --muted: #9aa7b5;
+    --ok: #3d9a6a;
+    --fail: #c44c4c;
+    --skip: #b0892e;
+    --line: #2c3640;
+    --accent: #6cb2d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    background: radial-gradient(1200px 600px at 10% -10%, #243040, transparent),
+                radial-gradient(900px 500px at 100% 0%, #1a2830, transparent),
+                var(--bg);
+    color: var(--text);
+    line-height: 1.45;
+    padding: 2rem clamp(1rem, 4vw, 3rem) 3rem;
+  }
+  h1 { font-size: 1.75rem; margin: 0 0 0.25rem; font-weight: 650; }
+  .sub { color: var(--muted); margin-bottom: 1.75rem; }
+  .grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  section {
+    background: color-mix(in srgb, var(--panel) 92%, black);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1rem 1.15rem 1.15rem;
+  }
+  section.full { grid-column: 1 / -1; }
+  h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin: 0 0 0.75rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 0.45rem 0.55rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 560; width: 40%; }
+  .chart th { width: auto; }
+  .ok { color: #7ddea8; font-weight: 600; }
+  .fail { color: #f0a0a0; font-weight: 600; }
+  .skip { color: #e6c87a; font-weight: 600; }
+  code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.84em; color: #c9d7e3; }
+  ul { margin: 0; padding-left: 1.1rem; }
+  li { margin: 0.25rem 0; }
+  footer { margin-top: 1.5rem; color: var(--muted); font-size: 0.85rem; }
+  .legend span { margin-right: 1rem; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>HDMI-1 — LG (Goldstar) LG TV</h1>
+    <p class="sub">PFx display-control experiment · 2026-07-17T21:30:52.358Z · host houdini</p>
+  </header>
+
+  <div class="grid">
+    <section>
+      <h2>Display information</h2>
+      <table><tr><th>xrandr output</th><td>HDMI-1</td></tr>
+<tr><th>DRM connector</th><td>card1-HDMI-A-1</td></tr>
+<tr><th>Make</th><td>LG (Goldstar)</td></tr>
+<tr><th>Model</th><td>LG TV</td></tr>
+<tr><th>Manufacturer ID (PNP)</th><td>GSM</td></tr>
+<tr><th>Product code</th><td>1</td></tr>
+<tr><th>Serial (ASCII)</th><td>—</td></tr>
+<tr><th>Manufactured</th><td>week 1, 2016</td></tr>
+<tr><th>Current mode</th><td>1360x768</td></tr>
+<tr><th>Geometry</th><td>1360x768+0+0</td></tr>
+<tr><th>Primary</th><td>yes</td></tr>
+<tr><th>I2C (DDC)</th><td>i2c-20</td></tr>
+<tr><th>CEC device</th><td>/dev/cec0</td></tr>
+<tr><th>DISPLAY</th><td>:0</td></tr>
+<tr><th>Physical size (mm)</th><td>1600 × 900</td></tr></table>
+    </section>
+    <section>
+      <h2>Host tools</h2>
+      <ul><li><strong>xrandr</strong>: <span class="ok">found</span> <code>/usr/bin/xrandr</code></li>
+<li><strong>xset</strong>: <span class="ok">found</span> <code>/usr/bin/xset</code></li>
+<li><strong>ddcutil</strong>: <span class="ok">found</span> <code>/usr/bin/ddcutil</code></li>
+<li><strong>cecClient</strong>: <span class="ok">found</span> <code>/usr/bin/cec-client</code></li>
+<li><strong>parseEdid</strong>: <span class="ok">found</span> <code>/usr/bin/parse-edid</code></li>
+<li><strong>i2cdetect</strong>: <span class="ok">found</span> <code>/usr/sbin/i2cdetect</code></li></ul>
+      <p class="sub" style="margin-top:1rem">Mode: interactive-full</p>
+    </section>
+    <section class="full">
+      <h2>Sensing &amp; control capability chart</h2>
+      <p class="legend sub">
+        <span class="ok">Works</span>
+        <span class="fail">Does not work</span>
+        <span class="skip">Skipped / unknown</span>
+      </p>
+      <table class="chart">
+        <thead>
+          <tr><th>Category</th><th>Option</th><th>Result</th><th>ID</th><th>Detail</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+  <td>sensing</td>
+  <td>X11 DPMS status (xset q)</td>
+  <td class="ok">Works</td>
+  <td><code>sense.xset_dpms</code></td>
+  <td>DPMS enabled; monitor reported as On (DISPLAY-global, not per-output)</td>
+</tr>
+<tr>
+  <td>sensing</td>
+  <td>xrandr --verbose per-output</td>
+  <td class="ok">Works</td>
+  <td><code>sense.xrandr_output</code></td>
+  <td>connected=true, mode=1360x768, brightness=1, primary=true</td>
+</tr>
+<tr>
+  <td>sensing</td>
+  <td>DRM sysfs (status/dpms/enabled)</td>
+  <td class="ok">Works</td>
+  <td><code>sense.drm_sysfs</code></td>
+  <td>status=connected, enabled=enabled, dpms=On</td>
+</tr>
+<tr>
+  <td>sensing</td>
+  <td>EDID make / model</td>
+  <td class="ok">Works</td>
+  <td><code>sense.edid_identity</code></td>
+  <td>make=LG (Goldstar), model=LG TV, year=2016</td>
+</tr>
+<tr>
+  <td>sensing</td>
+  <td>ddcutil DDC/CI telemetry</td>
+  <td class="fail">Does not work</td>
+  <td><code>sense.ddcutil</code></td>
+  <td>ddcutil detect found no display</td>
+</tr>
+<tr>
+  <td>sensing</td>
+  <td>HDMI-CEC sensing (cec-client)</td>
+  <td class="fail">Does not work</td>
+  <td><code>sense.cec</code></td>
+  <td>device=/dev/cec0; TV power=unknown; no responsive TV on CEC bus (common if CEC disabled on TV)</td>
+</tr>
+<tr>
+  <td>sensing</td>
+  <td>systemd-logind session idle</td>
+  <td class="ok">Works</td>
+  <td><code>sense.logind</code></td>
+  <td>loginctl available (session-level only; not per-monitor — noted for completeness)</td>
+</tr>
+<tr>
+  <td>control</td>
+  <td>DPMS xset force off/on</td>
+  <td class="ok">Works</td>
+  <td><code>control.dpms_force</code></td>
+  <td>Operator confirmed blank + wake via xset dpms force</td>
+</tr>
+<tr>
+  <td>control</td>
+  <td>xrandr output --off/--auto</td>
+  <td class="ok">Works</td>
+  <td><code>control.xrandr_toggle</code></td>
+  <td>Operator confirmed per-output off + restore via xrandr</td>
+</tr>
+<tr>
+  <td>control</td>
+  <td>ddcutil setvcp power (0xD6)</td>
+  <td class="fail">Does not work</td>
+  <td><code>control.ddcutil_power</code></td>
+  <td>ddcutil detect found no display on i2c-20</td>
+</tr>
+<tr>
+  <td>control</td>
+  <td>HDMI-CEC standby/on</td>
+  <td class="fail">Does not work</td>
+  <td><code>control.cec_power</code></td>
+  <td>Off observed=false, On observed=false</td>
+</tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <footer>
+    Generated by <code>experiments/display-control/run-display-probe.js</code>
+    for PR_MONITOR_CONTROL validation. JSON twin: same basename with <code>.json</code>.
+  </footer>
+</body>
+</html>

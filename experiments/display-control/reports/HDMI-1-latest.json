@@ -1,0 +1,234 @@
+{
+  "monitor": {
+    "xrandrName": "HDMI-1",
+    "drmName": "card1-HDMI-A-1",
+    "display": ":0",
+    "i2cBus": "i2c-20",
+    "cecDevice": "/dev/cec0",
+    "status": "connected",
+    "enabled": "enabled",
+    "dpms": "On",
+    "identity": {
+      "make": "LG (Goldstar)",
+      "model": "LG TV",
+      "manufacturerId": "GSM",
+      "productCode": 1,
+      "serialAscii": null,
+      "serialNumeric": 16843009,
+      "manufactureYear": 2016,
+      "manufactureWeek": 1,
+      "currentMode": "1360x768",
+      "geometry": "1360x768+0+0",
+      "primary": true,
+      "displaySizeMm": {
+        "width": 1600,
+        "height": 900
+      }
+    },
+    "edid": {
+      "ok": true,
+      "manufacturerId": "GSM",
+      "manufacturerHint": "LG (Goldstar)",
+      "modelName": "LG TV",
+      "productCode": 1,
+      "serialAscii": null,
+      "serialNumeric": 16843009,
+      "manufactureWeek": 1,
+      "manufactureYear": 2016,
+      "displaySizeMm": {
+        "width": 1600,
+        "height": 900
+      },
+      "parseEdidCli": {
+        "modelName": "LG TV",
+        "vendorName": "GSM",
+        "raw": "Section \"Monitor\"\n\tIdentifier \"LG TV\"\n\tModelName \"LG TV\"\n\tVendorName \"GSM\"\n\t# Monitor Manufactured week 1 of 2016\n\t# EDID version 1.3\n\t# Digital Display\n\tDisplaySize 1600 900\n\tGamma 2.20\n\tOption \"DPMS\" \"false\"\n\tHorizsync 30-83\n\tVertRefresh 58-62\n\t# Maximum pixel clock is 160MHz\n\t#Not giving standard mode: 640x480, 60Hz\n\t#Not giving standard mode: 800x600, 60Hz\n\t#Not giving standard mode: 1024x768, 60Hz\n\t#Not giving standard mode: 1152x864, 60Hz\n\n\t#Extension block found. Parsing...\n\tModeline \t\"Mode 10\" +hsync +vsync \n\tModeline \t\"Mode 0\" +hsync +vsync \n\tModeline \t\"Mode 1\" +hsync +vsync \n\tModeline \t\"Mode 2\" 148.500 1920 2008 2052 2200 1080 1084 1089 1125 +hsync +vsync\n\tModeline \t\"Mode 3\" 74.250 1920 2008 2052 2200 1080 1084 1089 1125 +hsync +vsync\n\tModeline \t\"Mode 4\" 74.250 1920 2558 2602 2750 1080 1084 1089 1125 +hsync +vsync\n\tModeline \t\"Mode 5\" 74.250 1920 2008 2052 2200 1080 1082 1087 1125 +hsync +vsync interlace\n\tModeline \t\"Mode 6\" 74.250 1280 1390 1420 1650 720 725 730 750 +hsync +vsync\n\tModeline \t\"Mode 7\" 27.027 720 736 798 858 480 489 495 525 -hsync -vsync\n\tModeline \t\"Mode 8\" 27.027 720 736 798 858 480 489 495 525 -hsync -vsync\n\tModeline \t\"Mode 9\" 25.200 640 656 752 800 480 490 492 525 -hsync -vsync\n\tModeline \t\"Mode 11\" +hsync +vsync interlace\n\tModeline \t\"Mode 12\" +hsync +vsync \n\tModeline \t\"Mode 13\" -hsync -vsync \n\tOption \"PreferredMode\" \"Mode 10\"\nEndSection"
+      },
+      "rawHex": "00ffffffffffff001e6d010001010101011a010380a05a780aee91a3544c99260f5054a1080031404540614071400101010101010101662150b051001b304070360040846300001e64190040410026301888360040846300001e000000fd003a3e1e5310000a202020202020000000fc004c472054560a20202020202020016d"
+    }
+  },
+  "probes": [
+    {
+      "id": "sense.xset_dpms",
+      "label": "X11 DPMS status (xset q)",
+      "category": "sensing",
+      "works": true,
+      "detail": "DPMS enabled; monitor reported as On (DISPLAY-global, not per-output)",
+      "evidence": {
+        "enabled": true,
+        "disabled": false,
+        "state": "On",
+        "snippet": "DPMS (Energy Star):\n  Standby: 0    Suspend: 0    Off: 0\n  DPMS is Enabled\n  Monitor is On\n"
+      }
+    },
+    {
+      "id": "sense.xrandr_output",
+      "label": "xrandr --verbose per-output",
+      "category": "sensing",
+      "works": true,
+      "detail": "connected=true, mode=1360x768, brightness=1, primary=true",
+      "evidence": {
+        "name": "HDMI-1",
+        "connected": true,
+        "currentMode": "1360x768",
+        "brightness": 1,
+        "primary": true,
+        "geometry": "1360x768+0+0",
+        "connectorId": 33
+      }
+    },
+    {
+      "id": "sense.drm_sysfs",
+      "label": "DRM sysfs (status/dpms/enabled)",
+      "category": "sensing",
+      "works": true,
+      "detail": "status=connected, enabled=enabled, dpms=On",
+      "evidence": {
+        "status": "connected",
+        "enabled": "enabled",
+        "dpms": "On",
+        "drmName": "card1-HDMI-A-1"
+      }
+    },
+    {
+      "id": "sense.edid_identity",
+      "label": "EDID make / model",
+      "category": "sensing",
+      "works": true,
+      "detail": "make=LG (Goldstar), model=LG TV, year=2016",
+      "evidence": {
+        "make": "LG (Goldstar)",
+        "model": "LG TV",
+        "manufacturerId": "GSM",
+        "productCode": 1,
+        "serialAscii": null,
+        "manufactureYear": 2016
+      }
+    },
+    {
+      "id": "sense.ddcutil",
+      "label": "ddcutil DDC/CI telemetry",
+      "category": "sensing",
+      "works": false,
+      "detail": "ddcutil detect found no display",
+      "evidence": {
+        "i2cBus": "i2c-20",
+        "detectOk": false,
+        "detectOut": "detect does not support explicit display option",
+        "power": null,
+        "brightness": null
+      }
+    },
+    {
+      "id": "sense.cec",
+      "label": "HDMI-CEC sensing (cec-client)",
+      "category": "sensing",
+      "works": false,
+      "detail": "device=/dev/cec0; TV power=unknown; no responsive TV on CEC bus (common if CEC disabled on TV)",
+      "evidence": {
+        "cecDevice": "/dev/cec0",
+        "powerStatus": "unknown",
+        "busHasTv": false,
+        "powOut": "opening a connection to the CEC adapter...\npower status: unknown",
+        "scanOut": "opening a connection to the CEC adapter...\nrequesting CEC bus information ...\nCEC bus information\n===================\ndevice #1: Recorder 1\naddress:       2.0.0.0\nactive source: no\nvendor:        Pulse Eight\nosd string:    CECTester\nCEC version:   1.4\npower status:  on\nlanguage:      eng\n\n\ncurrently active source: unknown (-1)"
+      }
+    },
+    {
+      "id": "sense.logind",
+      "label": "systemd-logind session idle",
+      "category": "sensing",
+      "works": true,
+      "detail": "loginctl available (session-level only; not per-monitor — noted for completeness)",
+      "evidence": {
+        "snippet": "Id=4\nUser=1000\nName=paradox\nTimestamp=Fri 2026-07-17 13:54:57 CDT\nTimestampMonotonic=415824536\nVTNr=0\nRemote=yes\nRemoteHost=100.109.249.89\nService=sshd\nScope=session-4.scope\nLeader=3207\nAudit=4\nType=tty\nClass=user\nActive=yes\nState=closing\nIdleHint=no\nIdleSinceHint=0\nIdleSinceHintMonotonic=0\nLockedHint=no"
+      }
+    },
+    {
+      "id": "control.dpms_force",
+      "label": "DPMS xset force off/on",
+      "category": "control",
+      "works": true,
+      "detail": "Operator confirmed blank + wake via xset dpms force",
+      "evidence": {
+        "offOk": true,
+        "onOk": true,
+        "offConfirm": {
+          "skipped": false,
+          "works": true
+        },
+        "onConfirm": {
+          "skipped": false,
+          "works": true
+        }
+      },
+      "requiresVisualConfirmation": true
+    },
+    {
+      "id": "control.xrandr_toggle",
+      "label": "xrandr output --off/--auto",
+      "category": "control",
+      "works": true,
+      "detail": "Operator confirmed per-output off + restore via xrandr",
+      "evidence": {
+        "offOk": true,
+        "onOk": true,
+        "modeBefore": "1360x768",
+        "offConfirm": {
+          "skipped": false,
+          "works": true
+        },
+        "onConfirm": {
+          "skipped": false,
+          "works": true
+        }
+      },
+      "requiresVisualConfirmation": true
+    },
+    {
+      "id": "control.ddcutil_power",
+      "label": "ddcutil setvcp power (0xD6)",
+      "category": "control",
+      "works": false,
+      "detail": "ddcutil detect found no display on i2c-20",
+      "evidence": {
+        "detectOut": "detect does not support explicit display option\n"
+      },
+      "requiresVisualConfirmation": true
+    },
+    {
+      "id": "control.cec_power",
+      "label": "HDMI-CEC standby/on",
+      "category": "control",
+      "works": false,
+      "detail": "Off observed=false, On observed=false",
+      "evidence": {
+        "cecDevice": "/dev/cec0",
+        "offOut": "opening a connection to the CEC adapter...",
+        "onOut": "opening a connection to the CEC adapter...",
+        "offConfirm": {
+          "skipped": false,
+          "works": false
+        },
+        "onConfirm": {
+          "skipped": false,
+          "works": false
+        }
+      },
+      "requiresVisualConfirmation": true
+    }
+  ],
+  "meta": {
+    "timestamp": "2026-07-17T21:30:52.358Z",
+    "host": "houdini",
+    "tools": {
+      "xrandr": "/usr/bin/xrandr",
+      "xset": "/usr/bin/xset",
+      "ddcutil": "/usr/bin/ddcutil",
+      "cecClient": "/usr/bin/cec-client",
+      "parseEdid": "/usr/bin/parse-edid",
+      "i2cdetect": "/usr/sbin/i2cdetect"
+    },
+    "mode": "interactive-full",
+    "skipControl": []
+  }
+}
