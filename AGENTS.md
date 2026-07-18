@@ -1,7 +1,7 @@
-# Agent Instructions
+﻿# Agent Instructions
 
-The canonical AI/agent instructions for this repository live in [`.github/copilot-instructions.md`](.github/copilot-instructions.md).
+The canonical AI/agent instructions for this repository live in [AI-INSTRUCTIONS.md](AI-INSTRUCTIONS.md).
 
-That file is auto-loaded by VS Code Copilot. This `AGENTS.md` and `CLAUDE.md` are thin pointers so Codex, Cursor, Aider, Gemini-CLI, and Claude Code pick up the same source of truth.
+This AGENTS.md, CLAUDE.md, and [.github/copilot-instructions.md](.github/copilot-instructions.md) are thin pointers so Cursor, Claude Code, Codex, Aider, Gemini-CLI, and VS Code Copilot all load the same source of truth.
 
-Read it before making changes.
+Read AI-INSTRUCTIONS.md before making changes.
