@@ -20,12 +20,12 @@ PFx is one of the Paradox products. Be aware of siblings when designing contract
 - **PxO** â€” game orchestration engine (EDN, state machine)
 - **PxC** â€” configurable clock app framework (React build)
 - **PxT** â€” player terminal kiosk (Electron)
-- **Pio** â€” GPIO-to-MQTT bridge (C++)
+- **PxIO** â€” GPIO-to-MQTT bridge (C++)
 - **PxB** â€” Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
 - **PxP** â€” Paradox Prime operator/admin hub (configures & manages this app; not part of a running game)
 - Rooms: `agent22`, `houdinis-challenge` â€” game packages consumed by PxO + PFx
 
-PFx does **not** own radio hardware, lights, relays, or GPIO. PxB owns radio devices; Pio owns GPIO. Hardware commands route to PxB over MQTT.
+PFx does **not** own radio hardware, lights, relays, or GPIO. PxB owns radio devices; PxIO owns GPIO. Hardware commands route to PxB over MQTT.
 
 ## How this repo is built â€” development methodology
 

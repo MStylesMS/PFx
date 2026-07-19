@@ -266,7 +266,7 @@ speech_volume = 90
 - **Real-time Coordination**: Subsystem coordination for seamless multi-zone experiences
 - **Device Routing**: Commands are automatically routed to correct device handlers based on MQTT topic
 - **Audio Integration**: Audio effects are tied to specific screen devices
-- **External Hardware Boundary**: Hardware control (GPIO, radio devices, sensors) is delegated to Pio and PxB over MQTT
+- **External Hardware Boundary**: Hardware control (GPIO, radio devices, sensors) is delegated to PxIO and PxB over MQTT
 
 ### 6. Status and Error Reporting
 

@@ -21,7 +21,7 @@ PFxE vocabulary compatibility, final lights/relays/inputs purge, multi-channel a
 
 ### Removed
 
-- **Lights / relays / inputs subsystem** — all code, tests, scripts, example configs, JSON schemas, and documentation. PFx is now a screen + audio controller only. Hardware device control (Z-Wave, Zigbee, GPIO) routes through PxB and Pio.
+- **Lights / relays / inputs subsystem** — all code, tests, scripts, example configs, JSON schemas, and documentation. PFx is now a screen + audio controller only. Hardware device control (Z-Wave, Zigbee, GPIO) routes through PxB and PxIO.
 - **`enableBrowser` / `disableBrowser` / `verifyBrowser` commands** — replaced by auto-enable at zone startup. Operators that still publish these commands receive an MQTT warning.
 - **Hardcoded `http://localhost/clock/` default URL** — removed from `window-manager.js`, `screen-zone-browser-controller.js`, and `screen-zone.js`. A `browser_url` must now be explicitly set in the INI to enable the browser overlay.
 
