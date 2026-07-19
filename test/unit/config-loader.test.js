@@ -122,6 +122,69 @@ RESOLUTION_FALLBACK= 1024x768@60
             expect(device.resolutionFallback).toBe('1024x768@60');
         });
 
+        test('should default monitor_control_method to none and parse overrides', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[screen:mirror]
+type=screen
+topic=paradox/houdini/mirror
+display=:0
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+            const config = await ConfigLoader.load('test.ini');
+            const device = config.devices.mirror || config.devices['screen:mirror'] || Object.values(config.devices)[0];
+            expect(device.monitorControlMethod).toBe('none');
+            expect(device.monitorCecDevice).toBeNull();
+            expect(device.monitorI2cBus).toBeNull();
+        });
+
+        test('should parse monitor_control_method cec and optional device/bus', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[screen:picture]
+type=screen
+topic=paradox/houdini/picture
+display=:0
+target_monitor=1
+monitor_control_method=CEC
+monitor_cec_device=/dev/cec1
+monitor_i2c_bus=21
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+            const config = await ConfigLoader.load('test.ini');
+            const device = Object.values(config.devices)[0];
+            expect(device.monitorControlMethod).toBe('cec');
+            expect(device.monitorCecDevice).toBe('/dev/cec1');
+            expect(device.monitorI2cBus).toBe(21);
+        });
+
+        test('should coerce invalid monitor_control_method to none', async () => {
+            const mockConfig = `
+[global]
+MQTT_SERVER=localhost
+HEARTBEAT_TOPIC=Paradox/Devices
+
+[screen:z]
+type=screen
+topic=paradox/test/z
+display=:0
+monitor_control_method=laser
+`;
+
+            fs.readFile.mockResolvedValue(mockConfig);
+            const config = await ConfigLoader.load('test.ini');
+            const device = Object.values(config.devices)[0];
+            expect(device.monitorControlMethod).toBe('none');
+        });
+
         test('should reject unsupported device types', async () => {
             const mockConfig = `
 [global]

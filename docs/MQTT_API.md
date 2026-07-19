@@ -467,10 +467,10 @@ Screen devices handle image display, video playback, and audio playback.
 ### Screen Power Management
 
 * `sleepScreen`
-  Turn off the display (monitor goes to sleep). Publishes event `screen_sleep`.
+  Turn off / blank the zone display using the configured `monitor_control_method` (`xrandr`, `dpms`, `cec`, `ddc`, or `none`). Publishes event `screen_sleep`. With method `none` (default), the command is a no-op.
 
 * `wakeScreen`
-  Wake the display (monitor on). Publishes event `screen_wake`.
+  Wake / power on the zone display using the same method. Publishes event `screen_wake`. With method `none`, no-op.
 
 ### System Control
 
@@ -667,11 +667,11 @@ Parameters:
 
 ### Screen Power Management Commands
 
-ParadoxFX provides intelligent screen power management that balances energy efficiency with responsive operation.
+Per-zone monitor on/off is controlled by INI `monitor_control_method` on `[screen:*]` (default `none`). See `CONFIG_INI.md` for methods and host dependencies.
 
 #### sleepScreen
 
-Put all connected displays into low-power sleep mode using DPMS (Display Power Management Signaling).
+Turn the zone's display off (or blank it) using the configured method.
 
 **Format:**
 
@@ -681,25 +681,24 @@ Put all connected displays into low-power sleep mode using DPMS (Display Power M
 }
 ```
 
+**Example (picture zone topic):**
+
+```bash
+mosquitto_pub -h 127.0.0.1 -t 'paradox/houdini/picture/commands' \
+  -m '{"command":"sleepScreen"}'
+```
+
 **Behavior:**
-- **Screen zones only**: Sends DPMS sleep signal to the target monitor for this zone
+- **Screen zones only**: Applies `monitor_control_method` for this zone (`xrandr` / `dpms` / `cec` / `ddc`). Method `none` logs and no-ops.
 - **Audio zones**: Command is ignored (no screen to control)
 - **Video playback restriction**: Sleep commands are ignored while video is actively playing
 - Sleep is only applied when video is paused or an image is displayed
 - Maintains system state and media queues
-- Display will show "No Signal" or enter standby mode
-
-**Examples:**
-
-```json
-{
-  "command": "sleepScreen"
-}
-```
+- Effect depends on method: CEC typically true TV standby; xrandr/dpms often blank or “no signal” without full power-off
 
 #### wakeScreen
 
-Wake the zone's display from sleep mode and restore default display state.
+Wake / power on the zone's display using the configured method and restore default display state when idle.
 
 **Format:**
 
@@ -710,20 +709,11 @@ Wake the zone's display from sleep mode and restore default display state.
 ```
 
 **Behavior:**
-- **Screen zones only**: Sends DPMS wake signal to the target monitor for this zone
+- **Screen zones only**: Applies the configured wake path for this zone
 - **Audio zones**: Command is ignored (no screen to control)
-- Display returns to active state immediately
-- If no media is currently playing, display shows the configured default image
+- If no media is currently playing, display shows the configured default image after wake
 
-**Examples:**
-
-```json
-{
-  "command": "wakeScreen"
-}
-```
-
-**Note:** Most media commands (`setImage`, `playVideo`) automatically wake sleeping displays, making explicit `wakeScreen` commands typically unnecessary during normal operation. Sleep commands are ignored during active video playbook to prevent interruption.
+**Auto-wake on media:** When `monitor_control_method` is not `none`, `setImage` and `playVideo` best-effort wake the monitor before playback so a separate `wakeScreen` is usually unnecessary. Sleep commands are ignored during active video playback to prevent interruption.
 
 ### Browser Overlay Details
 

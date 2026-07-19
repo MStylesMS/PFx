@@ -73,6 +73,9 @@ Defines video+audio screen zones. Common keys:
 | output_name | string | No | (auto) | Optional xrandr output name (e.g. `HDMI-1`). When omitted PFx will try to resolve the monitor by `targetMonitor` index. |
 | resolution_mode | string | No | (none) | Desired display mode (e.g. `640x480@60`). Applied via `xrandr` before MPV starts. |
 | resolution_fallback | string | No | (none) | Secondary mode tried when the primary fails. Same syntax as `resolution_mode`. |
+| monitor_control_method | string | No | `none` | How `sleepScreen` / `wakeScreen` (and auto-wake before media) control this zone's display: `none` \| `xrandr` \| `dpms` \| `cec` \| `ddc`. When omitted or invalid, PFx uses `none` (commands no-op). |
+| monitor_cec_device | string | No | (derived) | Optional CEC device path override (e.g. `/dev/cec1`). When omitted, derived from `output_name` (`HDMI-N` → `/dev/cec{N-1}`) or `target_monitor` → `/dev/cec{target_monitor}`. |
+| monitor_i2c_bus | integer | No | (derived) | Optional I2C bus number for `ddc` (e.g. `21`). When omitted, best-effort from DRM connector DDC for the resolved HDMI output. |
 | browser_url | string | No | (none) | URL to open in the Chromium browser overlay at zone startup. When set, the browser process is launched hidden behind MPV during initialization. Use `showBrowser` / `hideBrowser` MQTT commands to control overlay visibility. Leave unset to disable the browser overlay entirely. Example: `browser_url = http://localhost/clock/` |
 | default_image | string | No | default.png | Startup image |
 | mpv_video_options | string | No | - | Extra mpv CLI options |
@@ -85,6 +88,34 @@ Notes:
 - Use `display = :0` and `target_monitor` to target specific monitors under X11. For Pi5 dual-HDMI use X11 (see Pi5 section).
 - Screen resolution control requires X11 with `xrandr` installed (`sudo apt install x11-xserver-utils` on Debian/Ubuntu/Pi OS). PFx logs will warn if the binary is missing or the mode cannot be applied; the system continues using the current desktop resolution.
 - `max_volume` setting prevents audio from exceeding the specified level, providing volume safety limits for installations
+- Monitor power control host deps: `xrandr`/`xset` for `xrandr`/`dpms`; `cec-utils` (`cec-client`) for `cec`; `ddcutil` plus `i2c` group for `ddc`. Validate per display with `experiments/display-control` before choosing a method.
+
+##### Monitor control methods
+
+| Method | Off | On | Notes |
+|--------|-----|----|-------|
+| `none` | no-op | no-op | Default. Safe until a method is proven for the attached display. |
+| `xrandr` | `xrandr --output … --off` | `--auto` (+ mode/position repair) | Per-output; may show TV “no signal” OSD rather than true standby. |
+| `dpms` | `xset dpms force off` | `xset dpms force on` | DISPLAY-global; affects every monitor on that X display. |
+| `cec` | HDMI-CEC `standby 0` | `on 0` (+ active source) | True TV power when CEC is enabled on the set. |
+| `ddc` | `ddcutil setvcp 0xD6 0x04` | `0xD6 0x01` | Requires working DDC/CI on the HDMI link. |
+
+When `monitor_control_method` is not `none`, `setImage` and `playVideo` auto-wake the monitor (best-effort) before playback.
+
+##### Houdini deploy notes (manual site INI)
+
+From `experiments/display-control` hardware probes (apply in Houdini-Installs `pfx.ini` profiles, not committed here):
+
+```ini
+# Mirror Pi — LG on HDMI-1 / target_monitor=0
+[screen:zone1-hdmi0]
+monitor_control_method = xrandr
+
+# Picture Pi — Samsung on HDMI-2 / target_monitor=1
+[screen:zone2-hdmi1]
+monitor_control_method = cec
+# monitor_cec_device = /dev/cec1   # only if derivation is wrong
+```
 
 <!-- Combined sink configuration allows routing audio to multiple physical outputs simultaneously -->
 Combined sink configuration (PulseAudio)
