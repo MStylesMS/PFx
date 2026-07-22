@@ -1,4 +1,4 @@
-﻿# ParadoxFX (PFx) — AI Instructions
+# ParadoxFX (PFx) — AI Instructions
 
 This is the canonical AI/agent context for this repository. `AGENTS.md`, `CLAUDE.md`, and `.github/copilot-instructions.md` are thin pointers to this file.
 
@@ -118,3 +118,7 @@ scripts/pi-audio-discovery.sh
 | [docs/json-schemas/](../docs/json-schemas/) | Machine-readable command/event schemas |
 | [scripts/README.md](../scripts/README.md) | Operational tooling catalog |
 | [config/pfx.service](../config/pfx.service) | Sample systemd unit |
+
+## Suite standards
+
+Suite-wide contracts live in [../PxH/docs/standards/](../PxH/docs/standards/) (folder, not a single file). Read those before changing MQTT topics or shared conventions. If you change a standard, update the file under PxH `docs/standards/` first and propagate to other repos' docs in the same work.
