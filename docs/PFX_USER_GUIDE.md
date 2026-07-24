@@ -162,22 +162,27 @@ PFx reads a single INI file at startup (path passed on the command line, typical
 Minimal example:
 
 ```ini
+[mqtt]
+broker     = localhost
+base_topic = paradox/demo/pfx
+device_name = demo-pfx
+
 [global]
-mqtt_host = localhost
-mqtt_port = 1883
-media_dir = /opt/paradox/media
+heartbeat_topic = paradox/demo/pfx/heartbeat
 
 [screen:main]
-base_topic = paradox/screen/main
-display    = :0
-audio_zone = main
+type    = screen
+topic   = paradox/demo/screen
+display = :0
+media_dir = /opt/paradox/media
 
 [audio:main]
-base_topic = paradox/audio/main
-device     = hdmi
+type   = audio
+topic  = paradox/demo/audio
+device = hdmi
 ```
 
-Every supported key, default value, and platform note is in [CONFIG_INI.md](CONFIG_INI.md). For Pi-specific tuning, see the platform notes in [archive/Pi5-Notes.md](archive/Pi5-Notes.md) and [archive/Pi4_Notes.md](archive/Pi4_Notes.md).
+`[mqtt] base_topic` is the PFx process root (`…/pfx`); each zone’s `topic` is the gameplay leaf. Full key reference: [CONFIG_INI.md](CONFIG_INI.md). For Pi-specific tuning, see the platform notes in [archive/Pi5-Notes.md](archive/Pi5-Notes.md) and [archive/Pi4_Notes.md](archive/Pi4_Notes.md).
 
 ---
 

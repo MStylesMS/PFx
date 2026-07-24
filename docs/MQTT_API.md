@@ -109,39 +109,56 @@ Client Guidance:
 
 ### Base Architecture
 
-- **Commands**: Sent to `{baseTopic}/commands`
-- **State**: Published to `{baseTopic}/state`
-- **Heartbeat**: Published to global heartbeat topic
-- **Errors**: Published to both device state topic and global heartbeat topic
+- **Zone commands**: Sent to `{zoneTopic}/commands` (per `[screen:…]` / `[audio:…]` `topic`)
+- **Zone state / events / warnings**: Published to `{zoneTopic}/state|events|warnings`
+- **Process discovery**: Published to `{mqtt.base_topic}/discovery`
+- **Process heartbeat**: Published to configured `heartbeat_topic` (full path; nothing appended)
+- **Errors**: Published to the zone warnings/state path; some paths also mirror to the heartbeat topic
 
 ## Topic Structure
 
-### Device Topics
+PFx uses **two kinds of topic roots**. Do not conflate `[mqtt] base_topic` with a zone `topic`.
 
-Each device has a base topic configured in `pfx.ini`:
+### Process topics (`[mqtt] base_topic`)
 
-```
-{baseTopic}/commands   # Incoming commands
-{baseTopic}/state      # Outgoing state updates
-{baseTopic}/events     # Real-time events
-{baseTopic}/warnings   # Warnings and errors
-```
-
-### Global Topics
+Suite practice: `paradox/<room>/pfx` (SpyCatcher Moscow: `paradox/spycatcher/moscow/pfx`).
 
 ```
-{heartbeatTopic}       # System heartbeat and global messages
+{mqtt.base_topic}/discovery    # Retained catalog of zones (startup)
+```
+
+Heartbeat is configured separately (prefer under the same PFx root):
+
+```
+{heartbeat_topic}              # e.g. paradox/<room>/pfx/heartbeat
+```
+
+### Zone topics (each `[screen:…]` / `[audio:…]` `topic`)
+
+```
+{zoneTopic}/commands   # Incoming commands
+{zoneTopic}/state      # Outgoing retained state snapshots
+{zoneTopic}/events     # Real-time events
+{zoneTopic}/warnings   # Warnings and errors
+{zoneTopic}/schema     # Retained supported-commands schema (startup)
 ```
 
 ### Example Topic Structure
 
 ```
-paradox/living-room/screen/commands   # Commands to living room screen
-paradox/living-room/screen/state      # State from living room screen
-paradox/living-room/screen/events     # Event notifications
-paradox/living-room/screen/warnings   # Warnings and errors
-paradox/devices                       # Global heartbeat topic
+# Process (from [mqtt] base_topic / heartbeat_topic)
+paradox/spycatcher/moscow/pfx/discovery
+paradox/spycatcher/moscow/pfx/heartbeat
+
+# Zone (from [audio:audio] topic = paradox/spycatcher/moscow/audio)
+paradox/spycatcher/moscow/audio/commands
+paradox/spycatcher/moscow/audio/state
+paradox/spycatcher/moscow/audio/events
+paradox/spycatcher/moscow/audio/warnings
+paradox/spycatcher/moscow/audio/schema
 ```
+
+Multi-output hosts keep one `[mqtt] base_topic` and give each screen/audio zone its own `topic`.
 
 ## Message Formats
 

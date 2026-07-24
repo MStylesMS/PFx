@@ -33,10 +33,12 @@ General advice:
 | client_id | string | Yes | N/A | Unique client id |
 | keepalive | integer | No | 60 | Keepalive seconds |
 | clean_session | boolean | No | true | Clean session flag |
-| base_topic | string | Yes | N/A | Root topic for messages |
-| device_name | string | Yes | N/A | Device name for heartbeat/topic suffix |
+| base_topic | string | Yes | N/A | **PFx process root** (not a zone). Used for `{base_topic}/discovery` only. Suite practice: `paradox/<room>/pfx` (e.g. `paradox/spycatcher/moscow/pfx`). Do **not** set this to a zone leaf such as `…/audio` or `…/mirror`. |
+| device_name | string | Yes | N/A | Device name included in heartbeat payloads |
 | mqtt_qos | integer | No | 0 | Default QoS (0/1/2) |
 | mqtt_retain | boolean | No | false | Retain published messages |
+
+**`[mqtt] base_topic` vs zone `topic`:** These are different roots. Zone command/state/events/warnings use each `[screen:…]` / `[audio:…]` `topic`. Process discovery uses `[mqtt] base_topic`. See suite [MQTT-CONTRACT.md](../../PxH/docs/standards/MQTT-CONTRACT.md) § PFx process namespace.
 
 ### [global]
 
@@ -48,7 +50,7 @@ General advice:
 | media_base_path | path | No | (deprecated) | DEPRECATED — Use per-device `media_dir` instead. When present PFx will no longer rely on a global `media_base_path` for per-zone media resolution; specify `media_dir` inside each `[screen:<name>]` or `[audio:<name>]` section (absolute or relative to `/opt/paradox/media`). |
 | heartbeat_enabled | boolean | No | false | Enable heartbeat messages |
 | heartbeat_interval | integer(ms) | No | 10000 | Heartbeat interval in ms |
-| heartbeat_topic | string | No | paradox/heartbeat | Heartbeat MQTT topic |
+| heartbeat_topic | string | No | paradox/heartbeat | Full MQTT topic for process heartbeat (nothing is appended). Suite practice: under the PFx process root, e.g. `paradox/<room>/pfx/heartbeat`. Do **not** use `paradox/props`. |
 | ducking_adjust | integer (negative %) | No | 0 | Background reduction percent applied while any duck trigger active (0 = no duck). Expressed as negative percentage (e.g. -40). |
 | pulseaudio_wait_ms | integer (ms) | No | 6000 | Max time PFX will wait at startup for PulseAudio to become responsive before skipping combined sink setup. Increase if you see early "PulseAudio not available" warnings on boot. |
 | pulseaudio_wait_interval_ms | integer (ms) | No | 500 | Poll interval while waiting for PulseAudio readiness. Lower for finer granularity; keep >=250ms to avoid excess polling. |
@@ -62,7 +64,7 @@ Defines video+audio screen zones. Common keys:
 | Setting | Type | Req | Default | Description |
 |---|---:|:--:|---|---|
 | type | string | Yes | screen | Must be `screen` |
-| topic | string | Yes | N/A | Base MQTT topic for zone commands |
+| topic | string | Yes | N/A | Zone MQTT root for this output (`{topic}/commands\|state\|events\|warnings\|schema`). Gameplay leaf under the room, e.g. `paradox/<room>/mirror` — **not** the `[mqtt] base_topic` PFx process root. |
 | status_topic | string | No | - | Topic for status updates |
 | media_dir | path | No | - | Zone media directory |
 | volume | integer | No | 80 | Base volume % |
@@ -164,7 +166,7 @@ Audio-only zones. Common keys:
 | Setting | Type | Req | Default | Description |
 |---|---:|:--:|---|---|
 | type | string | Yes | audio | Must be `audio` |
-| topic | string | Yes | N/A | MQTT topic |
+| topic | string | Yes | N/A | Zone MQTT root (`{topic}/commands\|state\|events\|warnings\|schema`). Gameplay leaf, e.g. `paradox/<room>/audio` — not `[mqtt] base_topic`. |
 | audio_device | string | Yes | N/A | Pulse/PipeWire/ALSA device id |
 | background_music_volume | integer | No | 100 | Music volume |
 | ducking_adjust | integer (negative %) | No | 0 | Background reduction percent while duck active (speech / manual / video trigger). |
@@ -195,11 +197,15 @@ This mode is useful for Pi deployments that drive a speaker rack or intercom wit
 Example minimal audio-only config:
 
 ```ini
-[global]
-heartbeat_topic = paradox/heartbeat
-
 [mqtt]
-broker = localhost
+broker      = localhost
+base_topic  = paradox/houdini/pfx
+device_name = houdini-audio
+
+[global]
+heartbeat_enabled  = true
+heartbeat_interval = 10000
+heartbeat_topic    = paradox/houdini/pfx/heartbeat
 
 [audio:room]
 type         = audio
@@ -207,6 +213,8 @@ topic        = paradox/houdini/audio
 audio_device = pulse/alsa_output.platform-107c701400.hdmi.hdmi-stereo
 volume       = 100
 ```
+
+Discovery publishes to `paradox/houdini/pfx/discovery`; zone traffic stays on `paradox/houdini/audio/{commands,state,events,warnings}`.
 
 ---
 

@@ -30,13 +30,16 @@ npm install
 Create a `pfx.ini` in the PFx root with one screen zone and one light zone (optional light zone shown below can be removed):
 
 ```ini
-[global]
-heartbeat_topic = paradox/devices
-heartbeat_interval = 5000
-
 [mqtt]
-broker = localhost
-port = 1883
+broker     = localhost
+port       = 1883
+base_topic = paradox/demo/pfx
+device_name = demo-pfx
+
+[global]
+heartbeat_enabled  = true
+heartbeat_topic    = paradox/demo/pfx/heartbeat
+heartbeat_interval = 5000
 
 [screen:main]
 type = screen
