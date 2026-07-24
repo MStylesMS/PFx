@@ -10,6 +10,7 @@ This directory contains operational helpers, diagnostics, and proof scripts for 
 - [test-audio-setup.sh](test-audio-setup.sh): Validates PulseAudio/PipeWire sink setup and volume ranges.
 - [watch-logs.sh](watch-logs.sh): Tails the latest PFx log symlink (`pfx-latest.log`) and can list log files.
 - [startup-xhost-config.sh](startup-xhost-config.sh): Grants X11 access for the paradox user in desktop sessions (for remote DISPLAY=:0 workflows).
+- [install-pulseaudio-config.sh](install-pulseaudio-config.sh): Disables PulseAudio `module-suspend-on-idle` on Pi analog output (see [../docs/AUDIO_SILENT_PLAYBACK.md](../docs/AUDIO_SILENT_PLAYBACK.md)).
 
 ## Installation and desktop helpers
 
