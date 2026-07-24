@@ -207,7 +207,7 @@ A sample systemd unit lives at [../config/pfx.service](../config/pfx.service). I
 
 Typical install flow:
 
-1. Install Node.js 18+, mpv, Chromium, mosquitto.
+ 1. Install Node.js 24 LTS, mpv, Chromium, mosquitto.
 2. `npm install` in the PFx checkout.
 3. Copy `config/pfx.service` to `/etc/systemd/system/pfx.service` and edit.
 4. Place your INI at `/etc/pfx.ini`.
