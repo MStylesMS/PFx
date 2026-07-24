@@ -1,0 +1,8 @@
+# Paradox PFx — disable auto-suspend on idle sinks
+#
+# On Raspberry Pi analog output, module-suspend-on-idle can leave the sink
+# stuck after idle periods; mpv then reports success with no audible output.
+# See docs/AUDIO_SILENT_PLAYBACK.md
+.nofail
+unload-module module-suspend-on-idle
+.fail
