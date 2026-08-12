@@ -23,6 +23,29 @@
       },
       "notes": "Pi4 uses auto-copy hardware decoding to avoid DRM/blue screen issues. Copies decoded frames to system RAM for GPU compositing."
     },
+    "pi4-hw": {
+      "name": "Raspberry Pi 4 - Hardware (v4l2m2m, no copy)",
+      "description": "Pi4 V4L2 M2M hardware decode without copy-back to system RAM",
+      "tested": true,
+      "baseArgs": [
+        "--hwdec=v4l2m2m",
+        "--vo=gpu",
+        "--cache=yes",
+        "--demuxer-max-bytes=32M",
+        "--no-terminal",
+        "--no-osc",
+        "--keep-open=always"
+      ],
+      "displayArgs": {
+        "wayland": [],
+        "x11": []
+      },
+      "performance": {
+        "profile": null,
+        "extraArgs": []
+      },
+      "notes": "DO NOT USE ON Pi4 Rev 1.1 - PRODUCES A BLUE SCREEN. Verified 2026-08-11: mpv reported 30fps, 1 VO drop in 15s and only 19% CPU (vs 116% for pi4-sw), but the HDMI output was solid blue with no picture. --hwdec=auto-copy (profile 'pi4') renders correctly but drops ~6% of frames at 85% CPU. pi4-sw remains the only profile that is both correct and drop-free on this hardware. Kept here only to document that the non-copy v4l2m2m path was tried and failed."
+    },
     "pi4-sw": {
       "name": "Raspberry Pi 4 - Software",
       "description": "Pi4 with software decoding for maximum reliability (tested Oct 2025)",
