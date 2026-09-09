@@ -778,10 +778,12 @@ Top-level fields
 - `errors` (array): List of error objects or messages
 - `currentImage` (string|null): Image filename currently displayed
 - `currentVideo` (string|null): Video filename currently playing
-- `backgroundMusic` (string|null): Background music file currently playing
+- `backgroundMusic` (string|null): Background music file currently playing (legacy: first / `"default"` bed)
+- `backgrounds` (array): All beds — `{ id, file, state, time_left_s, duration_s, loop }` where `state` is `playing`|`paused`
+- `speech` (object): `{ current, queue }` — each item `{ id, file, state, time_left_s, duration_s }` (`state`: `playing`|`paused`|`queued`)
 - `videoQueueLength` (number): Number of items waiting in the video queue
 - `audioQueueLength` (number): Number of items waiting in the audio/effects queue
-- `speechQueueLength` (number): Number of items waiting in the speech queue
+- `speechQueueLength` (number): Number of items waiting in the speech queue (legacy: `speech.queue.length` plus current if playing)
 - `screenAwake` (boolean): Whether the screen/display is awake (DPMS state)
 - `focus` (string): `mpv`, `chromium`, or `none` — indicates which window currently has focus
 - `content` (string|null): Short description or URL of the content currently in focus
@@ -1005,11 +1007,14 @@ Play background music with seamless looping and volume control.
 
 - `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
+- `loop` (optional): Boolean. When true, loop this bed (`loop-file=inf`). Default false in code; rooms that need a continuous bed should pass `true`.
+- `id` (optional): Bed identifier (e.g. `"room"`, `"generator"`). Omitted `id` is `"default"`. A new `id` while another bed is playing **adds** a bed (does not replace) and publishes a **warning** (`multiple_backgrounds`) — the new bed still starts. The same `id` replaces that bed with no warning.
 
 **Features:**
 - Seamless looping for continuous playback
-- Real-time volume control for ducking during speech
-- Persistent playback instance for smooth audio experience
+- Real-time volume control for ducking during speech (all beds duck together)
+- Persistent playback instance per `id`
+- More than one bed is allowed; see [PR_MULTI_BACKGROUND.md](pending/PR_MULTI_BACKGROUND.md)
 
 **Examples:**
 
@@ -1028,6 +1033,24 @@ Play background music with seamless looping and volume control.
 }
 ```
 
+```json
+{
+  "command": "playBackground",
+  "file": "generator/background.mp3",
+  "id": "room",
+  "loop": true
+}
+```
+
+```json
+{
+  "command": "playBackground",
+  "file": "generator/gen_loop.mp3",
+  "id": "generator",
+  "loop": true
+}
+```
+
 #### pauseBackground
 
 Pause background music playback.
@@ -1040,6 +1063,8 @@ Pause background music playback.
 }
 ```
 
+Optional `id` or `file`: pause that bed only. Omit both to pause every bed.
+
 #### resumeBackground
 
 Resume background music playback.
@@ -1051,6 +1076,8 @@ Resume background music playback.
   "command": "resumeBackground"
 }
 ```
+
+Optional `id` or `file`: resume that bed only. Omit both to resume every paused bed.
 
 #### stopBackground
 
@@ -1068,6 +1095,14 @@ Stop background music playback with optional fade-out.
 **Parameters:**
 
 - `fadeTime` (optional): Fade-out duration in seconds (0.1-30.0). If not specified or 0, stops immediately.
+- `id` (optional): Stop only this bed.
+- `file` (optional): Stop only the bed whose file matches (basename or relative path).
+
+Omit `id` and `file` to stop **all** beds (legacy behaviour). Unknown `id`/`file` → warning, no other change.
+
+```json
+{ "command": "stopBackground", "id": "generator" }
+```
 
 **Examples:**
 
@@ -1104,6 +1139,7 @@ Play speech audio with automatic background music ducking.
 
 - `File` (required): Speech file relative to device MEDIA_DIR
 - `Volume` (optional): Volume level 0-100, default: 80
+- `id` (optional): Speech item identifier for status / targeted stop. Default is the file basename.
 
 #### stopSpeech
 
@@ -1115,6 +1151,22 @@ Stop current speech playback.
 {
   "command": "stopSpeech"
 }
+```
+
+**Parameters:**
+
+- `fadeTime` (optional): Fade-out duration in seconds before stop.
+- `id` (optional): Stop / drop only this speech item (current or queued).
+- `file` (optional): Same, matched by file basename or relative path.
+
+Omit `id` and `file` to stop the current clip and clear the queue (legacy behaviour).
+
+```json
+{ "command": "stopSpeech", "id": "genStart" }
+```
+
+```json
+{ "command": "stopSpeech", "file": "generator/hurry.mp3" }
 ```
 
 ### Sound Effects Commands
@@ -1175,6 +1227,20 @@ Return current audio queue.
   "command": "audioQueue"
 }
 ```
+
+#### audioStatus
+
+Return every background bed and speech item with playback state. Publishes `{baseTopic}/events` with `audio_status` (same shape as `current_state.backgrounds` + `current_state.speech` on retained `{baseTopic}/state`).
+
+**Format:**
+
+```json
+{
+  "command": "audioStatus"
+}
+```
+
+Each item includes `id`, `file`, `state` (`playing` | `paused` | `queued`), `time_left_s`, and `duration_s` (seconds; `time_left_s` / `duration_s` may be null if unknown or queued). Looping beds report time left until the next loop boundary.
 
 #### clearQueue
 
@@ -1247,6 +1313,8 @@ Stop all currently playing sound effects.
 
 ### Queue Inspection
 
+Screen-zone `playBackground` uses the same payload as the audio-zone command above, including optional `id`, `loop`, multi-bed warning, and targeted `stopBackground` / `pauseBackground` / `resumeBackground`. Canonical examples: [PR_MULTI_BACKGROUND.md](pending/PR_MULTI_BACKGROUND.md).
+
 ```json
 {
   "command": "playBackground",
@@ -1259,11 +1327,13 @@ Stop all currently playing sound effects.
 
 - `File` (required): Filename or subdirectory path relative to device MEDIA_DIR
 - `Volume` (optional): Volume level (0-100), defaults to device configuration
+- `loop` / `id`: same as audio-zone `playBackground`
 
 **Features:**
 - Seamless looping for continuous playback
-- Real-time volume control for ducking during speech
-- Persistent playback instance for smooth audio experience
+- Real-time volume control for ducking during speech (all beds duck together)
+- Persistent playback instance per `id`
+
 
 **Examples:**
 
