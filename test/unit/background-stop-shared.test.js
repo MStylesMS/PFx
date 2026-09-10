@@ -134,7 +134,7 @@ describe('Shared background stop flow', () => {
         await zone._stopSpeech(2);
 
         expect(zone.audioManager.fadeSpeech).toHaveBeenCalledWith(0, 2000, expect.any(Function));
-        expect(zone.audioManager.stopSpeech).toHaveBeenCalledTimes(1);
+        expect(zone.audioManager.clearSpeechQueue).toHaveBeenCalledTimes(1);
         expect(zone.mpvInstances.speech.status).toBe('idle');
         expect(mqtt.publish).toHaveBeenCalledWith('test/audio/events', expect.objectContaining({ speech_stopped: true, fade_time: 2 }), {});
     });

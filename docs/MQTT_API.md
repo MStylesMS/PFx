@@ -797,7 +797,8 @@ Top-level fields
 
 `mpv_instances` (object)
 - `media` (object): `{ status: 'idle'|'active'|'playing', file: string|null, socket_path: string }`
-- `background` (object): `{ status: 'idle'|'active', file: string|null, socket_path: string }`
+- `background` (object): `{ status: 'idle'|'active', file: string|null, socket_path: string }` — first / `"default"` bed (legacy)
+- `backgrounds` (array): every active bed `{ id, status, file, socket_path }`
 - `speech` (object): `{ status: 'idle'|'active', file: string|null, socket_path: string }`
 
 Examples
@@ -1584,6 +1585,8 @@ Skip current speech and move to next in queue.
   "command": "skipSpeech"
 }
 ```
+
+Optional `id` or `file`: skip that item if queued, or skip current if it matches. Omit both to skip the current clip (legacy).
 
 #### stopAudio
 

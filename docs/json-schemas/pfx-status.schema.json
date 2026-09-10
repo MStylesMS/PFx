@@ -19,6 +19,27 @@
         "currentImage": {"type":["string","null"]},
         "currentVideo": {"type":["string","null"]},
         "backgroundMusic": {"type":["string","null"]},
+        "backgrounds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string"},
+              "file": {"type": ["string", "null"]},
+              "state": {"type": "string", "enum": ["playing", "paused", "queued"]},
+              "time_left_s": {"type": ["number", "null"]},
+              "duration_s": {"type": ["number", "null"]},
+              "loop": {"type": "boolean"}
+            }
+          }
+        },
+        "speech": {
+          "type": "object",
+          "properties": {
+            "current": {"type": ["object", "null"]},
+            "queue": {"type": "array"}
+          }
+        },
         "videoQueueLength": {"type":"integer","minimum":0},
         "audioQueueLength": {"type":"integer","minimum":0},
         "speechQueueLength": {"type":"integer","minimum":0},
@@ -53,6 +74,18 @@
           }
         },
         "background": {"type":"object","properties":{"status":{"type":"string"},"file":{"type":["string","null"]},"socket_path":{"type":"string"}}},
+        "backgrounds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string"},
+              "status": {"type": "string"},
+              "file": {"type": ["string", "null"]},
+              "socket_path": {"type": "string"}
+            }
+          }
+        },
         "speech": {"type":"object","properties":{"status":{"type":"string"},"file":{"type":["string","null"]},"socket_path":{"type":"string"}}}
       },
       "additionalProperties": false

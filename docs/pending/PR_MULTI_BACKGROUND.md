@@ -1,8 +1,8 @@
 # PR: Multiple backgrounds + live audio status / kill
 
-**Status:** spec for implementation (no runtime code in this PR).  
+**Status:** implemented.  
 **Test case:** TFD generator on `generator.local` — room bed (`background.mp3`) plus generator loop (`gen_loop.mp3`) at the same time.  
-**Owner:** implement in a follow-up on this branch / this PR.
+**Owner:** runtime on this branch.
 
 Related: [MQTT_API.md](../MQTT_API.md) (contract updated in the same commit).
 
@@ -176,15 +176,15 @@ See [MQTT_API.md](../MQTT_API.md) for the canonical payloads. Summary:
    - Duck applies to both beds.
    - `audioStatus` / state lists both beds + current speech + queue.
    - `stopSpeech` `{file}` drops one queued item without clearing the rest.
-8. **Pi check:** two beds + one speech on analog (TFD generator) — duck, kill one bed, confirm the other continues.
+8. **Pi check:** two beds + one speech on analog (TFD generator) — duck, kill one bed, confirm the other continues. Still pending on hardware.
 
 ---
 
 ## Acceptance
 
-- [ ] Two looping beds on one zone; speech ducks both.
-- [ ] Second bed → log + MQTT warning, playback still starts.
-- [ ] Retained `state` and `audioStatus` show file, playing/paused/queued, time left for every bed and speech item.
-- [ ] `stopBackground` / `stopSpeech` with `id` or `file` kills only that item.
-- [ ] Legacy single-bed callers (`playBackground` without `id`) still work.
-- [ ] Unit tests above pass; MQTT_API examples match the code.
+- [x] Two looping beds on one zone; speech ducks both.
+- [x] Second bed → log + MQTT warning, playback still starts.
+- [x] Retained `state` and `audioStatus` show file, playing/paused/queued, time left for every bed and speech item.
+- [x] `stopBackground` / `stopSpeech` with `id` or `file` kills only that item.
+- [x] Legacy single-bed callers (`playBackground` without `id`) still work.
+- [x] Unit tests above pass; MQTT_API examples match the code.

@@ -183,9 +183,9 @@ ParadoxFX implements intelligent screen power management that balances energy ef
   - Device-specific command validation and routing
 
 - **Advanced Audio Commands:**
-  - `playBackgroundMusic`: Start background music with volume control
+  - `playBackgroundMusic`: Start background music with volume control (multiple looping beds per zone via optional `id`)
   - `playSoundEffect`: Trigger low-latency sound effects  
-  - `playSpeech`: Queue speech with automatic background music ducking
+  - `playSpeech`: Queue speech with automatic background music ducking (all beds duck together)
   - `setBackgroundMusicVolume`: Real-time volume adjustment
   - `clearSpeechQueue`: Immediate speech queue management
 
