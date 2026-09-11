@@ -189,6 +189,8 @@ ParadoxFX implements intelligent screen power management that balances energy ef
   - `setBackgroundMusicVolume`: Real-time volume adjustment
   - `clearSpeechQueue`: Immediate speech queue management
 
+- **Media pack (`mediaId`):** Optional per-zone folder insert between `media_dir` and relative `file`. Commands: `switchMedia`, optional `mediaId`/`refresh` on `start`. MQTT `restart` is an alias of `restartPfx` (graceful process exit for systemd). See [MQTT_API.md](MQTT_API.md) § Media pack. Omit `mediaId` and path resolution is unchanged.
+
 -- **Enhanced Status Reporting:**
   - Real-time audio subsystem status (background music, effects, speech queue)
   - Multi-zone device health and basic performance monitoring (heartbeat)

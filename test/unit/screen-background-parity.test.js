@@ -3,10 +3,12 @@ const ScreenZone = require('../../lib/zones/screen-zone');
 jest.mock('../../lib/media/audio-manager');
 jest.mock('../../lib/utils/logger');
 jest.mock('../../lib/utils/screen-power-manager', () => {
-    return jest.fn().mockImplementation(() => ({
+    const Mock = jest.fn().mockImplementation(() => ({
         autoWakeForMedia: jest.fn().mockResolvedValue(),
         shouldWakeForAudio: jest.fn().mockReturnValue(false)
     }));
+    Mock.normalizeMethod = jest.fn((method) => method || 'none');
+    return Mock;
 });
 jest.mock('../../lib/media/mpv-zone-manager', () => {
     return jest.fn().mockImplementation(() => ({

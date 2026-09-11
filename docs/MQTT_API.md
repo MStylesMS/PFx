@@ -10,6 +10,7 @@ This document provides the complete MQTT API specification for ParadoxFX (Parado
 - [Event Publishing](#event-publishing)
 - [Multi-Zone Audio](#multi-zone-audio)
 - [Screen/Media Commands](#screenmedia-commands)
+- [Media pack (`mediaId`)](#media-pack-mediaid)
 - [Multi-Zone Audio Commands](#multi-zone-audio-commands)
 - [System Messages](#system-messages)
 - [Error Handling](#error-handling)
@@ -499,6 +500,79 @@ Screen devices handle image display, video playback, and audio playback.
 
 * `killPfx`
   Gracefully terminate the PFX process via SIGTERM. Publishes `command_completed` event.
+
+* `restartPfx` / `restart`
+  Graceful PFx process restart (cleanup, then `process.exit(0)` so systemd can restart `pfx.service`). `restart` is an alias of `restartPfx`; both do the same thing. Accepted on screen and audio zone command topics. This is a recovery command, not the media-pack switch mechanism.
+
+### Media pack (`mediaId`)
+
+Optional language / restyle pack. Canonical suite text: PxH `docs/standards/MQTT-CONTRACT.md` § Media pack. Pack is **per zone** (each zone has its own `media_dir` and retained state). Do not change INI `media_dir`; it stays the room media root.
+
+**Path rule**
+
+- No pack (omit / never set / cleared with `null`): `{media_dir}/{file}` — **bit-identical** to today’s resolution.
+- Pack set: `{media_dir}/{id}/{file}`
+- Absolute `file` skips the insert. `file` may contain subdirectories (`elevator/vo_01_intro.mp3`).
+
+**Sanitize `mediaId`:** JSON number or decimal string matching `^[1-9][0-9]{0,8}$`. Reject `0`, leading zeros, `/`, `..`, empty, slugs like `"v1"`. On reject: ignore the command, publish `{base}/warnings`, keep the previous pack.
+
+Unknown extra fields on these commands are ignored.
+
+#### switchMedia
+
+Published to the **zone** `{topic}/commands` (the same topic that accepts `playVideo` / `playBackground`).
+
+```json
+{
+  "command": "switchMedia",
+  "mediaId": 2,
+  "refresh": false
+}
+```
+
+| Field | Required | Default | Meaning |
+|-------|----------|---------|---------|
+| `mediaId` | yes | — | Catalog Version ID (integer). To clear the pack (legacy `{media_dir}/{file}`), send `mediaId: null`. |
+| `refresh` | no | `false` | If `true`, reload currently active stills / looping video / background bed(s) from the new pack. If `false`, leave mpv/audio as-is; the next `play*` / `setImage` uses the new pack. |
+
+`refresh: true` does **not** cut one-shot speech or FX mid-phrase.
+
+On success, publishes a non-retained `{base}/events` receipt:
+
+```json
+{
+  "event": "mediaSwitched",
+  "mediaId": 2,
+  "refresh": false,
+  "refreshed": ["background", "default_image"]
+}
+```
+
+`refreshed` is the list of active layers actually replaced (empty when `refresh` is false). Example layer names: `default_image`, `video`, `background`.
+
+#### start (optional pack fields)
+
+`start` is accepted on screen and audio zones. When `mediaId` is omitted, start does not change the zone’s pack. When `mediaId` is present (including `null`), it is equivalent to `switchMedia` immediately before the rest of start. Optional `refresh` has the same meaning as on `switchMedia`.
+
+```json
+{
+  "command": "start",
+  "mediaId": 2,
+  "refresh": false
+}
+```
+
+#### Retained `{base}/state`
+
+Include `mediaId` on the retained snapshot **only if a pack has ever been set** for that zone (and on change). Omit the field entirely when unset so old UIs and rooms see today’s payload. After a successful clear (`mediaId: null`), the snapshot includes `"mediaId": null`.
+
+```json
+{
+  "mediaId": 2
+}
+```
+
+Missing files under the new pack use the existing “file not found” warning. Do not crash. Do not invent a silent fallback pack.
 
 ### Media Playback & Stop Commands (Fade Support)
 
