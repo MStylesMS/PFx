@@ -83,6 +83,64 @@ describe('AudioManager multiple backgrounds', () => {
         expect(manager.backgrounds.get('room').file).toBe('/opt/paradox/media/generator/other.mp3');
     });
 
+    test('overlapping identical playBackground coalesces to one spawn', async () => {
+        const manager = makeManager();
+        let releaseSpawn;
+        const spawnGate = new Promise((resolve) => { releaseSpawn = resolve; });
+        let spawnCalls = 0;
+        manager._spawnIdleMpv = jest.fn().mockImplementation(async (socket) => {
+            spawnCalls += 1;
+            await spawnGate;
+            const proc = fakeProcess();
+            proc.socket = socket;
+            return proc;
+        });
+
+        const first = manager.playBackgroundMusic('/opt/paradox/media/generator/gen_loop.mp3', 70, true, { id: 'generator' });
+        const second = manager.playBackgroundMusic('/opt/paradox/media/generator/gen_loop.mp3', 70, true, { id: 'generator' });
+        // Let both enter playBackground before the spawn finishes.
+        await Promise.resolve();
+        expect(spawnCalls).toBe(1);
+        releaseSpawn();
+
+        const [a, b] = await Promise.all([first, second]);
+        expect(a.success).toBe(true);
+        expect(b.success).toBe(true);
+        expect(manager._spawnIdleMpv).toHaveBeenCalledTimes(1);
+        expect(manager.backgrounds.size).toBe(1);
+    });
+
+    test('identical playBackground within dedupe window is ignored', async () => {
+        const manager = makeManager();
+        manager._backgroundDedupMs = 1000;
+
+        await manager.playBackgroundMusic('/opt/paradox/media/generator/gen_loop.mp3', 70, true, { id: 'generator' });
+        const loadCallsAfterFirst = manager._sendMpvCommand.mock.calls.filter(
+            ([, cmd]) => cmd.command && cmd.command[0] === 'loadfile'
+        ).length;
+
+        const dup = await manager.playBackgroundMusic('/opt/paradox/media/generator/gen_loop.mp3', 70, true, { id: 'generator' });
+        const loadCallsAfterDup = manager._sendMpvCommand.mock.calls.filter(
+            ([, cmd]) => cmd.command && cmd.command[0] === 'loadfile'
+        ).length;
+
+        expect(dup.success).toBe(true);
+        expect(dup.info).toBe('Duplicate ignored');
+        expect(loadCallsAfterDup).toBe(loadCallsAfterFirst);
+        expect(manager._spawnIdleMpv).toHaveBeenCalledTimes(1);
+    });
+
+    test('same id with a different file still replaces after first start', async () => {
+        const manager = makeManager();
+        await manager.playBackgroundMusic('/opt/paradox/media/generator/gen_loop.mp3', 70, true, { id: 'generator' });
+        const replaced = await manager.playBackgroundMusic('/opt/paradox/media/generator/other.mp3', 70, true, { id: 'generator' });
+
+        expect(replaced.success).toBe(true);
+        expect(replaced.info).toBeUndefined();
+        expect(manager.backgrounds.get('generator').file).toBe('/opt/paradox/media/generator/other.mp3');
+        expect(manager._spawnIdleMpv).toHaveBeenCalledTimes(1);
+    });
+
     test('omitted id uses default and still works as a single bed', async () => {
         const manager = makeManager();
 
