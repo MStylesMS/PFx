@@ -63,6 +63,8 @@ sudo systemctl enable --now mosquitto
 npm start
 ```
 
+Use **Mosquitto** as the broker on every Paradox host that shares MQTT. If this Pi bridges topics to another host with `topic … both`, set `try_private true` on the Mosquitto bridge connection so mirrored publishes do not come back as duplicate local commands (e.g. double `playBackground`). That option only works when both ends run Mosquitto.
+
 ## 5) Send a test command
 
 In another terminal:
